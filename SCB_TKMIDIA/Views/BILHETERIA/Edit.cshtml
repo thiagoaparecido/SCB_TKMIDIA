@@ -1,0 +1,611 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.BilheteriaEdit>
+
+<h3 style="color:seagreen">Alteração de Rendas</h3> 
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+
+            <div class="col-xs-2">
+                Dia Cinematográfico
+                <input type="text" id="BIL_DIA_CIN" class="form-control input-sm" name="BIL_DIA_CIN" style="text-align:center" autocomplete="off" maxlength="10" value="@Model.FirstOrDefault().BIL_DIA_CIN.ToShortDateString()"/>
+            </div>
+
+            <div class="col-md-2">
+                Exibidor
+                @Html.DropDownList("EMP_CD_ANCINE", null, htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-2">
+                Sala
+                @Html.DropDownList("SAL_CD_ANCINE", null, htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-2">
+                Obra
+                @Html.DropDownList("FIL_CD_ANCINE", null, htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-2" hidden="hidden">
+                Houve Sessão ?
+                @*@Html.EditorFor(model => model.FirstOrDefault().BIL_HOUVE_SES, new { htmlAttributes = new { @class = "form-control input-sm" } })*@
+                <input type="text" value="S" id="BIL_HOUVE_SES" name="BIL_HOUVE_SES"/>
+            </div>
+
+            <div class="col-md-2">
+                Retificação ?
+                @Html.DropDownList("BIL_RETIF" ,new SelectList(ViewBag.BIL_RETIF1 ,"Value" ,"Text" ,Model.FirstOrDefault().BIL_RETIF) ,htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2">
+                Horário Início Sessão
+                <input type="text" id="SEA_DT_HR_INICIO" class="time form-control input-sm" name="SEA_DT_HR_INICIO" style="text-align:center" autocomplete="off" maxlength="5" value="@Model.FirstOrDefault().SEA_DT_HR_INICIO.ToShortTimeString()" />
+            </div>
+
+            <div class="col-md-2">
+                Modalidade
+                @Html.DropDownList("SEA_MODAL", new SelectList(ViewBag.SEA_MODAL1, "Value", "Text", Model.FirstOrDefault().SEA_MODAL), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-2">
+                Vendedor Remoto
+                <select name="VRE_CNPJ" class="form-control input-sm" id="VRE_CNPJ" style="text-align:center">
+                </select>
+                @*@Html.DropDownList("VRE_CNPJ", null, htmlAttributes: new { @class = "form-control input-sm" })*@
+            </div>
+
+            <div class="col-md-2">
+                Tipo Tela
+                @Html.DropDownList("SEA_FIL_TP_TELA", new SelectList(ViewBag.SEA_FIL_TP_TELA1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_TP_TELA), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-1">
+                Digital
+                @Html.DropDownList("SEA_FIL_DIGITAL", new SelectList(ViewBag.SEA_FIL_DIGITAL1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_DIGITAL), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-1">
+                Projeção
+                @Html.DropDownList("SEA_FIL_TP_PROJECAO", new SelectList(ViewBag.SEA_FIL_TP_PROJECAO1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_TP_PROJECAO), htmlAttributes: new { @class = "form-control input-sm" })
+             </div>
+
+            <div class="col-md-2">
+                Áudio
+                @Html.DropDownList("SEA_FIL_AUDIO", new SelectList(ViewBag.SEA_FIL_AUDIO1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_AUDIO), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <div class="col-md-1">
+                Legenda
+                @Html.DropDownList("SEA_FIL_LEG", new SelectList(ViewBag.SEA_FIL_LEG1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_LEG), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-1">
+                Libras
+                @Html.DropDownList("SEA_FIL_PRO_LIBRA", new SelectList(ViewBag.SEA_FIL_PRO_LIBRA1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_PRO_LIBRA), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-2">
+                Leg Descritiva (CC)
+                @Html.DropDownList("SEA_FIL_LEG_DESC_CC", new SelectList(ViewBag.SEA_FIL_LEG_DESC_CC1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_LEG_DESC_CC), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+
+            <div class="col-md-2">
+                Áudio Descrição
+                @Html.DropDownList("SEA_FIL_AUDIO_DESC", new SelectList(ViewBag.SEA_FIL_AUDIO_DESC1, "Value", "Text", Model.FirstOrDefault().SEA_FIL_AUDIO_DESC), htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+            
+        </div>
+
+
+        <table>
+            <tr>
+                <td>
+                    <div class="panel panel-info small">
+                        <div class="panel-heading"><b>Assentos Tipo Padrão</b></div>
+                        <table class="table">
+
+                            @{
+                                string label1 = "";
+                                string label2 = "";
+                                string strHTML1 = "";
+                                string strHTML2 = "";
+                                string strHTML3 = "";
+                                string strHTML4 = "";
+                                string strHTML5 = "";
+
+                                int qtd_espec_p_int = 0;
+                                double vlr_arr_p_int_trad = 0;
+                                double vlr_arr_p_int_vc = 0;
+                                double vlr_arr_p_int_out = 0;
+
+                                long tta_id = 0;
+                                long tci_id = 0;
+                                long tmp_id = 0;
+
+                                int numLabel=0;
+
+
+                            }
+
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='SAL_QTD_LUG_ESP' name='SAL_QTD_LUG_PDR' value='150' /></div>")
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='SAL_QTD_LUG_ESP' name='SAL_QTD_LUG_ESP' value='50' /></div>")
+
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_ID' name='BIL_ID' value='" + Model.FirstOrDefault().BIL_ID + "' /></div>")
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='SEA_ID' name='SEA_ID' value='" + Model.FirstOrDefault().SEA_ID + "' /></div>")
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_PROT' name='BIL_PROT' value='" + Model.FirstOrDefault().BIL_PROT + "' /></div>")
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_STATUS_PROT' name='BIL_STATUS_PROT' value='" + Model.FirstOrDefault().BIL_STATUS_PROT + "' /></div>")
+                            
+                                @foreach (var item in Model)
+                                {
+                                    
+                                    tta_id = item.TTA_ID;
+                                    @Html.Raw("<div hidden='hidden'><input type='text' id='TTA_ID' name='TTA_ID' value='" + tta_id + "' /></div>")
+                                    tci_id = item.TCI_ID;
+                                    @Html.Raw("<div hidden='hidden'><input type='text' id='TCI_ID' name='TCI_ID' value='" + tci_id + "' /></div>")
+                                    tmp_id = item.TMP_ID;
+                                    @Html.Raw("<div hidden='hidden'><input type='text' id='TMP_ID' name='TMP_ID' value='" + tmp_id + "' /></div>")
+
+
+                                    //Assento Padrão//
+                                    if (item.TTA_TP_ASSENTO == "P")
+                                    {
+
+                                        //INTEIRAS//
+                                        if (item.TCI_CAT == 1)
+                                        {
+                                            if (label1 == "")
+                                            {
+                                                label1 = "<tr><td><b>Inteiras</b></td>";
+                                                @Html.Raw(label1)
+                                                numLabel = +1;
+
+                                                qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                                label2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td>";
+                                                @Html.Raw(label2)
+
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 1)
+                                            {
+                                                vlr_arr_p_int_trad = item.TMP_VLR_ARR;
+                                                label2 = "<td>Meio Tradicional<input type='text' id='TMP_VLR_ARR_TRAD' class='form-control input-sm' name='TMP_VLR_ARR_TRAD' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_trad + "' data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                                    @Html.Raw(label2)
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 2)
+                                            {
+                                                vlr_arr_p_int_vc = item.TMP_VLR_ARR;
+                                                label2 = "<td>Vale Cultura<input type='text' id='TMP_VLR_ARR_VC' class='form-control input-sm' name='TMP_VLR_ARR_VC' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_vc + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                                    @Html.Raw(label2)
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 3)
+                                            {
+                                                vlr_arr_p_int_out = item.TMP_VLR_ARR;
+                                                label2 = "<td>Outras<input type='text' id='TMP_VLR_ARR_OUT' class='form-control input-sm' name='TMP_VLR_ARR_OUT' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_out + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                                    @Html.Raw(label2)
+                                                label1 = "";
+                                            }
+                                        }
+
+
+
+                                        //MEIA//    
+                                        if (item.TCI_CAT == 2)
+                                        {
+                                            if (label1 == "")
+                                            {
+                                                label1 = "<tr><td><b>Meia Entrada</b></td>";
+                                                @Html.Raw(label1)
+
+                                                qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                                label2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td>";
+                                                @Html.Raw(label2)
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 1)
+                                            {
+                                                vlr_arr_p_int_trad = item.TMP_VLR_ARR;
+                                                label2 = "<td>Meio Tradicional<input type='text' id='TMP_VLR_ARR_TRAD' class='form-control input-sm' name='TMP_VLR_ARR_TRAD' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_trad + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";                      @Html.Raw(label2)
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 2)
+                                            {
+                                                vlr_arr_p_int_vc = item.TMP_VLR_ARR;
+                                                label2 = "<td>Vale Cultura<input type='text' id='TMP_VLR_ARR_VC' class='form-control input-sm' name='TMP_VLR_ARR_VC' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_vc + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";                                          @Html.Raw(label2)
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 3)
+                                            {
+                                                vlr_arr_p_int_out = item.TMP_VLR_ARR;
+                                                label2 = "<td>Outras<input type='text' id='TMP_VLR_ARR_OUT' class='form-control input-sm' name='TMP_VLR_ARR_OUT' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_out + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td></tr>";
+                                            @Html.Raw(label2)
+                                                label1 = "";
+                                            }
+                                        }
+
+                                        //CORTESIA//
+                                        if (item.TCI_CAT == 3)
+                                        {
+                                            if (strHTML1 != "")
+                                            {
+                                                @Html.Raw(strHTML1)
+                                                @Html.Raw(strHTML2)
+                                                @Html.Raw(strHTML3)
+                                                @Html.Raw(strHTML4)
+                                                @Html.Raw(strHTML5)
+                                                strHTML1 = "";
+                                            }
+                                            if (label1 == "")
+                                            {
+                                                label1 = "<tr><td><b>Cortesias</b></td>";
+                                                @Html.Raw(label1)
+                                                qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                                label2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td></tr>";
+                                                @Html.Raw(label2)
+                                            }
+                                        }
+
+                                        //PROMOCIONAL//
+                                        if (item.TCI_CAT == 4)
+                                        {
+                                            if (label1 == "")
+                                            {
+
+                                                if (item.TMP_MOD_PAG == 1)
+                                                {
+                                                    strHTML1 = "<tr><td><b>Promocional</b></td>";
+                                                    qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                                    strHTML2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td>";
+
+                                                    vlr_arr_p_int_trad = item.TMP_VLR_ARR;
+                                                    strHTML3 = "<td>Meio Tradicional<input type='text' id='TMP_VLR_ARR_TRAD' class='form-control input-sm' name='TMP_VLR_ARR_TRAD' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_trad + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                                }
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 2)
+                                            {
+                                                vlr_arr_p_int_vc = item.TMP_VLR_ARR;
+                                                strHTML4 = "<td>Vale Cultura<input type='text' id='TMP_VLR_ARR_VC' class='form-control input-sm' name='TMP_VLR_ARR_VC' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_vc + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 3)
+                                            {
+                                                vlr_arr_p_int_out = item.TMP_VLR_ARR;
+                                                strHTML5 = "<td>Outras<input type='text' id='TMP_VLR_ARR_OUT' class='form-control input-sm' name='TMP_VLR_ARR_OUT' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_out + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td></tr>";
+                                                //label1 = "";
+                                            }
+                                        }
+                                    }
+                                }
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    &nbsp;&nbsp;
+                </td>
+                <td>
+                    <div class="panel panel-success small">
+                        <div class="panel-heading"><b>Assentos Tipo Especial</b></div>
+                        <table class="table">
+
+                            @{ 
+                                label1 = "";
+                                ViewBag.bil_dia_cin = Model.FirstOrDefault().BIL_DIA_CIN.ToShortDateString();
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                //Assento ESPECIAL//
+                                if (item.TTA_TP_ASSENTO == "E")
+                                {
+                                    //INTEIRAS//
+                                    if (item.TCI_CAT == 1)
+                                    {
+                                        if (label1 == "")
+                                        {
+                                            label1 = "<tr><td><b>Inteiras</b></td>";
+                                            @Html.Raw(label1)
+                                            numLabel = +1;
+
+                                            qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                            label2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td>";
+                                            @Html.Raw(label2)
+                                        }
+
+                                        if (item.TMP_MOD_PAG == 1)
+                                        {
+                                            vlr_arr_p_int_trad = item.TMP_VLR_ARR;
+                                            label2 = "<td>Meio Tradicional<input type='text' id='TMP_VLR_ARR_TRAD' class='form-control input-sm' name='TMP_VLR_ARR_TRAD' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_trad + "' data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                            @Html.Raw(label2)
+                                        }
+
+                                        if (item.TMP_MOD_PAG == 2)
+                                        {
+                                            vlr_arr_p_int_vc = item.TMP_VLR_ARR;
+                                            label2 = "<td>Vale Cultura<input type='text' id='TMP_VLR_ARR_VC' class='form-control input-sm' name='TMP_VLR_ARR_VC' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_vc + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                            @Html.Raw(label2)
+                                        }
+
+                                        if (item.TMP_MOD_PAG == 3)
+                                        {
+                                            vlr_arr_p_int_out = item.TMP_VLR_ARR;
+                                            label2 = "<td>Outras<input type='text' id='TMP_VLR_ARR_OUT' class='form-control input-sm' name='TMP_VLR_ARR_OUT' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_out + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                            @Html.Raw(label2)
+                                            label1 = "";
+                                        }
+                                    }
+
+
+
+                                    //MEIA//
+                                    if (item.TCI_CAT == 2)
+                                    {
+                                        if (label1 == "")
+                                        {
+                                            label1 = "<tr><td><b>Meia Entrada</b></td>";
+                                            @Html.Raw(label1)
+
+                                            qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                            label2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td>";
+                                            @Html.Raw(label2)
+                                        }
+
+                                        if (item.TMP_MOD_PAG == 1)
+                                        {
+                                            vlr_arr_p_int_trad = item.TMP_VLR_ARR;
+                                            label2 = "<td>Meio Tradicional<input type='text' id='TMP_VLR_ARR_TRAD' class='form-control input-sm' name='TMP_VLR_ARR_TRAD' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_trad + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";                      @Html.Raw(label2)
+                                        }
+
+                                        if (item.TMP_MOD_PAG == 2)
+                                        {
+                                            vlr_arr_p_int_vc = item.TMP_VLR_ARR;
+                                            label2 = "<td>Vale Cultura<input type='text' id='TMP_VLR_ARR_VC' class='form-control input-sm' name='TMP_VLR_ARR_VC' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_vc + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";                                          @Html.Raw(label2)
+                                        }
+
+                                        if (item.TMP_MOD_PAG == 3)
+                                        {
+                                            vlr_arr_p_int_out = item.TMP_VLR_ARR;
+                                            label2 = "<td>Outras<input type='text' id='TMP_VLR_ARR_OUT' class='form-control input-sm' name='TMP_VLR_ARR_OUT' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_out + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td></tr>";
+                                            @Html.Raw(label2)
+                                            label1 = "";
+                                        }
+                                    }
+
+                                    //CORTESIA//
+                                    if (item.TCI_CAT == 3)
+                                    {
+                                        if (strHTML1 != "")
+                                        {
+                                            @Html.Raw(strHTML1)
+                                            @Html.Raw(strHTML2)
+                                            @Html.Raw(strHTML3)
+                                            @Html.Raw(strHTML4)
+                                            @Html.Raw(strHTML5)
+                                            strHTML1 = "";
+                                        }
+                                        if (label1 == "")
+                                        {
+                                            label1 = "<tr><td><b>Cortesias</b></td>";
+                                            @Html.Raw(label1)
+                                            qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                            label2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td></tr>";
+                                            @Html.Raw(label2)
+                                        }
+                                    }
+
+                                    //PROMOCIONAL//
+                                    if (item.TCI_CAT == 4)
+                                    {
+                                        if (label1 == "")
+                                        {
+
+                                            if (item.TMP_MOD_PAG == 1)
+                                            {
+                                                strHTML1 = "<tr><td><b>Promocional</b></td>";
+                                                qtd_espec_p_int = item.TCI_QTD_ESPECT;
+                                                strHTML2 = "<td>Qtd Espectadores<input type='text' id='TCI_QTD_ESPECT' class='form-control input-sm' name='TCI_QTD_ESPECT' style='text-align:right' autocomplete='off' maxlength='5' value='" + qtd_espec_p_int + "' /></td>";
+
+                                                vlr_arr_p_int_trad = item.TMP_VLR_ARR;
+                                                strHTML3 = "<td>Meio Tradicional<input type='text' id='TMP_VLR_ARR_TRAD' class='form-control input-sm' name='TMP_VLR_ARR_TRAD' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_trad + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 2)
+                                            {
+                                                vlr_arr_p_int_vc = item.TMP_VLR_ARR;
+                                                strHTML4 = "<td>Vale Cultura<input type='text' id='TMP_VLR_ARR_VC' class='form-control input-sm' name='TMP_VLR_ARR_VC' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_vc + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td>";
+                                            }
+
+                                            if (item.TMP_MOD_PAG == 3)
+                                            {
+                                                vlr_arr_p_int_out = item.TMP_VLR_ARR;
+                                                strHTML5 = "<td>Outras<input type='text' id='TMP_VLR_ARR_OUT' class='form-control input-sm' name='TMP_VLR_ARR_OUT' style='text-align:right' autocomplete='off' maxlength='5' value='" + vlr_arr_p_int_out + "'  data-mask='###,###,###,###,###.##' data-mask-reverse='true'/></td></tr>";
+                                                //label1 = "";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        </table>
+                    </div>
+
+                </td>
+            </tr>
+        </table>
+
+        <div class="form-group">
+            <div class="col-sx-12" style="text-align:right">
+                <button class="btn btn-default btn-sm" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+                <input type="submit" value="Salvar" id="btnSalvarNovo" class="btn btn-success btn-sm" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+
+    $('#btnSalvarNovo').click(function () {
+
+        //SelectElement("S", 'txtSalvarVoltar');
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_TRAD');
+        for (var i = 0; i < ('TMP_VLR_ARR_TRAD').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+
+            //console.debug(input_list[i].value, input_list[i].getAttribute('value'));
+        }
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_VC');
+        for (var i = 0; i < ('TMP_VLR_ARR_VC').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+        }
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_OUT');
+        for (var i = 0; i < ('TMP_VLR_ARR_OUT').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+        }
+
+    });
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+        });
+
+        $('#SEA_DT_HR_INICIO').mask('00:00');
+
+        var data = $('#SEA_DT_HR_INICIO').val();
+        $('#SEA_DT_HR_INICIO').val(data).trigger('change');
+
+        var data = $('#TMP_VLR_ARR_TRAD').val();
+        $('#TMP_VLR_ARR_TRAD').val(data).trigger('change');
+
+    });
+
+    $('#EMP_CD_ANCINE').change(function () {
+        var empcd = $("#EMP_CD_ANCINE").val();
+        var _tt = $(this).val();
+        $('#SAL_CD_ANCINE').empty();
+
+        var sal_cd_aux = "0";
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "/Bilheteria/SalaByEmpresa/",
+            data: { EMP_CD: empcd },
+            success: function (data) {
+                $.each(data, function (i, sala) {
+
+                    if (sal_cd_aux == "0") {
+                        sal_cd_aux = sala.Value;
+                    }
+
+                    $("#SAL_CD_ANCINE").append('<option value="'
+                        + sala.Value + '">'
+                        + sala.Text + '</option>');
+                });
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            }
+        });
+
+        $('#VRE_CNPJ').empty();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "/Bilheteria/VendRemotoByEmpresa/",
+            data: { EMP_CD: empcd },
+            success: function (data) {
+                $.each(data, function (i, sala) {
+                    $("#VRE_CNPJ").append('<option value="'
+                        + sala.Value + '">'
+                        + sala.Text + '</option>');
+                });
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            }
+        });
+    });
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+    function SetMask()
+    {
+        $('#SEA_DT_HR_INICIO').mask('00:00');
+    }
+
+    window.onload = SetMask();
+
+    function removeOptions(selectbox)
+    {
+        var i;
+        for (i = selectbox.options.length - 1 ; i >= 0 ; i--) {
+            selectbox.remove(i);
+        }
+
+        var data = $('#EMP_CD_ANCINE').val();
+
+        $('#EMP_CD_ANCINE').val(data).trigger('change');
+    }
+
+</script>
+
+}

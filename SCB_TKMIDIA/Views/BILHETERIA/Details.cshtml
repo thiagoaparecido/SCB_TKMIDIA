@@ -1,0 +1,74 @@
+﻿@model SCB_TKMIDIA.Models.TB_BILHETERIA
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TB_BILHETERIA</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.BIL_DIA_CIN)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BIL_DIA_CIN)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BIL_HOUVE_SES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BIL_HOUVE_SES)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BIL_RETIF)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BIL_RETIF)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BIL_PROT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BIL_PROT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BIL_ADIMP_SALA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BIL_ADIMP_SALA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TB_EMPRESA_COMPLEXO.EMP_RZ_SOCIAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TB_EMPRESA_COMPLEXO.EMP_RZ_SOCIAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TB_SALA.EMP_CD_ANCINE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TB_SALA.EMP_CD_ANCINE)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.BIL_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

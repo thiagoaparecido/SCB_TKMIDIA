@@ -1,0 +1,37 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.MensagensANCINE>
+
+
+<h3 style="color:seagreen">Atualização de Envios ANCINE</h3>
+
+<br />
+<table class="table small table-striped table-hover">
+    <tr class="info">
+        <th>
+            Dia Cinematográfico
+        </th>
+        <th>
+            Mensagens
+        </th>    
+        <th>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            @ViewBag.diaCinematografico
+        </td>
+        <td>
+            @Html.Raw(ViewBag.Retorno)
+        </td>
+        <td>
+            @ViewBag.msg
+        </td>
+    </tr>
+
+</table>
+
+<br />
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10" style="text-align:right">
+        <a href="/BILHETERIA/IndexStatus" class="btn btn-default">Voltar</a>
+    </div>
+</div>

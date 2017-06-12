@@ -1,0 +1,69 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.TB_USUARIO>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_NM)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_LOGIN)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_SENHA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_DT_INC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_DT_ALT)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_DT_DES)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USU_MOT_DES)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_NM)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_LOGIN)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_SENHA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_DT_INC)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_DT_ALT)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_DT_DES)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USU_MOT_DES)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.USU_CD }) |
+            @Html.ActionLink("Details", "Details", new { id=item.USU_CD }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.USU_CD })
+        </td>
+    </tr>
+}
+
+</table>

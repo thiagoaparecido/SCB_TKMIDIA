@@ -1,0 +1,108 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.TB_MENSAGEM_ANCINE>
+
+<h3 style="color:seagreen">Mensagens de retorno Ancine</h3>
+
+<br />
+<table class="table small">
+    <tr class="info">
+        <th>
+            Dia Cinematográfico
+        </th>
+        <th>
+            Horário Início Sessão
+        </th>
+        <th>
+            Sala
+        </th>
+        <th>
+            Data e Hora Mensagem
+        </th>
+        <th>
+            Tipo
+        </th>
+        <th>
+            Código
+        </th>
+        <th>
+            Mensagem
+        </th>
+        <th>
+
+        </th>
+    </tr>
+
+    @{
+        string RawBotoes = "";
+
+        string status = "";
+        DateTime hora_ini_aux;
+        string hora_ini = "";
+
+        DateTime dia_cin_aux;
+        string dia_cin = "";
+    }
+
+    @foreach (var item in Model)
+    {
+        //STATUS PROTOCOLO
+        status = item.MSA_TP_MSG;
+        RawBotoes = "";
+
+        if (item.SEA_DT_HR_INICIO != null)
+        {
+            hora_ini_aux = Convert.ToDateTime(item.SEA_DT_HR_INICIO);
+            hora_ini = hora_ini_aux.ToShortTimeString();
+        }
+
+        dia_cin_aux = Convert.ToDateTime(item.TB_BILHETERIA.BIL_DIA_CIN);
+        dia_cin = dia_cin_aux.ToShortDateString();
+
+        switch (status)
+        {
+            case "I":
+            status = "<td>Informação</td>";
+            RawBotoes = "<td></td>";
+            break;
+
+            case "A":
+            status = "<td>Alerta</td>";
+            RawBotoes = "<td></td>";
+            break;
+
+            case "E":
+            status = "<td style='color:red'>Erro</td>";
+            RawBotoes = "<td></td>";
+            break;
+        }
+
+        <tr>
+            <td>
+                @Html.Raw(dia_cin)
+            </td>
+            <td>
+                @Html.Raw(hora_ini)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TB_SALA.SAL_DESC)
+            </td>
+            <td style="color:cornflowerblue">
+                @Html.DisplayFor(modelItem => item.MSA_DT_HORA_MSG)
+            </td>
+            @Html.Raw(status)
+            <td>
+                @Html.DisplayFor(modelItem => item.MSA_CD_MSG)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MSA_TXT_MSG)
+            </td>
+            <td></td>
+        </tr>
+    }
+
+</table>
+
+<div class="form-group">
+    <div class="col-sx-12" style="text-align:right">
+        <button class="btn btn-default btn-sm" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+    </div>
+</div>

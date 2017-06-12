@@ -1,0 +1,88 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.MensagensANCINE>
+
+
+<h3 style="color:seagreen">Envio de Rendas de Bilheteria para a ANCINE</h3>
+
+<h4>Resultado do Envio</h4>
+<br />
+
+@{
+    string status = "";
+    status = ViewBag.statusProtocolo;
+
+
+    switch (status)
+    {
+        case "":
+        status = "<td>Não Enviado</td>";
+        break;
+
+        case "N":
+        status = "<td style='color:red'><b>Não Acatado</b></td>";
+        break;
+
+        case "V":
+        status = "<td style='color:green'><b>Validado - OK</b></td>";
+        break;
+
+        case "A":
+        status = "<td style='color:blue'><b>Em Análise</b></td>";
+        break;
+
+        case "E":
+        status = "<td style='color:red'><b>Com Erro</b></td>";
+        break;
+
+        case "R":
+        status = "<td style='color:red'><b>Recusado</b></td>";
+        break;
+
+        default:
+        status = "<td></td>";
+        break;
+    }
+
+}
+
+
+<table class="table small table-striped table-hover">
+    <tr class="info">
+        <th>
+            Sala
+        </th>
+        <th>
+            Dia Cinematográfico
+        </th>
+        <th>
+            Protocolo
+        </th>
+        <th>
+            Status Protocolo
+        </th>    
+        <th>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            @ViewBag.registroANCINESala
+        </td>
+        <td>
+            @ViewBag.diaCinematografico
+        </td>
+        <td>
+            @ViewBag.numeroProtocolo
+        </td>
+        @Html.Raw(status)
+        <td>
+            @ViewBag.ex
+        </td>
+    </tr>
+
+</table>
+
+<br />
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10" style="text-align:right">
+        <a href="/BILHETERIA/SendReceive" class="btn btn-default btn-sm" role="button">Voltar</a>
+    </div>
+</div>

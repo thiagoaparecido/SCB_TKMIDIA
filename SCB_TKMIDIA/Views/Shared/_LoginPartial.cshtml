@@ -1,0 +1,26 @@
+﻿@*@model SCB_TKMIDIA.Models.TB_USUARIO*@
+@using System.Configuration;
+
+@if (Session["Nome"] != null)
+{
+    using (Html.BeginForm("Logoff" ,"USUARIO" ,FormMethod.Post ,new { id = "logoutForm" ,@class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            @{ string str_SCB_Client_Name = ConfigurationManager.AppSettings["SCB_Client_Name"];}
+            <li>@Html.ActionLink("Cliente: " + str_SCB_Client_Name ,"Index" ,"Home" ,routeValues: null ,htmlAttributes: new { id = "CLIENT" })</li>
+            <li>
+                @Html.ActionLink("Olá " + Session["Nome"]  ,"Index" ,"Home" ,routeValues: null ,htmlAttributes: new { title = "Usuário conectado" })
+            </li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Sair  </a></li>
+        </ul>
+    }
+}
+else
+{
+        <ul class="nav navbar-nav navbar-right">
+            @{ string str_SCB_Client_Name = ConfigurationManager.AppSettings["SCB_Client_Name"];}
+            <li>@Html.ActionLink("Cliente: " + str_SCB_Client_Name ,"Index" ,"Home" ,routeValues: null ,htmlAttributes: new { id = "CLIENT" })</li>
+        </ul>
+}

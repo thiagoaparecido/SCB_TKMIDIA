@@ -1,0 +1,244 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.MensagensANCINE>
+
+
+
+<h3 style="color:seagreen">Rendas</h3>
+
+@using (Html.BeginForm("Index", "BILHETERIA", FormMethod.Post, htmlAttributes: new { id = "frmPesq" }))
+{
+    <table class="table small">
+        <tr>
+            <td style="text-align:right">
+                <label>Dia Cinematofráfico:</label> &nbsp;
+            </td>
+            <td style="width:150px">
+                @Html.TextBox("BIL_DIA_CIN" ,ViewBag.bil_dia_cin as string ,htmlAttributes: new { @class = "form-control input-xs" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center" ,autocomplete = "off" })
+            </td>
+            <td>
+                <a href="#" id="btnPesquisar" name="btnPesquisar" class="btn btn-info btn-sm" onclick="$('#frmPesq').submit();">Pesquisar</a>
+            </td>
+            <td style="text-align:right">
+                <a href="/Bilheteria/Create" class="btn btn-success btn-sm">Lançar Renda</a>
+            </td>
+        </tr>
+    </table>
+}
+
+<table class="table small table-striped table-hover">
+    <tr class="info">
+        <th>
+            Status
+        </th>
+        <th style="text-align:center">
+            Dia Cinematográfico
+        </th>
+        <th style="text-align:center">
+            Sala
+        </th>
+        <th>
+            Obra
+        </th>
+        <th style="text-align:center">
+            Horário Início Sessão
+        </th>
+        <th style="text-align:center">
+            Houve Sessão
+        </th>
+        <th style="text-align:center">
+            Retificadora
+        </th>
+        <th></th>
+    </tr>
+
+    @{
+        string status = "";
+        string houve_ses = "";
+        string retif = "";
+        string hora_ini = "";
+        string RawBotoes = "";
+        string RawBotoesAux = "";
+        string RawBotaoRetif = "";
+        string RawBotaoDelete = "";
+     }
+
+    @foreach (var item in Model)
+    {
+
+
+        //STATUS PROTOCOLO
+        status = item.BIL_STATUS_PROT;
+        RawBotoes = "";
+
+        //HOUVE SESSÃO ?
+        houve_ses = item.BIL_HOUVE_SES;
+
+        if (houve_ses == "S")
+        {
+            houve_ses = "Sim";
+        }
+        else
+        {
+            houve_ses = "Não";
+        }
+
+
+        //RETIFICAÇÃO ?
+        retif = item.BIL_RETIF;
+
+        if (retif == "S")
+        {
+            retif = "Sim";
+        }
+        else
+        {
+            retif = "Não";
+        }
+
+
+        if(houve_ses == "Sim")
+        {
+            hora_ini = item.SEA_DT_HR_INICIO.ToShortTimeString();
+        }
+        else
+        {
+            hora_ini = "";
+        }
+
+        RawBotoes = "&nbsp;";
+        if (status != "A")
+        {
+            RawBotoes = " <a href='/Bilheteria/Delete?BIL_ID=" + @item.BIL_ID + "&houve_ses=" + @houve_ses + "&retif=" + @retif + "&sala=" + @item.SAL_DESC + "&obra=" + @item.SEA_FIL_NM + "&hora_ini=" + @hora_ini + "&dia_cin=" + @item.BIL_DIA_CIN.ToShortDateString() + "' class='btn btn-danger btn-xs'>Excluir</a> ";
+        }
+
+        if (status != "A" && houve_ses == "Sim")
+        {
+            RawBotoes = RawBotoes + " <a href='/Bilheteria/Edit?BIL_ID=" + @item.BIL_ID + "' class='btn btn-success btn-xs'>Editar</a> ";
+        }
+
+        if (status != "A" && houve_ses == "Não")
+        {
+            RawBotoes = RawBotoes + " <a href='/Bilheteria/Retif?BIL_ID=" + @item.BIL_ID + "' class='btn btn-warning btn-xs'>Retificar</a> ";
+        }
+
+        if (status == "N" || status == "E" || status == "R")
+        {
+            RawBotoes = RawBotoes + " <a href='/MENSAGEM_ANCINE?BIL_ID=" + @item.BIL_ID + "' style='color: red' class='btn btn-default btn-xs'><i class='fa fa-info-circle' aria-hidden='true'></i></a> ";
+        }
+
+        switch (status)
+        {
+            case "":
+            status = "<td>Não Enviado</td>";
+            break;
+
+            case "N":
+            status = "<td style='color:red'><b>Não Acatado</b></td>";
+            break;
+
+            case "V":
+            status = "<td style='color:green'><b>Validado - OK</b></td>";
+            break;
+
+            case "A":
+            status = "<td style='color:blue'><b>Em Análise</b></td>";
+            break;
+
+            case "E":
+            status = "<td style='color:red'><b>Com Erro</b></td>";
+            break;
+
+            case "R":
+            status = "<td style='color:red'><b>Recusado</b></td>";
+            break;
+
+        }
+
+
+
+
+
+        <tr>
+            @Html.Raw(status)
+            <td style="text-align:center">
+                @item.BIL_DIA_CIN.ToShortDateString()
+            </td>
+            <td style="text-align:center;color:blue">
+                @item.SAL_DESC
+            </td>
+            <td>
+                @item.SEA_FIL_NM
+            </td>
+            <td style="text-align:center">
+                @hora_ini
+            </td>
+            <td style="text-align:center">
+                @houve_ses
+            </td>
+            <td style="text-align:center">
+                @retif
+            </td>
+            <td>
+                @Html.Raw(RawBotoes)
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+            nextText: 'Próximo',
+            prevText: 'Anterior'
+        });
+
+    });
+
+    var myDate = new Date();
+    var month;
+    var day;
+    var year;
+    var dtIni;
+
+    var txt_dia_cin = document.getElementById('BIL_DIA_CIN');
+
+    if (txt_dia_cin.value == '')
+    {
+        day = myDate.getDate();
+        month = myDate.getMonth() + 1;
+        year = myDate.getFullYear();
+
+        if (day.toString().length == 1)
+            day = "0" + day;
+
+        if (month.toString().length == 1)
+            month = "0" + month;
+
+        dtIni = day + '/' + month + '/' + year;
+
+        SelectElement(dtIni, 'BIL_DIA_CIN');
+    }
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+</script>
+
+    }

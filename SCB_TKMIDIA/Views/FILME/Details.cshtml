@@ -1,0 +1,154 @@
+﻿@model SCB_TKMIDIA.Models.TB_FILME
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TB_FILME</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_NM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_NM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_ID_NACIO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_ID_NACIO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DIGITAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DIGITAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_GENERO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_GENERO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_CLASS_ETA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_CLASS_ETA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DIRETOR)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DIRETOR)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_SINOPSE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_SINOPSE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DT_INICIO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DT_INICIO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DT_FIM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DT_FIM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_ANO_LANC)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_ANO_LANC)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_PAIS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_PAIS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_CD_AUX)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_CD_AUX)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DT_INC)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DT_INC)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DT_ALT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DT_ALT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_DT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_DT_DES)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FIL_MOT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FIL_MOT_DES)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TB_DISTRIBUIDORA.DIS_NM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TB_DISTRIBUIDORA.DIS_NM)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.FIL_CD_ANCINE }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

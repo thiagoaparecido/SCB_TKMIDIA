@@ -1,0 +1,66 @@
+﻿@model SCB_TKMIDIA.Models.TB_DISTRIBUIDORA
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TB_DISTRIBUIDORA</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DIS_NM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIS_NM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIS_CD_AUX)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIS_CD_AUX)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIS_DT_INC)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIS_DT_INC)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIS_DT_ALT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIS_DT_ALT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIS_DT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIS_DT_DES)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIS_MOT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIS_MOT_DES)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DIS_CNPJ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

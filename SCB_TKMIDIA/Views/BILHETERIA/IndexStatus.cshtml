@@ -1,0 +1,242 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.MensagensANCINE>
+
+<h3 style="color:seagreen">Acompanhamento de Envio para a Ancine</h3>
+
+@*@{
+    string strAlert = "";
+
+    if (ViewBag.ex != "" || ViewBag.ex != null)
+    { strAlert = "<div class='alert alert-danger' id='danger-alert'><button type='button' class='close' data-dismiss='alert'>x</button><strong>Erro:</strong>" + @ViewBag.ex + "</div>";    }
+
+    }*@
+
+@*@Html.Raw(strAlert)*@
+
+@using (Html.BeginForm("IndexStatus", "BILHETERIA", FormMethod.Post, htmlAttributes: new { id = "frmPesq" }))
+{
+    <table class="table small">
+        <tr>
+            <th style="text-align:right">
+                <a href="/BILHETERIA/AtualizaAncine" class="btn btn-danger" role="button"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;Atualizar Ancine</a>
+                <a href="/TB_SALA" class="btn btn-warning" role="button"><i class="fa fa-video-camera" aria-hidden="true"></i>&nbsp;&nbsp;Adimplência Salas</a>
+            </th>
+        </tr>
+    </table>
+}
+
+<table class="table small table-striped table-hover">
+    <tr class="info">
+        <th>
+            Status
+        </th>
+        <th style="text-align:center">
+            Dia Cinematográfico
+        </th>
+        <th style="text-align:center">
+            Sala
+        </th>
+        <th>
+            Adimplência
+        </th>
+        <th>
+            Obra
+        </th>
+        <th style="text-align:center">
+            Horário Início Sessão
+        </th>
+        <th style="text-align:center">
+            Houve Sessão
+        </th>
+        <th style="text-align:center">
+            Retificadora
+        </th>
+        <th>
+            Protocolo
+        </th>
+        <th></th>
+    </tr>
+
+    @{
+        string status = "";
+        string retif = "";
+        string hora_ini = "";
+        string adimp_sala = "";
+        string houvesessao = "";
+        string rawBotoes = "";
+     }
+
+    @foreach (var item in Model)
+    {
+
+
+        //STATUS PROTOCOLO
+        status = item.BIL_STATUS_PROT;
+
+        switch (status)
+        {
+            case "":
+            status = "<td>Não Enviado</td>";
+            rawBotoes = "<td></td>";
+            break;
+
+            case "N":
+            status = "<td style='color:red'><b>Não Acatado</b></td>";
+            rawBotoes = "<td><a href='/MENSAGEM_ANCINE?BIL_ID=" + item.BIL_ID + "' class='btn btn-default btn-xs'><i class='fa fa-info-circle' aria-hidden='true'></i></a></td>";
+            break;
+
+            case "A":
+            status = "<td style='color:blue'><b>Em Análise</b></td>";
+            rawBotoes = "<td></td>";
+            break;
+
+            case "E":
+            status = "<td style='color:red'><b>Com Erro</b></td>";
+            rawBotoes = "<td><a href='/MENSAGEM_ANCINE?BIL_ID=" + item.BIL_ID + "' class='btn btn-default btn-xs' style='color: red'><i class='fa fa-info-circle' aria-hidden='true'></i></span></a></td>";
+            break;
+
+            case "V":
+            status = "<td style='color:green'><b>Validado - OK</b></td>";
+            rawBotoes = "<td></td>";
+            break;
+
+            case "R":
+            status = "<td style='color:red'><b>Recusado</b></td>";
+            rawBotoes = "<td><a href='/MENSAGEM_ANCINE?BIL_ID=" + item.BIL_ID + "' class='btn btn-default btn-xs'><i class='fa fa-info-circle' aria-hidden='true'></i></a></td>";
+            break;
+            default:
+            status = "<td></td>";
+            rawBotoes = "<td></td>";
+            break;
+        }
+
+        // ADIMPLENCIA DE SALA
+        adimp_sala = item.BIL_ADIMP_SALA;
+        switch (status)
+        {
+            case "":
+            adimp_sala = "<td></td>";
+            break;
+
+            case "A":
+            adimp_sala = "<td style='color:green'><b>Adimplente</b></td>";
+            break;
+
+            case "T":
+            adimp_sala = "<td style='color:red'><b>Com atraso</b></td>";
+            break;
+
+            case "N":
+            adimp_sala = "<td><b>Não Enviado</b></td>";
+            break;
+
+            case "E":
+            adimp_sala = "<td style='color:red'><b>Com Erro</b></td>";
+            break;
+
+            case "R":
+            adimp_sala = "<td style='color:red'><b>Recusado</b></td>";
+            break;
+            default:
+            adimp_sala = "<td></td>";
+            break;
+        }
+
+        //RETIFICAÇÃO ?
+        retif = item.BIL_RETIF;
+
+        if (retif == "S")
+        {
+            retif = "Sim";
+        }
+        else
+        {
+            retif = "Não";
+        }
+
+        houvesessao = item.BIL_HOUVE_SES;
+        if (houvesessao == "S")
+        {
+            houvesessao = "Sim";
+            hora_ini = item.SEA_DT_HR_INICIO.ToShortTimeString();
+        }
+        else
+        {
+            houvesessao = "Não";
+            hora_ini = "";
+        }
+
+
+        <tr>
+            @Html.Raw(status)
+            <td style="text-align:center">
+                @item.BIL_DIA_CIN.ToShortDateString()
+            </td>
+            <td style="text-align:center;color:blue">
+                @item.SAL_DESC
+            </td>
+                @Html.Raw(adimp_sala)
+            <td>
+                @item.SEA_FIL_NM
+            </td>
+            <td style="text-align:center">
+                @hora_ini
+            </td>
+            <td style="text-align:center">
+                @houvesessao
+            </td>
+            <td style="text-align:center">
+                @retif
+            </td>
+            <td>
+                @item.BIL_PROT
+            </td>
+            @Html.Raw(rawBotoes)
+        </tr>
+      }
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+<script type="text/javascript">
+
+    window.setTimeout(function () {
+        $("#danger-alert").fadeTo(500, 0).slideUp(500, function () {
+            $(this).remove();
+        });
+    }, 3000);
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN_INI').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+            leftArrow: '&laquo;',
+            rightArrow: '&raquo;'
+        });
+
+        $('#BIL_DIA_CIN_FIM').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+            leftArrow: '&laquo;',
+            rightArrow: '&raquo;'
+        });
+
+    });
+
+</script>
+    }

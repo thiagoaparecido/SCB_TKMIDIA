@@ -1,0 +1,74 @@
+﻿@model SCB_TKMIDIA.Models.TB_MENSAGEM_ANCINE
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TB_MENSAGEM_ANCINE</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SEA_DT_HR_INICIO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SEA_DT_HR_INICIO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MSA_TP_MSG)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MSA_TP_MSG)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MSA_CD_MSG)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MSA_CD_MSG)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MSA_TXT_MSG)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MSA_TXT_MSG)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TB_BILHETERIA.EMP_CD_ANCINE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TB_BILHETERIA.EMP_CD_ANCINE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TB_SALA.EMP_CD_ANCINE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TB_SALA.EMP_CD_ANCINE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TB_SESSAO_ANCINE.SAL_CD_ANCINE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TB_SESSAO_ANCINE.SAL_CD_ANCINE)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

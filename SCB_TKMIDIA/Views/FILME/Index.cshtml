@@ -1,0 +1,171 @@
+﻿@model PagedList.IPagedList<SCB_TKMIDIA.Models.TB_FILME>
+@using PagedList.Mvc;
+@using SCB_TKMIDIA.Helpers;
+
+<h3>Filmes</h3>
+
+@using (Html.BeginForm("Index" ,"FILME" ,FormMethod.Post ,htmlAttributes: new { id = "frmPesq" }))
+{
+    <table class="table">
+        <tr>
+
+            <th style="text-align:right">
+                @Html.TextBox("DtSearch" ,ViewBag.CurrentDtSearch as string ,htmlAttributes: new { @class = "input-xs" ,style = "text-align:center" ,placeholder = "Data Inclusão" ,autocomplete = "off" })&nbsp; ou &nbsp;
+                @Html.TextBox("SearchString" ,ViewBag.CurrentFilter as string ,htmlAttributes: new { @class = "input-xs" ,placeholder = "Filme, Distribuidora..." ,autocomplete = "off" })&nbsp;
+                <a href="#" class="btn btn-info btn-sm" onclick="$('#frmPesq').submit();">Pesquisar</a>
+                &nbsp;<a href="/FILME" class="btn btn-default btn-sm">Limpar Pesquisa</a>
+            </th>
+            <th style="text-align:right">
+                <a href="/FILME/Create" class="btn btn-success btn-sm">Novo Filme</a>
+            </th>
+        </tr>
+    </table>
+}
+
+
+<table class="table small table-striped table-hover">
+    <tr class="info">
+        <th>
+            Código Ancine
+        </th>
+        <th>
+            <u>@Html.ActionLink("Filme" ,"Index" ,new { sortOrder = ViewBag.FilmeSortParm ,currentFilter = ViewBag.CurrentFilter })</u>
+        </th>
+        <th>
+            <u>@Html.ActionLink("Distribuidora" ,"Index" ,new { sortOrder = ViewBag.DistrSortParm ,currentFilter = ViewBag.CurrentFilter })</u>
+        </th>
+        <th>
+            <u>@Html.ActionLink("Nac / Est" ,"Index" ,new { sortOrder = ViewBag.NacSortParm ,currentFilter = ViewBag.CurrentFilter })</u>
+        </th>
+        <th style="text-align:center">
+            <u>@Html.ActionLink("Inclusão" ,"Index" ,new { sortOrder = ViewBag.InclusaoSortParm ,currentFilter = ViewBag.CurrentFilter })</u>
+        </th>
+        <th style="text-align:center">
+            Alteração
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @{
+                    var clsHelper = new Helpers();
+                    var codAncine = item.FIL_CD_ANCINE;
+                    var strCodAncine = "";
+                    if (codAncine != "")
+                    {
+                        strCodAncine = clsHelper.FormataCodigoObraGenerica(codAncine);
+
+                        if (strCodAncine != "")
+                        {
+                            codAncine = strCodAncine;
+                        }
+
+                    }
+                }
+                <div>@codAncine</div>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FIL_NM)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TB_DISTRIBUIDORA.DIS_NM)
+            </td>
+            <td>
+                @{
+                    var nac = item.FIL_ID_NACIO;
+                    if (nac == "E")
+                    { nac = "Estrangeiro"; }
+                    else
+                    { nac = "Nacional"; }
+                }
+                <div>@nac</div>
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.FIL_DT_INC)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.FIL_DT_ALT)
+            </td>
+            <td style="text-align:center">
+                <a href="/FILME/Edit/@item.FIL_CD_ANCINE" class="btn btn-info btn-xs">Editar</a>
+                <a href="/FILME/Delete/@item.FIL_CD_ANCINE" class="btn btn-danger btn-xs">Excluir</a>
+            </td>
+        </tr>
+                    }
+
+</table>
+
+Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
+@Html.PagedListPager(Model ,page => Url.Action("Index" ,new { page ,sortOrder = ViewBag.CurrentSort ,currentFilter = ViewBag.CurrentFilter }))
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        function ClearObj() {
+
+            //alert("ok");
+            var element = document.getElementById("SearchString");
+            element.value = "";
+
+            var element2 = document.getElementById("DtSearch");
+            element2.value = "";
+
+        };
+
+        window.onload = ClearObj;
+
+        function fnExcelReport() {
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            tab = document.getElementById('prog_index'); // id of table
+
+            for (j = 0 ; j < tab.rows.length ; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+                //tab_text=tab_text+"</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to Sumit.xls");
+            }
+            else                 //other browser not tested on IE 11
+            {
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+            }
+            return (sa);
+        }
+
+
+        $(function () {
+            $(document).ready(function () {
+                $('#DtSearch').datepicker({
+                    dateFormat: "dd/mm/yy",
+                    showStatus: true,
+                    showWeek: true,
+                    showOtherMonths: false,
+                    selectOtherMonths: true,
+                    autoSize: true,
+                    gotoCurrent: true,
+                    highlightWeek: true,
+                });
+            });
+
+        });
+    </script>
+}

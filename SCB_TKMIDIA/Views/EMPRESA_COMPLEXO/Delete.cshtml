@@ -1,0 +1,168 @@
+﻿@model SCB_TKMIDIA.Models.TB_EMPRESA_COMPLEXO
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>TB_EMPRESA_COMPLEXO</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_RZ_SOCIAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_RZ_SOCIAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_NM_FANT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_NM_FANT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_CNPJ)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_CNPJ)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_INSCRICAO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_INSCRICAO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_NUM_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_NUM_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_CMP_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_CMP_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_BRR_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_BRR_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_CID_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_CID_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_TEL_DDD)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_TEL_DDD)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_TEL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_TEL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_UF_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_UF_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_CEP_END)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_CEP_END)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_CD_AUX)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_CD_AUX)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_DT_INC)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_DT_INC)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_DT_ALT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_DT_ALT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_DT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_DT_DES)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EMP_MOT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EMP_MOT_DES)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

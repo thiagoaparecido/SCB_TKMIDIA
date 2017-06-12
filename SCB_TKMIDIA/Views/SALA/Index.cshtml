@@ -1,0 +1,121 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.Adimplencia>
+
+<h3 style="color:seagreen">Adimplência de Salas</h3>
+
+@using (Html.BeginForm("Index" ,"SALA" ,FormMethod.Post ,htmlAttributes: new { id = "frmPesq" }))
+{
+    <table class="table small">
+        <tr>
+            <td style="text-align:right">
+                <label>Dia Cinematofráfico:</label> &nbsp;
+            </td>
+            <td style="width:150px">
+                @Html.TextBox("BIL_DIA_CIN" ,ViewBag.bil_dia_cin as string ,htmlAttributes: new { @class = "form-control input-xs" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center" ,autocomplete = "off" })
+            </td>
+            <td style="text-align:left"><a href="#" id="btnPesquisar" name="btnPesquisar" class="btn btn-info btn-sm" onclick="$('#frmPesq').submit();">Pesquisar</a></td>
+        </tr>
+    </table>
+}
+
+<table class="table small table-striped table-hover">
+    <tr>
+        <th>
+            Código Ancine
+        </th>
+        <th>
+            Sala
+        </th>
+        <th>
+            Situação
+        </th>
+    </tr>
+
+    @{
+        string status = "";
+    }
+
+    @foreach (var item in Model)
+    {
+        status = item.BIL_ADIMP_SALA;
+        switch (status)
+        {
+            case "":
+            status = "<td>Não Enviado</td>";
+            break;
+
+            case "N":
+            status = "<td>Não Enviado</td>";
+            break;
+
+            case "A":
+            status = "<td style='color:blue'><b>Em Análise</b></td>";
+            break;
+
+            case "T":
+            status = "<td style='color:red'><b>Em atraso</b></td>";
+            break;
+
+            case "D":
+            status = "<td><b>Dispensado</b></td>";
+            break;
+
+            case "F":
+            status = "<td style='color:red'><b>Fechada</b></td>";
+            break;
+
+            case "E":
+            status = "<td style='color:red'><b>Com Erro</b></td>";
+            break;
+
+            case "V":
+            status = "<td style='color:green'><b>OK</b></td>";
+            break;
+
+            case "R":
+            status = "<td style='color:red'><b>Recusado</b></td>";
+            break;
+            default:
+            status = "<td></td>";
+            break;
+        }
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SAL_CD_ANCINE)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SAL_DESC)
+            </td>
+            @Html.Raw(status)
+        </tr>
+    }
+
+</table>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#BIL_DIA_CIN').datepicker({
+                dateFormat: "dd/mm/yy",
+                showStatus: true,
+                showWeek: true,
+                showOtherMonths: false,
+                selectOtherMonths: true,
+                autoSize: true,
+                gotoCurrent: true,
+                highlightWeek: true,
+                nextText: 'Próximo',
+                prevText: 'Anterior'
+            });
+
+            //$('#frmPesq').submit();
+        
+
+        });
+
+    </script>
+}

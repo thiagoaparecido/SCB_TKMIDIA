@@ -1,0 +1,197 @@
+﻿@model SCB_TKMIDIA.Models.TB_FILME
+
+<h2>Alteração de Filme</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true ,"" ,new { @class = "text-danger" })
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Código Ancine</label>
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.FIL_CD_ANCINE ,new { htmlAttributes = new { @class = "form-control" ,@readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.FIL_CD_ANCINE ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Distribuidora</label>
+            <div class="col-md-10">
+                @Html.DropDownList("DIS_CNPJ" ,null ,htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DIS_CNPJ ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Nome do Filme</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_NM ,new { htmlAttributes = new { @class = "form-control" ,maxlength = "50" } })
+                @Html.ValidationMessageFor(model => model.FIL_NM ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Nac / Estr</label>
+            <div class="col-md-4">
+                <select name="FIL_ID_NACIO1" class="form-control" id="FIL_ID_NACIO1" style="text-align:center">
+                    <option value="E">Estrangeiro</option>
+                    <option value="N">Nacional</option>
+                </select>
+                <div hidden>
+                    @Html.EditorFor(model => model.FIL_ID_NACIO ,new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DIGITAL ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DIGITAL ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_DIGITAL ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_GENERO ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_GENERO ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_GENERO ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_CLASS_ETA ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_CLASS_ETA ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_CLASS_ETA ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DIRETOR ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DIRETOR ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_DIRETOR ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_SINOPSE ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_SINOPSE ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_SINOPSE ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DT_INICIO ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DT_INICIO ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_DT_INICIO ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DT_FIM ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DT_FIM ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_DT_FIM ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_ANO_LANC ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_ANO_LANC ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_ANO_LANC ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_PAIS ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_PAIS ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_PAIS ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_CD_AUX ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_CD_AUX ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_CD_AUX ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DT_INC ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DT_INC ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_DT_INC ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DT_ALT ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DT_ALT ,new { htmlAttributes = new { @Value = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss") } })
+                @Html.ValidationMessageFor(model => model.FIL_DT_ALT ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_DT_DES ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_DT_DES ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_DT_DES ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FIL_MOT_DES ,htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FIL_MOT_DES ,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FIL_MOT_DES ,"" ,new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10" style="text-align:right">
+                <a href="/FILME" class="btn btn-default btn-md" role="button">Voltar</a>
+                <input type="submit" value="Salvar" id="Salvar" class="btn btn-success btn-md" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+
+    $(function () {
+        $(document).ready(function () {
+            var strNac = $("#FIL_ID_NACIO").val();
+            SelectElement(strNac, 'FIL_ID_NACIO1');
+        });
+    });
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+    $('#FIL_ID_NACIO1').change(function () {
+
+        var txtLeg = $("#FIL_ID_NACIO1").val();
+        document.getElementById('FIL_ID_NACIO').value = txtLeg;
+
+    });
+
+    </script>
+}

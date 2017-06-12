@@ -1,0 +1,146 @@
+﻿@model SCB_TKMIDIA.Models.MensagensANCINE
+
+<h3 style="color:seagreen">Dia sem Sessão</h3>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-xs-2">
+                Dia Cinematográfico
+                <input type="text" id="BIL_DIA_CIN" class="form-control input-sm" name="BIL_DIA_CIN" style="text-align:center" autocomplete="off" maxlength="10" value="@DateTime.Today.ToShortDateString() "/>
+                @Html.ValidationMessageFor(model => model.BIL_DIA_CIN, "", new { @class = "text-danger" })
+            </div>
+            
+            <div class="col-md-2">
+                Exibidor
+                @Html.DropDownList("EMP_CD_ANCINE", null, htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+            
+            <div class="col-md-2">
+                Sala
+                <select name="SAL_CD_ANCINE" class="form-control input-sm" id="SAL_CD_ANCINE">
+                </select>
+                @Html.ValidationMessageFor(model => model.SAL_CD_ANCINE, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+
+        <div hidden="hidden">
+            <input type="text" id="txtSalvarVoltar" name="txtSalvarVoltar"/>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sx-12" style="text-align:right">
+                <a href="/Bilheteria" class="btn btn-default btn-xs">Voltar</a>
+                <input type="submit" value="Salvar e Voltar" id="btnSalvarVoltar" class="btn btn-info btn-xs" />
+                <input type="submit" value="Salvar e Criar Novo" id="btnSalvarNovo" class="btn btn-success btn-xs" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+        });
+
+
+    });
+
+    $('#EMP_CD_ANCINE').change(function () {
+        var empcd = $("#EMP_CD_ANCINE").val();
+        var _tt = $(this).val();
+        $('#SAL_CD_ANCINE').empty();
+
+        var sal_cd_aux = "0";
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "/Bilheteria/SalaByEmpresa/",
+            data: { EMP_CD: empcd },
+            success: function (data) {
+                $.each(data, function (i, sala) {
+
+                    if (sal_cd_aux == "0") {
+                        sal_cd_aux = sala.Value;
+                    }
+
+                    $("#SAL_CD_ANCINE").append('<option value="'
+                        + sala.Value + '">'
+                        + sala.Text + '</option>');
+                });
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            }
+        });
+    });
+
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+    function ReplaceString(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        var txtReplace;
+        txtReplace = valueToSelect;
+
+        element.value = txtReplace.replace(",",".")
+    }
+
+
+    $('#btnSalvarVoltar').click(function () {
+
+        SelectElement("S", 'txtSalvarVoltar');
+
+    });
+
+    $('#btnSalvarNovo').click(function () {
+
+        SelectElement("N", 'txtSalvarVoltar');
+
+    });
+
+    window.onload = removeOptions(document.getElementById("SAL_CD_ANCINE"));;
+
+
+    function removeOptions(selectbox) {
+        var i;
+        for (i = selectbox.options.length - 1 ; i >= 0 ; i--) {
+            selectbox.remove(i);
+        }
+
+        var data = $('#EMP_CD_ANCINE').val();
+
+        $('#EMP_CD_ANCINE').val(data).trigger('change');
+
+
+    }
+
+</script>
+
+}

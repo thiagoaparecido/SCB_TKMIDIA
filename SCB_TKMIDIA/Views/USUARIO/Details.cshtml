@@ -1,0 +1,74 @@
+﻿@model SCB_TKMIDIA.Models.USUARIO
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>USUARIO</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_NM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_NM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_LOGIN)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_LOGIN)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_SENHA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_SENHA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_DT_INC)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_DT_INC)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_DT_ALT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_DT_ALT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_DT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_DT_DES)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USU_MOT_DES)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USU_MOT_DES)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.USU_CD }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

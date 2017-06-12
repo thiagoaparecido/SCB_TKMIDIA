@@ -1,0 +1,127 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.MensagensANCINE>
+
+<h3 style="color:seagreen">Envio de Rendas para a Ancine</h3>
+
+<table class="table small">
+    <tr>
+        <th style="text-align:left">
+            <h4>Rendas disponíveis para envio</h4>
+        </th>
+        <th style="text-align:right">
+            <a href="/BILHETERIA/AtualizaAncine" class="btn btn-danger" role="button"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;Atualizar Ancine</a>
+        </th>
+    </tr>
+</table>
+
+<table class="table small table-striped table-hover">
+    <tr class="info">
+        <th style="text-align:center">
+            Status
+        </th>
+        <th style="text-align:center">
+            Dia Cinematográfico
+        </th>
+        <th style="text-align:center">
+            Sala
+        </th>
+        <th style="text-align:center">
+            Houve Sessão
+        </th>
+        <th style="text-align:center">
+            Retificadora
+        </th>
+        <th style="text-align:center">
+            Ação
+        </th>
+    </tr>
+
+    @{
+        string status = "";
+        string retif = "";
+        string houvesessao = "";
+     }
+
+    @foreach (var item in Model)
+    {
+
+        {
+            status = item.BIL_STATUS_PROT;
+
+            switch (status)
+            {
+                case "":
+                status = "<td style='text-align:center'>Não Enviado</td>";
+                break;
+
+                case "N":
+                status = "<td style='color:red; text-align:center'><b>Não Acatado</b></td>";
+                break;
+
+                case "A":
+                status = "<td style='color:blue; text-align:center'><b>Em Análise</b></td>";
+                break;
+
+                case "V":
+                status = "<td style='color:green; text-align:center'><b>Validado - OK</b></td>";
+                break;
+
+                case "E":
+                status = "<td style='color:red; text-align:center'><b>Com Erro</b></td>";
+                break;
+
+                case "R":
+                status = "<td style='color:red; text-align:center'><b>Recusado</b></td>";
+                break;
+                default:
+                status = "<td></td>";
+                break;
+            }
+
+            retif = item.BIL_RETIF;
+
+            if (retif == "S")
+            {
+                retif = "<td style='color:red; text-align:center'><b>Sim</b></td>";
+            }
+            else
+            {
+                retif = "<td style='text-align:center'>Não</td>";
+            }
+
+            houvesessao = item.BIL_HOUVE_SES;
+            if (houvesessao == "S")
+            {
+                houvesessao = "<td style='text-align:center'>Sim</td>";
+            }
+            else
+            {
+                houvesessao = "<td style='text-align:center;color:red'><b>Não</b></td>";
+            }
+
+        }
+
+        <tr>
+            @Html.Raw(status)
+            <td style="text-align:center">
+                @item.BIL_DIA_CIN.ToShortDateString()
+            </td>
+            <td style="text-align:center;color:blue">
+                @item.SAL_DESC
+            </td>
+            @Html.Raw(houvesessao)
+            @Html.Raw(retif)
+            <th style="text-align:center">
+                <a href="/Bilheteria/Send?bIL_DIA_CIN=@item.BIL_DIA_CIN&sAL_CD_ANCINE=@item.SAL_CD_ANCINE&sal_desc=@item.SAL_DESC&houve_ses=@item.BIL_HOUVE_SES" class="btn btn-success btn-xs">Enviar</a>
+            </th>
+        </tr>
+    }
+
+</table>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#processando').css({ display: 'none' });
+    });
+
+</script>

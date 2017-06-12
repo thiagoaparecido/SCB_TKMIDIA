@@ -1,0 +1,581 @@
+﻿@model SCB_TKMIDIA.Models.MensagensANCINE
+
+<h3 style="color:seagreen">Lançamento de Rendas</h3>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+        @Html.ValidationSummary(true ,"" ,new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-xs-2">
+                Dia Cinematográfico
+                @{
+                    if (TempData["bil_dia_cin"] == "")
+                    {
+                        ViewBag.bil_dia_cin = DateTime.Now.ToString("dd/MM/yyyy");
+                    }
+                    else
+                    {
+                        ViewBag.bil_dia_cin = TempData["bil_dia_cin"];
+                    }
+                }
+
+                @*@Html.TextBox("BIL_DIA_CIN", ViewBag.bil_dia_cin as string ,new { htmlAttributes = new { @class = "form-control input-sm", maxlength = "10", autocomplete = "off", style = "text-align:center" } })*@
+                <input type="text" id="BIL_DIA_CIN" class="form-control input-sm" name="BIL_DIA_CIN" style="text-align:center" autocomplete="off" maxlength="10" value="@ViewBag.bil_dia_cin " />
+                @Html.ValidationMessageFor(model => model.BIL_DIA_CIN, "", new { @class = "text-danger" })
+            </div>
+            
+            <div class="col-md-2">
+                Exibidor
+                @Html.DropDownList("EMP_CD_ANCINE", null, htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+            
+            <div class="col-md-2">
+                Sala
+                <select name="SAL_CD_ANCINE" class="form-control input-sm" id="SAL_CD_ANCINE">
+                </select>
+                @Html.ValidationMessageFor(model => model.SAL_CD_ANCINE, "", new { @class = "text-danger" })
+            </div>
+        
+            <div class="col-md-3">
+                Obra
+                @Html.DropDownList("FIL_CD_ANCINE", null, htmlAttributes: new { @class = "form-control input-sm" })
+            </div>
+            <div class="col-md-1">
+                Retificação ?
+                <select name="BIL_RETIF" class="form-control input-sm" id="BIL_RETIF" style="text-align:center">
+                    <option value="N">Não</option>
+                    <option value="S">Sim</option>
+                </select>
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                <input type="submit" value="Dia sem Sessão" id="btnDiasemSessao" class="btn btn-warning btn-sm" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2">
+                Horário Início Sessão
+                @{ 
+                    string hora_sessao = ViewBag.SEA_DT_HR_INICIO;
+                    if (hora_sessao == null)
+                    {
+                        hora_sessao = "14:00";
+                    }
+                }
+
+                <input type="text" id="SEA_DT_HR_INICIO" class="time form-control input-sm" name="SEA_DT_HR_INICIO" style="text-align:center" autocomplete="off" maxlength="5" value="@hora_sessao"/>
+                @Html.ValidationMessageFor(model => model.SEA_DT_HR_INICIO, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-2">
+                Modalidade
+                <select name="SEA_MODAL" class="form-control input-sm" id="SEA_MODAL" style="text-align:center">
+                    <option value="A">Sessão Regular</option>
+                    <option value="B">Pré-estreia</option>
+                    <option value="C">Mostra ou Festival</option>
+                    <option value="D">Sessão Privada</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                Vendedor Remoto
+                <select name="VRE_CNPJ" class="form-control input-sm" id="VRE_CNPJ" style="text-align:center">
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                Tipo Tela
+                <select name="SEA_FIL_TP_TELA" class="form-control input-sm" id="SEA_FIL_TP_TELA" style="text-align:center">
+                    <option value="P">Padrão</option>
+                    <option value="A">Ampliada</option>
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                Digital
+                <select name="SEA_FIL_DIGITAL" class="form-control input-sm" id="SEA_FIL_DIGITAL" style="text-align:center">
+                    <option value="S">Sim</option>
+                    <option value="N">Não</option>
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                Projeção
+                <select name="SEA_FIL_TP_PROJECAO" class="form-control input-sm" id="SEA_FIL_TP_PROJECAO" style="text-align:center">
+                    <option value="2">2D</option>
+                    <option value="3">3D</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                Áudio
+                <select name="SEA_FIL_AUDIO" class="form-control input-sm" id="SEA_FIL_AUDIO" style="text-align:center">
+                    <option value="O">Original</option>
+                    <option value="D">Dublado</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <div class="col-md-1">
+                Legenda
+                <select name="SEA_FIL_LEG" class="form-control input-sm" id="SEA_FIL_LEG" style="text-align:center">
+                    <option value="S">Sim</option>
+                    <option value="N">Não</option>
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                Libras
+                <select name="SEA_FIL_PRO_LIBRA" class="form-control input-sm" id="SEA_FIL_PRO_LIBRA" style="text-align:center">
+                    <option value="N">Não</option>
+                    <option value="S">Sim</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                Leg Descritiva (CC)
+                <select name="SEA_FIL_LEG_DESC_CC" class="form-control input-sm" id="SEA_FIL_LEG_DESC_CC" style="text-align:center">
+                    <option value="N">Não</option>
+                    <option value="S">Sim</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                Áudio Descrição
+                <select name="SEA_FIL_AUDIO_DESC" class="form-control input-sm" id="SEA_FIL_AUDIO_DESC" style="text-align:center">
+                    <option value="N">Não</option>
+                    <option value="S">Sim</option>
+                </select>
+            </div>
+
+            @{ if (ViewBag.SEA_DT_HR_INICIO != null)
+                {
+                @Html.Raw("<div class='col-md-6'><div class='alert alert-success alert-dismissible fade in' role='alert'><button class='close' aria-label='Close' type='button' data-dismiss='alert'><span aria-hidden='true'>×</span></button>Sessão cadastrada:&nbsp; <b>" + ViewBag.bil_dia_cin + " " + ViewBag.SEA_DT_HR_INICIO + "</b></div></div>")
+                    }
+                }
+
+        </div>
+
+        <table>
+            <tr>
+                <td>
+                    <div class="panel panel-info small">
+                        <div class="panel-heading"><b>Assentos Tipo Padrão</b>
+                        </div>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <b>Inteiras</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0"  onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Meio Tradicional
+                                    <input type="text" id="TMP_VLR_ARR_TRAD" class="form-control input-sm currency" name="TMP_VLR_ARR_TRAD" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Vale Cultura
+                                    <input type="text" id="TMP_VLR_ARR_VC" class="form-control input-sm" name="TMP_VLR_ARR_VC" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Outras
+                                    <input type="text" id="TMP_VLR_ARR_OUT" class="form-control input-sm" name="TMP_VLR_ARR_OUT" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Meia Entrada</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5"  value="0" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Meio Tradicional
+                                    <input type="text" id="TMP_VLR_ARR_TRAD" class="form-control input-sm" name="TMP_VLR_ARR_TRAD" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Vale Cultura
+                                    <input type="text" id="TMP_VLR_ARR_VC" class="form-control input-sm" name="TMP_VLR_ARR_VC" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Outras
+                                    <input type="text" id="TMP_VLR_ARR_OUT" class="form-control input-sm" name="TMP_VLR_ARR_OUT" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Promocional</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Meio Tradicional
+                                    <input type="text" id="TMP_VLR_ARR_TRAD" class="form-control input-sm" name="TMP_VLR_ARR_TRAD" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Vale Cultura
+                                    <input type="text" id="TMP_VLR_ARR_VC" class="form-control input-sm" name="TMP_VLR_ARR_VC" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Outras
+                                    <input type="text" id="TMP_VLR_ARR_OUT" class="form-control input-sm" name="TMP_VLR_ARR_OUT" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Cortesias</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    &nbsp;&nbsp;
+                </td>
+                <td>
+                    <div class="panel panel-success small">
+                        <div class="panel-heading"><b>Assentos Tipo Especial</b>
+                        </div>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <b>Inteiras</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type = "text" id = "TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Meio Tradicional
+                                    <input type= "text" id= "TMP_VLR_ARR_TRAD" class="form-control input-sm" name="TMP_VLR_ARR_TRAD" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Vale Cultura
+                                    <input type= "text" id= "TMP_VLR_ARR_VC" class="form-control input-sm" name="TMP_VLR_ARR_VC" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Outras
+                                    <input type="text" id="TMP_VLR_ARR_OUT" class="form-control input-sm" name="TMP_VLR_ARR_OUT" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Meia Entrada</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Meio Tradicional
+                                    <input type="text" id="TMP_VLR_ARR_TRAD" class="form-control input-sm" name="TMP_VLR_ARR_TRAD" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Vale Cultura
+                                    <input type="text" id="TMP_VLR_ARR_VC" class="form-control input-sm" name="TMP_VLR_ARR_VC" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Outras
+                                    <input type="text" id="TMP_VLR_ARR_OUT" class="form-control input-sm" name="TMP_VLR_ARR_OUT" style="text-align:right" autocomplete="off" maxlength="13"  data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Promocional</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Meio Tradicional
+                                    <input type="text" id="TMP_VLR_ARR_TRAD" class="form-control input-sm" name="TMP_VLR_ARR_TRAD" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Vale Cultura
+                                    <input type="text" id="TMP_VLR_ARR_VC" class="form-control input-sm" name="TMP_VLR_ARR_VC" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                                <td>
+                                    Outras
+                                    <input type="text" id="TMP_VLR_ARR_OUT" class="form-control input-sm" name="TMP_VLR_ARR_OUT" style="text-align:right" autocomplete="off" maxlength="13" data-mask="###,###,###,###,###.##" data-mask-reverse="true" value="0.00" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Cortesias</b>
+                                </td>
+                                <td>
+                                    Qtd Espectadores
+                                    <input type="text" id="TCI_QTD_ESPECT" class="form-control input-sm" name="TCI_QTD_ESPECT" style="text-align:right" autocomplete="off" maxlength="5" value="0" onclick="this.select()"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div hidden="hidden" id="divEscondido">
+            <input type="text" id="txtSalvarVoltar" name="txtSalvarVoltar"/>
+            <input type="text" id="txtDiasemSessao" name="txtDiasemSessao" />
+            @*<input type="text" id="SAL_QTD_LUG_PDR" name="SAL_QTD_LUG_PDR" value="416"/>
+            <input type="text" id="SAL_QTD_LUG_ESP" name="SAL_QTD_LUG_ESP" value="4"/>*@
+            <input type="text" id="BIL_HOUVE_SES" name="BIL_HOUVE_SES" value="S" />
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-sx-12" style="text-align:right">
+                <button class="btn btn-default btn-sm" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+                <input type="submit" value="Salvar e Voltar" id="btnSalvarVoltar" class="btn btn-info btn-sm" />
+                <input type="submit" value="Salvar e Criar Novo" id="btnSalvarNovo" class="btn btn-success btn-sm" />
+                @*<input type="button" value="Teste" id="btnTeste" name="btnTeste" class="btn btn-success btn-sm" />*@
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+        });
+        $('#SEA_DT_HR_INICIO').mask('00:00');
+
+    });
+
+    $('#EMP_CD_ANCINE').change(function () {
+        var empcd = $("#EMP_CD_ANCINE").val();
+        var _tt = $(this).val();
+        $('#SAL_CD_ANCINE').empty();
+
+        var sal_cd_aux = "0";
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "/Bilheteria/SalaByEmpresa/",
+            data: { EMP_CD: empcd },
+            success: function (data) {
+                $.each(data, function (i, sala) {
+
+                    if (sal_cd_aux == "0") {
+                        sal_cd_aux = sala.Value;
+                    }
+
+                    $("#SAL_CD_ANCINE").append('<option value="' + sala.Value + '">' + sala.Text + '</option>');
+                });
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            }
+        });
+
+        //var data = $('#SAL_CD_ANCINE').val();
+        //$('#SAL_CD_ANCINE').val(data).trigger('change');
+
+        $('#VRE_CNPJ').empty();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "/Bilheteria/VendRemotoByEmpresa/",
+            data: { EMP_CD: empcd },
+            success: function (data) {
+                $.each(data, function (i, sala) {
+                    $("#VRE_CNPJ").append('<option value="'
+                        + sala.Value + '">'
+                        + sala.Text + '</option>');
+                });
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            }
+        });
+
+    });
+
+    //$('#SAL_CD_ANCINE').change(function ()
+    //{
+    //    var sal_cd = $("#SAL_CD_ANCINE").val();
+    //    $.ajax({
+    //        type: "GET",
+    //        dataType: "json",
+    //        url: "/Bilheteria/GetQtdLugaresSala/",
+    //        data: { sal_cd_ancine: sal_cd },
+    //        success: function (data) {
+    //            $.each(data, function (i, qtd)
+    //            {
+    //                $("#divEscondido").append("<input type='text' id='SAL_QTD_LUG_PDR' name='SAL_QTD_LUG_PDR' value='" + qtd.SAL_QTD_LUG_PDR + "'/>");
+    //                $("#divEscondido").append("<input type='text' id='SAL_QTD_LUG_ESP' name='SAL_QTD_LUG_ESP' value='" + qtd.SAL_QTD_LUG_ESP + "'/>");
+    //                //SelectElement(qtd.SAL_QTD_LUG_PDR, 'SAL_QTD_LUG_PDR');
+    //                //SelectElement(qtd.SAL_QTD_LUG_ESP, 'SAL_QTD_LUG_ESP');
+    //            });
+    //        },
+    //        error: function (xhr) {
+    //            alert('Error: ' + xhr.statusText);
+    //        }
+    //    });
+    //});
+
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+    function ReplaceString(valueToReplace, objToSelect) {
+
+        txtReplace = objToSelect;
+        element.value = txtReplace.replace(valueToReplace, "")
+
+    }
+
+    $('#btnDiasemSessao').click(function () {
+
+        SelectElement("S", 'txtDiasemSessao');
+    });
+    
+
+    $('#btnSalvarVoltar').click(function () {
+
+        SelectElement("S", 'txtSalvarVoltar');
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_TRAD');
+        for (var i = 0; i < ('TMP_VLR_ARR_TRAD').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+
+            //console.debug(input_list[i].value, input_list[i].getAttribute('value'));
+        }
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_VC');
+        for (var i = 0; i < ('TMP_VLR_ARR_VC').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+        }
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_OUT');
+        for (var i = 0; i < ('TMP_VLR_ARR_OUT').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+        }
+
+    });
+
+    $('#btnSalvarNovo').click(function () {
+
+        SelectElement("N", 'txtSalvarVoltar');
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_TRAD');
+        for (var i = 0; i < ('TMP_VLR_ARR_TRAD').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+
+            //console.debug(input_list[i].value, input_list[i].getAttribute('value'));
+        }
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_VC');
+        for (var i = 0; i < ('TMP_VLR_ARR_VC').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+        }
+
+        var input_list = document.getElementsByName('TMP_VLR_ARR_OUT');
+        for (var i = 0; i < ('TMP_VLR_ARR_OUT').length; i++) {
+            if (input_list[i] != null) {
+                txtReplace = input_list[i].value;
+
+                for (var x = 0; x < 13 ; x++) {
+                    txtReplace = txtReplace.replace(",", "");
+                    txtReplace = txtReplace.replace(".", "");
+                }
+                input_list[i].value = txtReplace;
+            }
+        }
+
+    });
+
+    window.onload = removeOptions(document.getElementById("SAL_CD_ANCINE"));;
+
+
+    function removeOptions(selectbox) {
+        var i;
+        for (i = selectbox.options.length - 1 ; i >= 0 ; i--) {
+            selectbox.remove(i);
+        }
+
+        var data = $('#EMP_CD_ANCINE').val();
+        $('#EMP_CD_ANCINE').val(data).trigger('change');
+
+
+    }
+
+</script>
+
+}

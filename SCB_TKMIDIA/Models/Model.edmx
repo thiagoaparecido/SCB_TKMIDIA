@@ -1,0 +1,1793 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="TB_BILHETERIA">
+          <Key>
+            <PropertyRef Name="BIL_ID" />
+          </Key>
+          <Property Name="BIL_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="SAL_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="BIL_DIA_CIN" Type="date" Nullable="false" />
+          <Property Name="BIL_HOUVE_SES" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="BIL_RETIF" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="BIL_PROT" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BIL_ADIMP_SALA" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="BIL_STATUS_PROT" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="BIL_DT_ALT_ADIMP" Type="datetime" />
+          <Property Name="BIL_DT_ALT_STAT_PROT" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TB_DISTRIBUIDORA">
+          <Key>
+            <PropertyRef Name="DIS_CNPJ" />
+          </Key>
+          <Property Name="DIS_CNPJ" Type="bigint" Nullable="false" />
+          <Property Name="DIS_NM" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="DIS_CD_AUX" Type="varchar" MaxLength="50" />
+          <Property Name="DIS_DT_INC" Type="datetime" />
+          <Property Name="DIS_DT_ALT" Type="datetime" />
+          <Property Name="DIS_DT_DES" Type="datetime" />
+          <Property Name="DIS_MOT_DES" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TB_EMPRESA_COMPLEXO">
+          <Key>
+            <PropertyRef Name="EMP_CD_ANCINE" />
+          </Key>
+          <Property Name="EMP_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="EMP_RZ_SOCIAL" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="EMP_NM_FANT" Type="varchar" MaxLength="200" />
+          <Property Name="EMP_CNPJ" Type="char" MaxLength="14" />
+          <Property Name="EMP_INSCRICAO" Type="char" MaxLength="12" />
+          <Property Name="EMP_END" Type="varchar" MaxLength="50" />
+          <Property Name="EMP_NUM_END" Type="int" />
+          <Property Name="EMP_CMP_END" Type="varchar" MaxLength="20" />
+          <Property Name="EMP_BRR_END" Type="varchar" MaxLength="50" />
+          <Property Name="EMP_CID_END" Type="varchar" MaxLength="50" />
+          <Property Name="EMP_TEL_DDD" Type="int" />
+          <Property Name="EMP_TEL" Type="int" />
+          <Property Name="EMP_UF_END" Type="varchar" MaxLength="2" />
+          <Property Name="EMP_CEP_END" Type="char" MaxLength="8" />
+          <Property Name="EMP_CD_AUX" Type="varchar" MaxLength="50" />
+          <Property Name="EMP_DT_INC" Type="datetime" />
+          <Property Name="EMP_DT_ALT" Type="datetime" />
+          <Property Name="EMP_DT_DES" Type="datetime" />
+          <Property Name="EMP_MOT_DES" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TB_FILME">
+          <Key>
+            <PropertyRef Name="FIL_CD_ANCINE" />
+          </Key>
+          <Property Name="FIL_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="DIS_CNPJ" Type="bigint" Nullable="false" />
+          <Property Name="FIL_NM" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="FIL_ID_NACIO" Type="varchar" MaxLength="1" />
+          <Property Name="FIL_DIGITAL" Type="varchar" MaxLength="1" />
+          <Property Name="FIL_GENERO" Type="varchar" MaxLength="20" />
+          <Property Name="FIL_CLASS_ETA" Type="int" />
+          <Property Name="FIL_DIRETOR" Type="varchar" MaxLength="50" />
+          <Property Name="FIL_SINOPSE" Type="varchar" MaxLength="255" />
+          <Property Name="FIL_DT_INICIO" Type="date" />
+          <Property Name="FIL_DT_FIM" Type="date" />
+          <Property Name="FIL_ANO_LANC" Type="date" />
+          <Property Name="FIL_PAIS" Type="varchar" MaxLength="50" />
+          <Property Name="FIL_CD_AUX" Type="varchar" MaxLength="50" />
+          <Property Name="FIL_DT_INC" Type="datetime" />
+          <Property Name="FIL_DT_ALT" Type="datetime" />
+          <Property Name="FIL_DT_DES" Type="datetime" />
+          <Property Name="FIL_MOT_DES" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TB_FUNCAO">
+          <Key>
+            <PropertyRef Name="MOD_CD" />
+            <PropertyRef Name="FUN_CD" />
+          </Key>
+          <Property Name="MOD_CD" Type="int" Nullable="false" />
+          <Property Name="FUN_CD" Type="int" Nullable="false" />
+          <Property Name="FUN_DESC" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="TB_GRP_CIN">
+          <Key>
+            <PropertyRef Name="GRP_CD" />
+            <PropertyRef Name="EMP_CD_ANCINE" />
+          </Key>
+          <Property Name="GRP_CD" Type="int" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="GRP_NM" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="GRP_DT_INC" Type="datetime" />
+          <Property Name="GRP_DT_ALT" Type="datetime" />
+          <Property Name="GRP_DT_DES" Type="datetime" />
+          <Property Name="GRP_MOT_DES" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TB_INGRESSO_TIPO">
+          <Key>
+            <PropertyRef Name="IGT_CD" />
+          </Key>
+          <Property Name="IGT_CD" Type="smallint" Nullable="false" />
+          <Property Name="IGT_DESC" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="TB_MENSAGEM_ANCINE">
+          <Key>
+            <PropertyRef Name="MSA_DT_MSG" />
+            <PropertyRef Name="MSA_DT_HORA_MSG" />
+            <PropertyRef Name="BIL_ID" />
+          </Key>
+          <Property Name="MSA_DT_MSG" Type="date" Nullable="false" />
+          <Property Name="MSA_DT_HORA_MSG" Type="datetime" Nullable="false" />
+          <Property Name="BIL_ID" Type="bigint" Nullable="false" />
+          <Property Name="SAL_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="SEA_ID" Type="bigint" />
+          <Property Name="SEA_DT_HR_INICIO" Type="datetime" />
+          <Property Name="MSA_TP_MSG" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="MSA_CD_MSG" Type="varchar" MaxLength="4" Nullable="false" />
+          <Property Name="MSA_TXT_MSG" Type="varchar" MaxLength="500" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_MODULO">
+          <Key>
+            <PropertyRef Name="MOD_CD" />
+          </Key>
+          <Property Name="MOD_CD" Type="int" Nullable="false" />
+          <Property Name="MOD_DESC" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_PERFIL_ACESSO">
+          <Key>
+            <PropertyRef Name="PER_CD" />
+          </Key>
+          <Property Name="PER_CD" Type="int" Nullable="false" />
+          <Property Name="PER_DESC" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_PROGRAMA">
+          <Key>
+            <PropertyRef Name="PRO_CD" />
+          </Key>
+          <Property Name="PRO_CD" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="varchar" MaxLength="20" />
+          <Property Name="EMP_RZ_SOCIAL" Type="varchar" MaxLength="200" />
+          <Property Name="EMP_NM_FANT" Type="varchar" MaxLength="200" />
+          <Property Name="PRO_DT_INI" Type="date" />
+          <Property Name="PRO_DT_FIM" Type="date" />
+          <Property Name="PRO_SEM_CIN" Type="int" />
+          <Property Name="FIL_CD_ANCINE" Type="varchar" MaxLength="20" />
+          <Property Name="FIL_NM" Type="varchar" MaxLength="200" />
+          <Property Name="DIS_CNPJ" Type="bigint" />
+          <Property Name="DIS_NM" Type="varchar" MaxLength="200" />
+          <Property Name="SAL_CD_ANCINE" Type="varchar" MaxLength="20" />
+          <Property Name="SAL_NUM" Type="int" />
+          <Property Name="SAL_DESC" Type="varchar" MaxLength="200" />
+          <Property Name="SAL_SERIAL_PROJETOR" Type="varchar" MaxLength="50" />
+          <Property Name="PRO_SOM" Type="varchar" MaxLength="3" />
+          <Property Name="PRO_TP_PROJECAO" Type="varchar" MaxLength="3" />
+          <Property Name="PRO_QTD_SESSAO" Type="int" />
+          <Property Name="PRO_STATUS" Type="varchar" MaxLength="200" />
+          <Property Name="PRO_AUDIO" Type="varchar" MaxLength="1" />
+          <Property Name="PRO_AUDIO_DESC" Type="varchar" MaxLength="1" />
+          <Property Name="PRO_TP_TELA" Type="varchar" MaxLength="1" />
+          <Property Name="PRO_LEG" Type="varchar" MaxLength="3" />
+          <Property Name="PRO_LEG_DESC_CC" Type="varchar" MaxLength="1" />
+          <Property Name="PRO_LIBRA" Type="varchar" MaxLength="1" />
+          <Property Name="PRO_VPF" Type="char" MaxLength="5" />
+          <Property Name="PRO_DT_INC" Type="datetime" />
+          <Property Name="PRO_DT_ALT" Type="datetime" />
+          <Property Name="PRO_DT_DES" Type="datetime" />
+          <Property Name="PRO_MOT_DES" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TB_SALA">
+          <Key>
+            <PropertyRef Name="SAL_CD_ANCINE" />
+          </Key>
+          <Property Name="SAL_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="SAL_NUM" Type="int" Nullable="false" />
+          <Property Name="SAL_DESC" Type="varchar" MaxLength="200" />
+          <Property Name="SAL_QTD_LUG_PDR" Type="int" />
+          <Property Name="SAL_QTD_LUG_ESP" Type="int" />
+          <Property Name="SAL_SERIAL_PROJETOR" Type="varchar" MaxLength="50" />
+          <Property Name="SAL_CD_AUX" Type="varchar" MaxLength="50" />
+          <Property Name="SAL_DT_INC" Type="datetime" />
+          <Property Name="SAL_DT_ALT" Type="datetime" />
+          <Property Name="SAL_DT_DES" Type="datetime" />
+          <Property Name="SAL_MOT_DES" Type="varchar" MaxLength="200" />
+          <Property Name="SAL_SOM" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <EntityType Name="TB_SESSAO_ANCINE">
+          <Key>
+            <PropertyRef Name="SEA_ID" />
+          </Key>
+          <Property Name="SEA_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BIL_ID" Type="bigint" Nullable="false" />
+          <Property Name="SAL_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="FIL_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="SEA_DT_HR_INICIO" Type="datetime" Nullable="false" />
+          <Property Name="SEA_MODAL" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_FIL_NM" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="SEA_FIL_TP_TELA" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_FIL_DIGITAL" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_FIL_TP_PROJECAO" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="SEA_FIL_AUDIO" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_FIL_LEG" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="SEA_FIL_PRO_LIBRA" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_FIL_LEG_DESC_CC" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_FIL_AUDIO_DESC" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="SEA_DIS_CNPJ" Type="bigint" Nullable="false" />
+          <Property Name="SEA_DIS_NM" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="SEA_VRE_CNPJ" Type="bigint" />
+          <Property Name="SEA_RZ_SOCIAL" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TB_TOT_CATEG_ING">
+          <Key>
+            <PropertyRef Name="TCI_ID" />
+          </Key>
+          <Property Name="TCI_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TTA_ID" Type="bigint" Nullable="false" />
+          <Property Name="TCI_CAT" Type="int" Nullable="false" />
+          <Property Name="TCI_QTD_ESPECT" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_TOT_MOD_PAGTO">
+          <Key>
+            <PropertyRef Name="TMP_ID" />
+          </Key>
+          <Property Name="TMP_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TCI_ID" Type="bigint" Nullable="false" />
+          <Property Name="TMP_MOD_PAG" Type="int" Nullable="false" />
+          <Property Name="TMP_VLR_ARR" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_TOT_TP_ASSENTO">
+          <Key>
+            <PropertyRef Name="TTA_ID" />
+          </Key>
+          <Property Name="TTA_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SEA_ID" Type="bigint" Nullable="false" />
+          <Property Name="TTA_TP_ASSENTO" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="TTA_QTD_DISP" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_USUARIO">
+          <Key>
+            <PropertyRef Name="USU_CD" />
+          </Key>
+          <Property Name="USU_CD" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="USU_NM" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USU_LOGIN" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="USU_SENHA" Type="char" MaxLength="31" Nullable="false" />
+          <Property Name="USU_DT_INC" Type="datetime" Nullable="false" />
+          <Property Name="USU_DT_ALT" Type="datetime" />
+          <Property Name="USU_DT_DES" Type="datetime" />
+          <Property Name="USU_MOT_DES" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="TB_USUARIO_PERFIL">
+          <Key>
+            <PropertyRef Name="USU_CD" />
+            <PropertyRef Name="PER_CD" />
+          </Key>
+          <Property Name="USU_CD" Type="int" Nullable="false" />
+          <Property Name="PER_CD" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TB_VENDEDOR_REMOTO">
+          <Key>
+            <PropertyRef Name="VRE_CNPJ" />
+          </Key>
+          <Property Name="VRE_CNPJ" Type="bigint" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="VRE_RZ_SOCIAL" Type="varchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__TB_BILHET__EMP_C__32E0915F">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_BILHETERIA">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_BILHET__SAL_C__33D4B598">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="1" />
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_BILHETERIA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_FILME__DIS_CN__34C8D9D1">
+          <End Role="TB_DISTRIBUIDORA" Type="Self.TB_DISTRIBUIDORA" Multiplicity="1" />
+          <End Role="TB_FILME" Type="Self.TB_FILME" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_DISTRIBUIDORA">
+              <PropertyRef Name="DIS_CNPJ" />
+            </Principal>
+            <Dependent Role="TB_FILME">
+              <PropertyRef Name="DIS_CNPJ" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_FUNCAO__MOD_C__35BCFE0A">
+          <End Role="TB_MODULO" Type="Self.TB_MODULO" Multiplicity="1" />
+          <End Role="TB_FUNCAO" Type="Self.TB_FUNCAO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_MODULO">
+              <PropertyRef Name="MOD_CD" />
+            </Principal>
+            <Dependent Role="TB_FUNCAO">
+              <PropertyRef Name="MOD_CD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_GRP_CI__EMP_C__36B12243">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_GRP_CIN" Type="Self.TB_GRP_CIN" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_GRP_CIN">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_MENSAG__BIL_I__37A5467C">
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="1" />
+          <End Role="TB_MENSAGEM_ANCINE" Type="Self.TB_MENSAGEM_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_BILHETERIA">
+              <PropertyRef Name="BIL_ID" />
+            </Principal>
+            <Dependent Role="TB_MENSAGEM_ANCINE">
+              <PropertyRef Name="BIL_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_MENSAG__SAL_C__38996AB5">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="1" />
+          <End Role="TB_MENSAGEM_ANCINE" Type="Self.TB_MENSAGEM_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_MENSAGEM_ANCINE">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_MENSAG__SEA_I__398D8EEE">
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="0..1" />
+          <End Role="TB_MENSAGEM_ANCINE" Type="Self.TB_MENSAGEM_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="SEA_ID" />
+            </Principal>
+            <Dependent Role="TB_MENSAGEM_ANCINE">
+              <PropertyRef Name="SEA_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_PROGRA__EMP_C__3A81B327">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="0..1" />
+          <End Role="TB_PROGRAMA" Type="Self.TB_PROGRAMA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_PROGRAMA">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_PROGRA__FIL_C__3B75D760">
+          <End Role="TB_FILME" Type="Self.TB_FILME" Multiplicity="0..1" />
+          <End Role="TB_PROGRAMA" Type="Self.TB_PROGRAMA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_FILME">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_PROGRAMA">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_PROGRA__SAL_C__3C69FB99">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="0..1" />
+          <End Role="TB_PROGRAMA" Type="Self.TB_PROGRAMA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_PROGRAMA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SALA__EMP_CD___3D5E1FD2">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_SALA">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SESSAO__BIL_I__3E52440B">
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="1" />
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_BILHETERIA">
+              <PropertyRef Name="BIL_ID" />
+            </Principal>
+            <Dependent Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="BIL_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SESSAO__FIL_C__3F466844">
+          <End Role="TB_FILME" Type="Self.TB_FILME" Multiplicity="1" />
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_FILME">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SESSAO__SAL_C__403A8C7D">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="1" />
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_TOT_CA__TTA_I__412EB0B6">
+          <End Role="TB_TOT_TP_ASSENTO" Type="Self.TB_TOT_TP_ASSENTO" Multiplicity="1" />
+          <End Role="TB_TOT_CATEG_ING" Type="Self.TB_TOT_CATEG_ING" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_TOT_TP_ASSENTO">
+              <PropertyRef Name="TTA_ID" />
+            </Principal>
+            <Dependent Role="TB_TOT_CATEG_ING">
+              <PropertyRef Name="TTA_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_TOT_MO__TCI_I__4222D4EF">
+          <End Role="TB_TOT_CATEG_ING" Type="Self.TB_TOT_CATEG_ING" Multiplicity="1" />
+          <End Role="TB_TOT_MOD_PAGTO" Type="Self.TB_TOT_MOD_PAGTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_TOT_CATEG_ING">
+              <PropertyRef Name="TCI_ID" />
+            </Principal>
+            <Dependent Role="TB_TOT_MOD_PAGTO">
+              <PropertyRef Name="TCI_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_TOT_TP__SEA_I__4316F928">
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="1" />
+          <End Role="TB_TOT_TP_ASSENTO" Type="Self.TB_TOT_TP_ASSENTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="SEA_ID" />
+            </Principal>
+            <Dependent Role="TB_TOT_TP_ASSENTO">
+              <PropertyRef Name="SEA_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_USUARI__PER_C__440B1D61">
+          <End Role="TB_PERFIL_ACESSO" Type="Self.TB_PERFIL_ACESSO" Multiplicity="1" />
+          <End Role="TB_USUARIO_PERFIL" Type="Self.TB_USUARIO_PERFIL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_PERFIL_ACESSO">
+              <PropertyRef Name="PER_CD" />
+            </Principal>
+            <Dependent Role="TB_USUARIO_PERFIL">
+              <PropertyRef Name="PER_CD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_USUARI__USU_C__44FF419A">
+          <End Role="TB_USUARIO" Type="Self.TB_USUARIO" Multiplicity="1" />
+          <End Role="TB_USUARIO_PERFIL" Type="Self.TB_USUARIO_PERFIL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_USUARIO">
+              <PropertyRef Name="USU_CD" />
+            </Principal>
+            <Dependent Role="TB_USUARIO_PERFIL">
+              <PropertyRef Name="USU_CD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_VENDED__EMP_C__45F365D3">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_VENDEDOR_REMOTO" Type="Self.TB_VENDEDOR_REMOTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_VENDEDOR_REMOTO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="up_TB_PROGRAMA_F" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EMP_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_DT_INI" Type="date" Mode="In" />
+          <Parameter Name="PRO_DT_FIM" Type="date" Mode="In" />
+          <Parameter Name="FIL_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="EMP_CD_ANCINE2" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_DT_INI2" Type="date" Mode="In" />
+          <Parameter Name="PRO_DT_FIM2" Type="date" Mode="In" />
+          <Parameter Name="FIL_CD_ANCINE2" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_CD_ANCINE2" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="up_TB_PROGRAMA_I" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EMP_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="EMP_RZ_SOCIAL" Type="varchar" Mode="In" />
+          <Parameter Name="EMP_NM_FANT" Type="varchar" Mode="In" />
+          <Parameter Name="FIL_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="FIL_NM" Type="varchar" Mode="In" />
+          <Parameter Name="DIS_NM" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_DESC" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_SOM" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_TP_PROJECAO" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_SERIAL_PROJETOR" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_DT_INI" Type="date" Mode="In" />
+          <Parameter Name="PRO_DT_FIM" Type="date" Mode="In" />
+          <Parameter Name="PRO_DT_INC" Type="datetime" Mode="In" />
+          <Parameter Name="PRO_QTD_SESSAO" Type="int" Mode="In" />
+          <Parameter Name="PRO_STATUS" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_DT_ALT" Type="datetime" Mode="In" />
+          <Parameter Name="PRO_SEM_CIN" Type="int" Mode="In" />
+          <Parameter Name="PRO_AUDIO" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_AUDIO_DESC" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_TP_TELA" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_LEG" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_LEG_DESC_CC" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_LIBRA" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_VPF" Type="char" Mode="In" />
+          <Parameter Name="PRO_DT_DES" Type="datetime" Mode="In" />
+          <Parameter Name="PRO_MOT_DES" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="up_TB_PROGRAMA_R" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="up_TB_PROGRAMA_U" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PRO_CD" Type="bigint" Mode="In" />
+          <Parameter Name="EMP_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="EMP_RZ_SOCIAL" Type="varchar" Mode="In" />
+          <Parameter Name="EMP_NM_FANT" Type="varchar" Mode="In" />
+          <Parameter Name="FIL_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="FIL_NM" Type="varchar" Mode="In" />
+          <Parameter Name="DIS_NM" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_CD_ANCINE" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_DESC" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_SOM" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_TP_PROJECAO" Type="varchar" Mode="In" />
+          <Parameter Name="SAL_SERIAL_PROJETOR" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_DT_INI" Type="date" Mode="In" />
+          <Parameter Name="PRO_DT_FIM" Type="date" Mode="In" />
+          <Parameter Name="PRO_DT_INC" Type="datetime" Mode="In" />
+          <Parameter Name="PRO_QTD_SESSAO" Type="int" Mode="In" />
+          <Parameter Name="PRO_STATUS" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_DT_ALT" Type="datetime" Mode="In" />
+          <Parameter Name="PRO_SEM_CIN" Type="int" Mode="In" />
+          <Parameter Name="PRO_AUDIO" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_AUDIO_DESC" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_TP_TELA" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_LEG" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_LEG_DESC_CC" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_LIBRA" Type="varchar" Mode="In" />
+          <Parameter Name="PRO_VPF" Type="char" Mode="In" />
+          <Parameter Name="PRO_DT_DES" Type="datetime" Mode="In" />
+          <Parameter Name="PRO_MOT_DES" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="ModelStoreContainer">
+          <EntitySet Name="TB_BILHETERIA" EntityType="Self.TB_BILHETERIA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_DISTRIBUIDORA" EntityType="Self.TB_DISTRIBUIDORA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_EMPRESA_COMPLEXO" EntityType="Self.TB_EMPRESA_COMPLEXO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_FILME" EntityType="Self.TB_FILME" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_FUNCAO" EntityType="Self.TB_FUNCAO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_GRP_CIN" EntityType="Self.TB_GRP_CIN" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_INGRESSO_TIPO" EntityType="Self.TB_INGRESSO_TIPO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_MENSAGEM_ANCINE" EntityType="Self.TB_MENSAGEM_ANCINE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_MODULO" EntityType="Self.TB_MODULO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_PERFIL_ACESSO" EntityType="Self.TB_PERFIL_ACESSO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_PROGRAMA" EntityType="Self.TB_PROGRAMA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_SALA" EntityType="Self.TB_SALA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_SESSAO_ANCINE" EntityType="Self.TB_SESSAO_ANCINE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_TOT_CATEG_ING" EntityType="Self.TB_TOT_CATEG_ING" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_TOT_MOD_PAGTO" EntityType="Self.TB_TOT_MOD_PAGTO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_TOT_TP_ASSENTO" EntityType="Self.TB_TOT_TP_ASSENTO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_USUARIO" EntityType="Self.TB_USUARIO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_USUARIO_PERFIL" EntityType="Self.TB_USUARIO_PERFIL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TB_VENDEDOR_REMOTO" EntityType="Self.TB_VENDEDOR_REMOTO" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__TB_BILHET__EMP_C__32E0915F" Association="Self.FK__TB_BILHET__EMP_C__32E0915F">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_BILHET__SAL_C__33D4B598" Association="Self.FK__TB_BILHET__SAL_C__33D4B598">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_FILME__DIS_CN__34C8D9D1" Association="Self.FK__TB_FILME__DIS_CN__34C8D9D1">
+            <End Role="TB_DISTRIBUIDORA" EntitySet="TB_DISTRIBUIDORA" />
+            <End Role="TB_FILME" EntitySet="TB_FILME" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_FUNCAO__MOD_C__35BCFE0A" Association="Self.FK__TB_FUNCAO__MOD_C__35BCFE0A">
+            <End Role="TB_MODULO" EntitySet="TB_MODULO" />
+            <End Role="TB_FUNCAO" EntitySet="TB_FUNCAO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_GRP_CI__EMP_C__36B12243" Association="Self.FK__TB_GRP_CI__EMP_C__36B12243">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_GRP_CIN" EntitySet="TB_GRP_CIN" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_MENSAG__BIL_I__37A5467C" Association="Self.FK__TB_MENSAG__BIL_I__37A5467C">
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+            <End Role="TB_MENSAGEM_ANCINE" EntitySet="TB_MENSAGEM_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_MENSAG__SAL_C__38996AB5" Association="Self.FK__TB_MENSAG__SAL_C__38996AB5">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_MENSAGEM_ANCINE" EntitySet="TB_MENSAGEM_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_MENSAG__SEA_I__398D8EEE" Association="Self.FK__TB_MENSAG__SEA_I__398D8EEE">
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+            <End Role="TB_MENSAGEM_ANCINE" EntitySet="TB_MENSAGEM_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_PROGRA__EMP_C__3A81B327" Association="Self.FK__TB_PROGRA__EMP_C__3A81B327">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_PROGRAMA" EntitySet="TB_PROGRAMA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_PROGRA__FIL_C__3B75D760" Association="Self.FK__TB_PROGRA__FIL_C__3B75D760">
+            <End Role="TB_FILME" EntitySet="TB_FILME" />
+            <End Role="TB_PROGRAMA" EntitySet="TB_PROGRAMA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_PROGRA__SAL_C__3C69FB99" Association="Self.FK__TB_PROGRA__SAL_C__3C69FB99">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_PROGRAMA" EntitySet="TB_PROGRAMA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SALA__EMP_CD___3D5E1FD2" Association="Self.FK__TB_SALA__EMP_CD___3D5E1FD2">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SESSAO__BIL_I__3E52440B" Association="Self.FK__TB_SESSAO__BIL_I__3E52440B">
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SESSAO__FIL_C__3F466844" Association="Self.FK__TB_SESSAO__FIL_C__3F466844">
+            <End Role="TB_FILME" EntitySet="TB_FILME" />
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SESSAO__SAL_C__403A8C7D" Association="Self.FK__TB_SESSAO__SAL_C__403A8C7D">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_TOT_CA__TTA_I__412EB0B6" Association="Self.FK__TB_TOT_CA__TTA_I__412EB0B6">
+            <End Role="TB_TOT_TP_ASSENTO" EntitySet="TB_TOT_TP_ASSENTO" />
+            <End Role="TB_TOT_CATEG_ING" EntitySet="TB_TOT_CATEG_ING" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_TOT_MO__TCI_I__4222D4EF" Association="Self.FK__TB_TOT_MO__TCI_I__4222D4EF">
+            <End Role="TB_TOT_CATEG_ING" EntitySet="TB_TOT_CATEG_ING" />
+            <End Role="TB_TOT_MOD_PAGTO" EntitySet="TB_TOT_MOD_PAGTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_TOT_TP__SEA_I__4316F928" Association="Self.FK__TB_TOT_TP__SEA_I__4316F928">
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+            <End Role="TB_TOT_TP_ASSENTO" EntitySet="TB_TOT_TP_ASSENTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_USUARI__PER_C__440B1D61" Association="Self.FK__TB_USUARI__PER_C__440B1D61">
+            <End Role="TB_PERFIL_ACESSO" EntitySet="TB_PERFIL_ACESSO" />
+            <End Role="TB_USUARIO_PERFIL" EntitySet="TB_USUARIO_PERFIL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_USUARI__USU_C__44FF419A" Association="Self.FK__TB_USUARI__USU_C__44FF419A">
+            <End Role="TB_USUARIO" EntitySet="TB_USUARIO" />
+            <End Role="TB_USUARIO_PERFIL" EntitySet="TB_USUARIO_PERFIL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_VENDED__EMP_C__45F365D3" Association="Self.FK__TB_VENDED__EMP_C__45F365D3">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_VENDEDOR_REMOTO" EntitySet="TB_VENDEDOR_REMOTO" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="TB_BILHETERIA">
+          <Key>
+            <PropertyRef Name="BIL_ID" />
+          </Key>
+          <Property Name="BIL_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EMP_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SAL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIL_DIA_CIN" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="BIL_HOUVE_SES" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIL_RETIF" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIL_PROT" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIL_ADIMP_SALA" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIL_STATUS_PROT" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIL_DT_ALT_ADIMP" Type="DateTime" Precision="3" />
+          <Property Name="BIL_DT_ALT_STAT_PROT" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="TB_EMPRESA_COMPLEXO" Relationship="Self.FK__TB_BILHET__EMP_C__32E0915F" FromRole="TB_BILHETERIA" ToRole="TB_EMPRESA_COMPLEXO" />
+          <NavigationProperty Name="TB_SALA" Relationship="Self.FK__TB_BILHET__SAL_C__33D4B598" FromRole="TB_BILHETERIA" ToRole="TB_SALA" />
+          <NavigationProperty Name="TB_MENSAGEM_ANCINE" Relationship="Self.FK__TB_MENSAG__BIL_I__37A5467C" FromRole="TB_BILHETERIA" ToRole="TB_MENSAGEM_ANCINE" />
+          <NavigationProperty Name="TB_SESSAO_ANCINE" Relationship="Self.FK__TB_SESSAO__BIL_I__3E52440B" FromRole="TB_BILHETERIA" ToRole="TB_SESSAO_ANCINE" />
+        </EntityType>
+        <EntityType Name="TB_DISTRIBUIDORA">
+          <Key>
+            <PropertyRef Name="DIS_CNPJ" />
+          </Key>
+          <Property Name="DIS_CNPJ" Type="Int64" Nullable="false" />
+          <Property Name="DIS_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DIS_CD_AUX" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DIS_DT_INC" Type="DateTime" Precision="3" />
+          <Property Name="DIS_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="DIS_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="DIS_MOT_DES" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_FILME" Relationship="Self.FK__TB_FILME__DIS_CN__34C8D9D1" FromRole="TB_DISTRIBUIDORA" ToRole="TB_FILME" />
+        </EntityType>
+        <EntityType Name="TB_EMPRESA_COMPLEXO">
+          <Key>
+            <PropertyRef Name="EMP_CD_ANCINE" />
+          </Key>
+          <Property Name="EMP_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EMP_RZ_SOCIAL" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EMP_NM_FANT" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_CNPJ" Type="String" MaxLength="14" FixedLength="true" Unicode="false" />
+          <Property Name="EMP_INSCRICAO" Type="String" MaxLength="12" FixedLength="true" Unicode="false" />
+          <Property Name="EMP_END" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_NUM_END" Type="Int32" />
+          <Property Name="EMP_CMP_END" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_BRR_END" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_CID_END" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_TEL_DDD" Type="Int32" />
+          <Property Name="EMP_TEL" Type="Int32" />
+          <Property Name="EMP_UF_END" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_CEP_END" Type="String" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="EMP_CD_AUX" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_DT_INC" Type="DateTime" Precision="3" />
+          <Property Name="EMP_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="EMP_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="EMP_MOT_DES" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_BILHETERIA" Relationship="Self.FK__TB_BILHET__EMP_C__32E0915F" FromRole="TB_EMPRESA_COMPLEXO" ToRole="TB_BILHETERIA" />
+          <NavigationProperty Name="TB_GRP_CIN" Relationship="Self.FK__TB_GRP_CI__EMP_C__36B12243" FromRole="TB_EMPRESA_COMPLEXO" ToRole="TB_GRP_CIN" />
+          <NavigationProperty Name="TB_PROGRAMA" Relationship="Self.FK__TB_PROGRA__EMP_C__3A81B327" FromRole="TB_EMPRESA_COMPLEXO" ToRole="TB_PROGRAMA" />
+          <NavigationProperty Name="TB_SALA" Relationship="Self.FK__TB_SALA__EMP_CD___3D5E1FD2" FromRole="TB_EMPRESA_COMPLEXO" ToRole="TB_SALA" />
+          <NavigationProperty Name="TB_VENDEDOR_REMOTO" Relationship="Self.FK__TB_VENDED__EMP_C__45F365D3" FromRole="TB_EMPRESA_COMPLEXO" ToRole="TB_VENDEDOR_REMOTO" />
+        </EntityType>
+        <EntityType Name="TB_FILME">
+          <Key>
+            <PropertyRef Name="FIL_CD_ANCINE" />
+          </Key>
+          <Property Name="FIL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DIS_CNPJ" Type="Int64" Nullable="false" />
+          <Property Name="FIL_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FIL_ID_NACIO" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_DIGITAL" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_GENERO" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_CLASS_ETA" Type="Int32" />
+          <Property Name="FIL_DIRETOR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_SINOPSE" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_DT_INICIO" Type="DateTime" Precision="0" />
+          <Property Name="FIL_DT_FIM" Type="DateTime" Precision="0" />
+          <Property Name="FIL_ANO_LANC" Type="DateTime" Precision="0" />
+          <Property Name="FIL_PAIS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_CD_AUX" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_DT_INC" Type="DateTime" Precision="3" />
+          <Property Name="FIL_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="FIL_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="FIL_MOT_DES" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_DISTRIBUIDORA" Relationship="Self.FK__TB_FILME__DIS_CN__34C8D9D1" FromRole="TB_FILME" ToRole="TB_DISTRIBUIDORA" />
+          <NavigationProperty Name="TB_PROGRAMA" Relationship="Self.FK__TB_PROGRA__FIL_C__3B75D760" FromRole="TB_FILME" ToRole="TB_PROGRAMA" />
+          <NavigationProperty Name="TB_SESSAO_ANCINE" Relationship="Self.FK__TB_SESSAO__FIL_C__3F466844" FromRole="TB_FILME" ToRole="TB_SESSAO_ANCINE" />
+        </EntityType>
+        <EntityType Name="TB_FUNCAO">
+          <Key>
+            <PropertyRef Name="MOD_CD" />
+            <PropertyRef Name="FUN_CD" />
+          </Key>
+          <Property Name="MOD_CD" Type="Int32" Nullable="false" />
+          <Property Name="FUN_CD" Type="Int32" Nullable="false" />
+          <Property Name="FUN_DESC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_MODULO" Relationship="Self.FK__TB_FUNCAO__MOD_C__35BCFE0A" FromRole="TB_FUNCAO" ToRole="TB_MODULO" />
+        </EntityType>
+        <EntityType Name="TB_GRP_CIN">
+          <Key>
+            <PropertyRef Name="GRP_CD" />
+            <PropertyRef Name="EMP_CD_ANCINE" />
+          </Key>
+          <Property Name="GRP_CD" Type="Int32" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="GRP_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="GRP_DT_INC" Type="DateTime" Precision="3" />
+          <Property Name="GRP_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="GRP_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="GRP_MOT_DES" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_EMPRESA_COMPLEXO" Relationship="Self.FK__TB_GRP_CI__EMP_C__36B12243" FromRole="TB_GRP_CIN" ToRole="TB_EMPRESA_COMPLEXO" />
+        </EntityType>
+        <EntityType Name="TB_INGRESSO_TIPO">
+          <Key>
+            <PropertyRef Name="IGT_CD" />
+          </Key>
+          <Property Name="IGT_CD" Type="Int16" Nullable="false" />
+          <Property Name="IGT_DESC" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TB_MENSAGEM_ANCINE">
+          <Key>
+            <PropertyRef Name="MSA_DT_MSG" />
+            <PropertyRef Name="MSA_DT_HORA_MSG" />
+            <PropertyRef Name="BIL_ID" />
+          </Key>
+          <Property Name="MSA_DT_MSG" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="MSA_DT_HORA_MSG" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="BIL_ID" Type="Int64" Nullable="false" />
+          <Property Name="SAL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_ID" Type="Int64" />
+          <Property Name="SEA_DT_HR_INICIO" Type="DateTime" Precision="3" />
+          <Property Name="MSA_TP_MSG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="MSA_CD_MSG" Type="String" MaxLength="4" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="MSA_TXT_MSG" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="TB_BILHETERIA" Relationship="Self.FK__TB_MENSAG__BIL_I__37A5467C" FromRole="TB_MENSAGEM_ANCINE" ToRole="TB_BILHETERIA" />
+          <NavigationProperty Name="TB_SALA" Relationship="Self.FK__TB_MENSAG__SAL_C__38996AB5" FromRole="TB_MENSAGEM_ANCINE" ToRole="TB_SALA" />
+          <NavigationProperty Name="TB_SESSAO_ANCINE" Relationship="Self.FK__TB_MENSAG__SEA_I__398D8EEE" FromRole="TB_MENSAGEM_ANCINE" ToRole="TB_SESSAO_ANCINE" />
+        </EntityType>
+        <EntityType Name="TB_MODULO">
+          <Key>
+            <PropertyRef Name="MOD_CD" />
+          </Key>
+          <Property Name="MOD_CD" Type="Int32" Nullable="false" />
+          <Property Name="MOD_DESC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="TB_FUNCAO" Relationship="Self.FK__TB_FUNCAO__MOD_C__35BCFE0A" FromRole="TB_MODULO" ToRole="TB_FUNCAO" />
+        </EntityType>
+        <EntityType Name="TB_PERFIL_ACESSO">
+          <Key>
+            <PropertyRef Name="PER_CD" />
+          </Key>
+          <Property Name="PER_CD" Type="Int32" Nullable="false" />
+          <Property Name="PER_DESC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="TB_USUARIO" Relationship="Self.TB_USUARIO_PERFIL" FromRole="TB_PERFIL_ACESSO" ToRole="TB_USUARIO" />
+        </EntityType>
+        <EntityType Name="TB_PROGRAMA">
+          <Key>
+            <PropertyRef Name="PRO_CD" />
+          </Key>
+          <Property Name="PRO_CD" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EMP_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_RZ_SOCIAL" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="EMP_NM_FANT" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_DT_INI" Type="DateTime" Precision="0" />
+          <Property Name="PRO_DT_FIM" Type="DateTime" Precision="0" />
+          <Property Name="PRO_SEM_CIN" Type="Int32" />
+          <Property Name="FIL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FIL_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="DIS_CNPJ" Type="Int64" />
+          <Property Name="DIS_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_NUM" Type="Int32" />
+          <Property Name="SAL_DESC" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_SERIAL_PROJETOR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_SOM" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_TP_PROJECAO" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_QTD_SESSAO" Type="Int32" />
+          <Property Name="PRO_STATUS" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_AUDIO" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_AUDIO_DESC" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_TP_TELA" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_LEG" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_LEG_DESC_CC" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_LIBRA" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="PRO_VPF" Type="String" MaxLength="5" FixedLength="true" Unicode="false" />
+          <Property Name="PRO_DT_INC" Type="DateTime" Precision="3" />
+          <Property Name="PRO_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="PRO_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="PRO_MOT_DES" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_EMPRESA_COMPLEXO" Relationship="Self.FK__TB_PROGRA__EMP_C__3A81B327" FromRole="TB_PROGRAMA" ToRole="TB_EMPRESA_COMPLEXO" />
+          <NavigationProperty Name="TB_FILME" Relationship="Self.FK__TB_PROGRA__FIL_C__3B75D760" FromRole="TB_PROGRAMA" ToRole="TB_FILME" />
+          <NavigationProperty Name="TB_SALA" Relationship="Self.FK__TB_PROGRA__SAL_C__3C69FB99" FromRole="TB_PROGRAMA" ToRole="TB_SALA" />
+        </EntityType>
+        <EntityType Name="TB_SALA">
+          <Key>
+            <PropertyRef Name="SAL_CD_ANCINE" />
+          </Key>
+          <Property Name="SAL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SAL_NUM" Type="Int32" Nullable="false" />
+          <Property Name="SAL_DESC" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_QTD_LUG_PDR" Type="Int32" />
+          <Property Name="SAL_QTD_LUG_ESP" Type="Int32" />
+          <Property Name="SAL_SERIAL_PROJETOR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_CD_AUX" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_DT_INC" Type="DateTime" Precision="3" />
+          <Property Name="SAL_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="SAL_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="SAL_MOT_DES" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SAL_SOM" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_BILHETERIA" Relationship="Self.FK__TB_BILHET__SAL_C__33D4B598" FromRole="TB_SALA" ToRole="TB_BILHETERIA" />
+          <NavigationProperty Name="TB_EMPRESA_COMPLEXO" Relationship="Self.FK__TB_SALA__EMP_CD___3D5E1FD2" FromRole="TB_SALA" ToRole="TB_EMPRESA_COMPLEXO" />
+          <NavigationProperty Name="TB_MENSAGEM_ANCINE" Relationship="Self.FK__TB_MENSAG__SAL_C__38996AB5" FromRole="TB_SALA" ToRole="TB_MENSAGEM_ANCINE" />
+          <NavigationProperty Name="TB_PROGRAMA" Relationship="Self.FK__TB_PROGRA__SAL_C__3C69FB99" FromRole="TB_SALA" ToRole="TB_PROGRAMA" />
+          <NavigationProperty Name="TB_SESSAO_ANCINE" Relationship="Self.FK__TB_SESSAO__SAL_C__403A8C7D" FromRole="TB_SALA" ToRole="TB_SESSAO_ANCINE" />
+        </EntityType>
+        <EntityType Name="TB_SESSAO_ANCINE">
+          <Key>
+            <PropertyRef Name="SEA_ID" />
+          </Key>
+          <Property Name="SEA_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BIL_ID" Type="Int64" Nullable="false" />
+          <Property Name="SAL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FIL_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_DT_HR_INICIO" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SEA_MODAL" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_TP_TELA" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_DIGITAL" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_TP_PROJECAO" Type="String" MaxLength="3" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_AUDIO" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_LEG" Type="String" MaxLength="3" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_PRO_LIBRA" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_LEG_DESC_CC" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_FIL_AUDIO_DESC" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_DIS_CNPJ" Type="Int64" Nullable="false" />
+          <Property Name="SEA_DIS_NM" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SEA_VRE_CNPJ" Type="Int64" />
+          <Property Name="SEA_RZ_SOCIAL" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_BILHETERIA" Relationship="Self.FK__TB_SESSAO__BIL_I__3E52440B" FromRole="TB_SESSAO_ANCINE" ToRole="TB_BILHETERIA" />
+          <NavigationProperty Name="TB_FILME" Relationship="Self.FK__TB_SESSAO__FIL_C__3F466844" FromRole="TB_SESSAO_ANCINE" ToRole="TB_FILME" />
+          <NavigationProperty Name="TB_MENSAGEM_ANCINE" Relationship="Self.FK__TB_MENSAG__SEA_I__398D8EEE" FromRole="TB_SESSAO_ANCINE" ToRole="TB_MENSAGEM_ANCINE" />
+          <NavigationProperty Name="TB_SALA" Relationship="Self.FK__TB_SESSAO__SAL_C__403A8C7D" FromRole="TB_SESSAO_ANCINE" ToRole="TB_SALA" />
+          <NavigationProperty Name="TB_TOT_TP_ASSENTO" Relationship="Self.FK__TB_TOT_TP__SEA_I__4316F928" FromRole="TB_SESSAO_ANCINE" ToRole="TB_TOT_TP_ASSENTO" />
+        </EntityType>
+        <EntityType Name="TB_TOT_CATEG_ING">
+          <Key>
+            <PropertyRef Name="TCI_ID" />
+          </Key>
+          <Property Name="TCI_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TTA_ID" Type="Int64" Nullable="false" />
+          <Property Name="TCI_CAT" Type="Int32" Nullable="false" />
+          <Property Name="TCI_QTD_ESPECT" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TB_TOT_TP_ASSENTO" Relationship="Self.FK__TB_TOT_CA__TTA_I__412EB0B6" FromRole="TB_TOT_CATEG_ING" ToRole="TB_TOT_TP_ASSENTO" />
+          <NavigationProperty Name="TB_TOT_MOD_PAGTO" Relationship="Self.FK__TB_TOT_MO__TCI_I__4222D4EF" FromRole="TB_TOT_CATEG_ING" ToRole="TB_TOT_MOD_PAGTO" />
+        </EntityType>
+        <EntityType Name="TB_TOT_MOD_PAGTO">
+          <Key>
+            <PropertyRef Name="TMP_ID" />
+          </Key>
+          <Property Name="TMP_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TCI_ID" Type="Int64" Nullable="false" />
+          <Property Name="TMP_MOD_PAG" Type="Int32" Nullable="false" />
+          <Property Name="TMP_VLR_ARR" Type="Double" Nullable="false" />
+          <NavigationProperty Name="TB_TOT_CATEG_ING" Relationship="Self.FK__TB_TOT_MO__TCI_I__4222D4EF" FromRole="TB_TOT_MOD_PAGTO" ToRole="TB_TOT_CATEG_ING" />
+        </EntityType>
+        <EntityType Name="TB_TOT_TP_ASSENTO">
+          <Key>
+            <PropertyRef Name="TTA_ID" />
+          </Key>
+          <Property Name="TTA_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SEA_ID" Type="Int64" Nullable="false" />
+          <Property Name="TTA_TP_ASSENTO" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TTA_QTD_DISP" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TB_SESSAO_ANCINE" Relationship="Self.FK__TB_TOT_TP__SEA_I__4316F928" FromRole="TB_TOT_TP_ASSENTO" ToRole="TB_SESSAO_ANCINE" />
+          <NavigationProperty Name="TB_TOT_CATEG_ING" Relationship="Self.FK__TB_TOT_CA__TTA_I__412EB0B6" FromRole="TB_TOT_TP_ASSENTO" ToRole="TB_TOT_CATEG_ING" />
+        </EntityType>
+        <EntityType Name="TB_USUARIO">
+          <Key>
+            <PropertyRef Name="USU_CD" />
+          </Key>
+          <Property Name="USU_CD" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="USU_NM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USU_LOGIN" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USU_SENHA" Type="String" MaxLength="31" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="USU_DT_INC" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="USU_DT_ALT" Type="DateTime" Precision="3" />
+          <Property Name="USU_DT_DES" Type="DateTime" Precision="3" />
+          <Property Name="USU_MOT_DES" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TB_PERFIL_ACESSO" Relationship="Self.TB_USUARIO_PERFIL" FromRole="TB_USUARIO" ToRole="TB_PERFIL_ACESSO" />
+        </EntityType>
+        <EntityType Name="TB_VENDEDOR_REMOTO">
+          <Key>
+            <PropertyRef Name="VRE_CNPJ" />
+          </Key>
+          <Property Name="VRE_CNPJ" Type="Int64" Nullable="false" />
+          <Property Name="EMP_CD_ANCINE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="VRE_RZ_SOCIAL" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="TB_EMPRESA_COMPLEXO" Relationship="Self.FK__TB_VENDED__EMP_C__45F365D3" FromRole="TB_VENDEDOR_REMOTO" ToRole="TB_EMPRESA_COMPLEXO" />
+        </EntityType>
+        <Association Name="FK__TB_BILHET__EMP_C__32E0915F">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_BILHETERIA">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_BILHET__SAL_C__33D4B598">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="1" />
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_BILHETERIA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_MENSAG__BIL_I__37A5467C">
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="1" />
+          <End Role="TB_MENSAGEM_ANCINE" Type="Self.TB_MENSAGEM_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_BILHETERIA">
+              <PropertyRef Name="BIL_ID" />
+            </Principal>
+            <Dependent Role="TB_MENSAGEM_ANCINE">
+              <PropertyRef Name="BIL_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SESSAO__BIL_I__3E52440B">
+          <End Role="TB_BILHETERIA" Type="Self.TB_BILHETERIA" Multiplicity="1" />
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_BILHETERIA">
+              <PropertyRef Name="BIL_ID" />
+            </Principal>
+            <Dependent Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="BIL_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_FILME__DIS_CN__34C8D9D1">
+          <End Role="TB_DISTRIBUIDORA" Type="Self.TB_DISTRIBUIDORA" Multiplicity="1" />
+          <End Role="TB_FILME" Type="Self.TB_FILME" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_DISTRIBUIDORA">
+              <PropertyRef Name="DIS_CNPJ" />
+            </Principal>
+            <Dependent Role="TB_FILME">
+              <PropertyRef Name="DIS_CNPJ" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_GRP_CI__EMP_C__36B12243">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_GRP_CIN" Type="Self.TB_GRP_CIN" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_GRP_CIN">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_PROGRA__EMP_C__3A81B327">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="0..1" />
+          <End Role="TB_PROGRAMA" Type="Self.TB_PROGRAMA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_PROGRAMA">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SALA__EMP_CD___3D5E1FD2">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_SALA">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_VENDED__EMP_C__45F365D3">
+          <End Role="TB_EMPRESA_COMPLEXO" Type="Self.TB_EMPRESA_COMPLEXO" Multiplicity="1" />
+          <End Role="TB_VENDEDOR_REMOTO" Type="Self.TB_VENDEDOR_REMOTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_EMPRESA_COMPLEXO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_VENDEDOR_REMOTO">
+              <PropertyRef Name="EMP_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_PROGRA__FIL_C__3B75D760">
+          <End Role="TB_FILME" Type="Self.TB_FILME" Multiplicity="0..1" />
+          <End Role="TB_PROGRAMA" Type="Self.TB_PROGRAMA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_FILME">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_PROGRAMA">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SESSAO__FIL_C__3F466844">
+          <End Role="TB_FILME" Type="Self.TB_FILME" Multiplicity="1" />
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_FILME">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="FIL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_FUNCAO__MOD_C__35BCFE0A">
+          <End Role="TB_MODULO" Type="Self.TB_MODULO" Multiplicity="1" />
+          <End Role="TB_FUNCAO" Type="Self.TB_FUNCAO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_MODULO">
+              <PropertyRef Name="MOD_CD" />
+            </Principal>
+            <Dependent Role="TB_FUNCAO">
+              <PropertyRef Name="MOD_CD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_MENSAG__SAL_C__38996AB5">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="1" />
+          <End Role="TB_MENSAGEM_ANCINE" Type="Self.TB_MENSAGEM_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_MENSAGEM_ANCINE">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_MENSAG__SEA_I__398D8EEE">
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="0..1" />
+          <End Role="TB_MENSAGEM_ANCINE" Type="Self.TB_MENSAGEM_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="SEA_ID" />
+            </Principal>
+            <Dependent Role="TB_MENSAGEM_ANCINE">
+              <PropertyRef Name="SEA_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_PROGRA__SAL_C__3C69FB99">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="0..1" />
+          <End Role="TB_PROGRAMA" Type="Self.TB_PROGRAMA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_PROGRAMA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_SESSAO__SAL_C__403A8C7D">
+          <End Role="TB_SALA" Type="Self.TB_SALA" Multiplicity="1" />
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SALA">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Principal>
+            <Dependent Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="SAL_CD_ANCINE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_TOT_TP__SEA_I__4316F928">
+          <End Role="TB_SESSAO_ANCINE" Type="Self.TB_SESSAO_ANCINE" Multiplicity="1" />
+          <End Role="TB_TOT_TP_ASSENTO" Type="Self.TB_TOT_TP_ASSENTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_SESSAO_ANCINE">
+              <PropertyRef Name="SEA_ID" />
+            </Principal>
+            <Dependent Role="TB_TOT_TP_ASSENTO">
+              <PropertyRef Name="SEA_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_TOT_CA__TTA_I__412EB0B6">
+          <End Role="TB_TOT_TP_ASSENTO" Type="Self.TB_TOT_TP_ASSENTO" Multiplicity="1" />
+          <End Role="TB_TOT_CATEG_ING" Type="Self.TB_TOT_CATEG_ING" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_TOT_TP_ASSENTO">
+              <PropertyRef Name="TTA_ID" />
+            </Principal>
+            <Dependent Role="TB_TOT_CATEG_ING">
+              <PropertyRef Name="TTA_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TB_TOT_MO__TCI_I__4222D4EF">
+          <End Role="TB_TOT_CATEG_ING" Type="Self.TB_TOT_CATEG_ING" Multiplicity="1" />
+          <End Role="TB_TOT_MOD_PAGTO" Type="Self.TB_TOT_MOD_PAGTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TB_TOT_CATEG_ING">
+              <PropertyRef Name="TCI_ID" />
+            </Principal>
+            <Dependent Role="TB_TOT_MOD_PAGTO">
+              <PropertyRef Name="TCI_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="TB_USUARIO_PERFIL">
+          <End Role="TB_PERFIL_ACESSO" Type="Self.TB_PERFIL_ACESSO" Multiplicity="*" />
+          <End Role="TB_USUARIO" Type="Self.TB_USUARIO" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="SCBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="TB_BILHETERIA" EntityType="Self.TB_BILHETERIA" />
+          <EntitySet Name="TB_DISTRIBUIDORA" EntityType="Self.TB_DISTRIBUIDORA" />
+          <EntitySet Name="TB_EMPRESA_COMPLEXO" EntityType="Self.TB_EMPRESA_COMPLEXO" />
+          <EntitySet Name="TB_FILME" EntityType="Self.TB_FILME" />
+          <EntitySet Name="TB_FUNCAO" EntityType="Self.TB_FUNCAO" />
+          <EntitySet Name="TB_GRP_CIN" EntityType="Self.TB_GRP_CIN" />
+          <EntitySet Name="TB_INGRESSO_TIPO" EntityType="Self.TB_INGRESSO_TIPO" />
+          <EntitySet Name="TB_MENSAGEM_ANCINE" EntityType="Self.TB_MENSAGEM_ANCINE" />
+          <EntitySet Name="TB_MODULO" EntityType="Self.TB_MODULO" />
+          <EntitySet Name="TB_PERFIL_ACESSO" EntityType="Self.TB_PERFIL_ACESSO" />
+          <EntitySet Name="TB_PROGRAMA" EntityType="Self.TB_PROGRAMA" />
+          <EntitySet Name="TB_SALA" EntityType="Self.TB_SALA" />
+          <EntitySet Name="TB_SESSAO_ANCINE" EntityType="Self.TB_SESSAO_ANCINE" />
+          <EntitySet Name="TB_TOT_CATEG_ING" EntityType="Self.TB_TOT_CATEG_ING" />
+          <EntitySet Name="TB_TOT_MOD_PAGTO" EntityType="Self.TB_TOT_MOD_PAGTO" />
+          <EntitySet Name="TB_TOT_TP_ASSENTO" EntityType="Self.TB_TOT_TP_ASSENTO" />
+          <EntitySet Name="TB_USUARIO" EntityType="Self.TB_USUARIO" />
+          <EntitySet Name="TB_VENDEDOR_REMOTO" EntityType="Self.TB_VENDEDOR_REMOTO" />
+          <AssociationSet Name="FK__TB_BILHET__EMP_C__32E0915F" Association="Self.FK__TB_BILHET__EMP_C__32E0915F">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_BILHET__SAL_C__33D4B598" Association="Self.FK__TB_BILHET__SAL_C__33D4B598">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_MENSAG__BIL_I__37A5467C" Association="Self.FK__TB_MENSAG__BIL_I__37A5467C">
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+            <End Role="TB_MENSAGEM_ANCINE" EntitySet="TB_MENSAGEM_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SESSAO__BIL_I__3E52440B" Association="Self.FK__TB_SESSAO__BIL_I__3E52440B">
+            <End Role="TB_BILHETERIA" EntitySet="TB_BILHETERIA" />
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_FILME__DIS_CN__34C8D9D1" Association="Self.FK__TB_FILME__DIS_CN__34C8D9D1">
+            <End Role="TB_DISTRIBUIDORA" EntitySet="TB_DISTRIBUIDORA" />
+            <End Role="TB_FILME" EntitySet="TB_FILME" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_GRP_CI__EMP_C__36B12243" Association="Self.FK__TB_GRP_CI__EMP_C__36B12243">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_GRP_CIN" EntitySet="TB_GRP_CIN" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_PROGRA__EMP_C__3A81B327" Association="Self.FK__TB_PROGRA__EMP_C__3A81B327">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_PROGRAMA" EntitySet="TB_PROGRAMA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SALA__EMP_CD___3D5E1FD2" Association="Self.FK__TB_SALA__EMP_CD___3D5E1FD2">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_VENDED__EMP_C__45F365D3" Association="Self.FK__TB_VENDED__EMP_C__45F365D3">
+            <End Role="TB_EMPRESA_COMPLEXO" EntitySet="TB_EMPRESA_COMPLEXO" />
+            <End Role="TB_VENDEDOR_REMOTO" EntitySet="TB_VENDEDOR_REMOTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_PROGRA__FIL_C__3B75D760" Association="Self.FK__TB_PROGRA__FIL_C__3B75D760">
+            <End Role="TB_FILME" EntitySet="TB_FILME" />
+            <End Role="TB_PROGRAMA" EntitySet="TB_PROGRAMA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SESSAO__FIL_C__3F466844" Association="Self.FK__TB_SESSAO__FIL_C__3F466844">
+            <End Role="TB_FILME" EntitySet="TB_FILME" />
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_FUNCAO__MOD_C__35BCFE0A" Association="Self.FK__TB_FUNCAO__MOD_C__35BCFE0A">
+            <End Role="TB_MODULO" EntitySet="TB_MODULO" />
+            <End Role="TB_FUNCAO" EntitySet="TB_FUNCAO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_MENSAG__SAL_C__38996AB5" Association="Self.FK__TB_MENSAG__SAL_C__38996AB5">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_MENSAGEM_ANCINE" EntitySet="TB_MENSAGEM_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_MENSAG__SEA_I__398D8EEE" Association="Self.FK__TB_MENSAG__SEA_I__398D8EEE">
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+            <End Role="TB_MENSAGEM_ANCINE" EntitySet="TB_MENSAGEM_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_PROGRA__SAL_C__3C69FB99" Association="Self.FK__TB_PROGRA__SAL_C__3C69FB99">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_PROGRAMA" EntitySet="TB_PROGRAMA" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_SESSAO__SAL_C__403A8C7D" Association="Self.FK__TB_SESSAO__SAL_C__403A8C7D">
+            <End Role="TB_SALA" EntitySet="TB_SALA" />
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_TOT_TP__SEA_I__4316F928" Association="Self.FK__TB_TOT_TP__SEA_I__4316F928">
+            <End Role="TB_SESSAO_ANCINE" EntitySet="TB_SESSAO_ANCINE" />
+            <End Role="TB_TOT_TP_ASSENTO" EntitySet="TB_TOT_TP_ASSENTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_TOT_CA__TTA_I__412EB0B6" Association="Self.FK__TB_TOT_CA__TTA_I__412EB0B6">
+            <End Role="TB_TOT_TP_ASSENTO" EntitySet="TB_TOT_TP_ASSENTO" />
+            <End Role="TB_TOT_CATEG_ING" EntitySet="TB_TOT_CATEG_ING" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TB_TOT_MO__TCI_I__4222D4EF" Association="Self.FK__TB_TOT_MO__TCI_I__4222D4EF">
+            <End Role="TB_TOT_CATEG_ING" EntitySet="TB_TOT_CATEG_ING" />
+            <End Role="TB_TOT_MOD_PAGTO" EntitySet="TB_TOT_MOD_PAGTO" />
+          </AssociationSet>
+          <AssociationSet Name="TB_USUARIO_PERFIL" Association="Self.TB_USUARIO_PERFIL">
+            <End Role="TB_PERFIL_ACESSO" EntitySet="TB_PERFIL_ACESSO" />
+            <End Role="TB_USUARIO" EntitySet="TB_USUARIO" />
+          </AssociationSet>
+          <FunctionImport Name="up_TB_PROGRAMA_F">
+            <Parameter Name="EMP_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_INI" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_DT_FIM" Mode="In" Type="DateTime" />
+            <Parameter Name="FIL_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="SAL_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="EMP_CD_ANCINE2" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_INI2" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_DT_FIM2" Mode="In" Type="DateTime" />
+            <Parameter Name="FIL_CD_ANCINE2" Mode="In" Type="String" />
+            <Parameter Name="SAL_CD_ANCINE2" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="up_TB_PROGRAMA_I">
+            <Parameter Name="EMP_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="EMP_RZ_SOCIAL" Mode="In" Type="String" />
+            <Parameter Name="EMP_NM_FANT" Mode="In" Type="String" />
+            <Parameter Name="FIL_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="FIL_NM" Mode="In" Type="String" />
+            <Parameter Name="DIS_NM" Mode="In" Type="String" />
+            <Parameter Name="SAL_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="SAL_DESC" Mode="In" Type="String" />
+            <Parameter Name="PRO_SOM" Mode="In" Type="String" />
+            <Parameter Name="SAL_TP_PROJECAO" Mode="In" Type="String" />
+            <Parameter Name="SAL_SERIAL_PROJETOR" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_INI" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_DT_FIM" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_DT_INC" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_QTD_SESSAO" Mode="In" Type="Int32" />
+            <Parameter Name="PRO_STATUS" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_ALT" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_SEM_CIN" Mode="In" Type="Int32" />
+            <Parameter Name="PRO_AUDIO" Mode="In" Type="String" />
+            <Parameter Name="PRO_AUDIO_DESC" Mode="In" Type="String" />
+            <Parameter Name="PRO_TP_TELA" Mode="In" Type="String" />
+            <Parameter Name="PRO_LEG" Mode="In" Type="String" />
+            <Parameter Name="PRO_LEG_DESC_CC" Mode="In" Type="String" />
+            <Parameter Name="PRO_LIBRA" Mode="In" Type="String" />
+            <Parameter Name="PRO_VPF" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_DES" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_MOT_DES" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="up_TB_PROGRAMA_R" ReturnType="Collection(Model.up_TB_PROGRAMA_R_Result)" />
+          <FunctionImport Name="up_TB_PROGRAMA_U">
+            <Parameter Name="PRO_CD" Mode="In" Type="Int64" />
+            <Parameter Name="EMP_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="EMP_RZ_SOCIAL" Mode="In" Type="String" />
+            <Parameter Name="EMP_NM_FANT" Mode="In" Type="String" />
+            <Parameter Name="FIL_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="FIL_NM" Mode="In" Type="String" />
+            <Parameter Name="DIS_NM" Mode="In" Type="String" />
+            <Parameter Name="SAL_CD_ANCINE" Mode="In" Type="String" />
+            <Parameter Name="SAL_DESC" Mode="In" Type="String" />
+            <Parameter Name="PRO_SOM" Mode="In" Type="String" />
+            <Parameter Name="SAL_TP_PROJECAO" Mode="In" Type="String" />
+            <Parameter Name="SAL_SERIAL_PROJETOR" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_INI" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_DT_FIM" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_DT_INC" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_QTD_SESSAO" Mode="In" Type="Int32" />
+            <Parameter Name="PRO_STATUS" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_ALT" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_SEM_CIN" Mode="In" Type="Int32" />
+            <Parameter Name="PRO_AUDIO" Mode="In" Type="String" />
+            <Parameter Name="PRO_AUDIO_DESC" Mode="In" Type="String" />
+            <Parameter Name="PRO_TP_TELA" Mode="In" Type="String" />
+            <Parameter Name="PRO_LEG" Mode="In" Type="String" />
+            <Parameter Name="PRO_LEG_DESC_CC" Mode="In" Type="String" />
+            <Parameter Name="PRO_LIBRA" Mode="In" Type="String" />
+            <Parameter Name="PRO_VPF" Mode="In" Type="String" />
+            <Parameter Name="PRO_DT_DES" Mode="In" Type="DateTime" />
+            <Parameter Name="PRO_MOT_DES" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="up_TB_PROGRAMA_R_Result">
+          <Property Type="Int64" Name="PRO_CD" Nullable="false" />
+          <Property Type="String" Name="EMP_CD_ANCINE" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="EMP_RZ_SOCIAL" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="EMP_NM_FANT" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="PRO_DT_INI" Nullable="true" />
+          <Property Type="DateTime" Name="PRO_DT_FIM" Nullable="true" />
+          <Property Type="Int32" Name="PRO_SEM_CIN" Nullable="true" />
+          <Property Type="String" Name="FIL_CD_ANCINE" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="FIL_NM" Nullable="true" MaxLength="200" />
+          <Property Type="Int64" Name="DIS_CNPJ" Nullable="true" />
+          <Property Type="String" Name="DIS_NM" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="SAL_CD_ANCINE" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="SAL_NUM" Nullable="true" />
+          <Property Type="String" Name="SAL_DESC" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="SAL_SERIAL_PROJETOR" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRO_SOM" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="PRO_TP_PROJECAO" Nullable="true" MaxLength="3" />
+          <Property Type="Int32" Name="PRO_QTD_SESSAO" Nullable="true" />
+          <Property Type="String" Name="PRO_STATUS" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="PRO_AUDIO" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="PRO_AUDIO_DESC" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="PRO_TP_TELA" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="PRO_LEG" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="PRO_LEG_DESC_CC" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="PRO_LIBRA" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="PRO_VPF" Nullable="true" MaxLength="5" />
+          <Property Type="DateTime" Name="PRO_DT_INC" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="PRO_DT_ALT" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="PRO_DT_DES" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PRO_MOT_DES" Nullable="true" MaxLength="200" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="SCBEntities">
+          <EntitySetMapping Name="TB_BILHETERIA">
+            <EntityTypeMapping TypeName="Model.TB_BILHETERIA">
+              <MappingFragment StoreEntitySet="TB_BILHETERIA">
+                <ScalarProperty Name="BIL_ID" ColumnName="BIL_ID" />
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="SAL_CD_ANCINE" ColumnName="SAL_CD_ANCINE" />
+                <ScalarProperty Name="BIL_DIA_CIN" ColumnName="BIL_DIA_CIN" />
+                <ScalarProperty Name="BIL_HOUVE_SES" ColumnName="BIL_HOUVE_SES" />
+                <ScalarProperty Name="BIL_RETIF" ColumnName="BIL_RETIF" />
+                <ScalarProperty Name="BIL_PROT" ColumnName="BIL_PROT" />
+                <ScalarProperty Name="BIL_ADIMP_SALA" ColumnName="BIL_ADIMP_SALA" />
+                <ScalarProperty Name="BIL_STATUS_PROT" ColumnName="BIL_STATUS_PROT" />
+                <ScalarProperty Name="BIL_DT_ALT_ADIMP" ColumnName="BIL_DT_ALT_ADIMP" />
+                <ScalarProperty Name="BIL_DT_ALT_STAT_PROT" ColumnName="BIL_DT_ALT_STAT_PROT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_DISTRIBUIDORA">
+            <EntityTypeMapping TypeName="Model.TB_DISTRIBUIDORA">
+              <MappingFragment StoreEntitySet="TB_DISTRIBUIDORA">
+                <ScalarProperty Name="DIS_CNPJ" ColumnName="DIS_CNPJ" />
+                <ScalarProperty Name="DIS_NM" ColumnName="DIS_NM" />
+                <ScalarProperty Name="DIS_CD_AUX" ColumnName="DIS_CD_AUX" />
+                <ScalarProperty Name="DIS_DT_INC" ColumnName="DIS_DT_INC" />
+                <ScalarProperty Name="DIS_DT_ALT" ColumnName="DIS_DT_ALT" />
+                <ScalarProperty Name="DIS_DT_DES" ColumnName="DIS_DT_DES" />
+                <ScalarProperty Name="DIS_MOT_DES" ColumnName="DIS_MOT_DES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_EMPRESA_COMPLEXO">
+            <EntityTypeMapping TypeName="Model.TB_EMPRESA_COMPLEXO">
+              <MappingFragment StoreEntitySet="TB_EMPRESA_COMPLEXO">
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="EMP_RZ_SOCIAL" ColumnName="EMP_RZ_SOCIAL" />
+                <ScalarProperty Name="EMP_NM_FANT" ColumnName="EMP_NM_FANT" />
+                <ScalarProperty Name="EMP_CNPJ" ColumnName="EMP_CNPJ" />
+                <ScalarProperty Name="EMP_INSCRICAO" ColumnName="EMP_INSCRICAO" />
+                <ScalarProperty Name="EMP_END" ColumnName="EMP_END" />
+                <ScalarProperty Name="EMP_NUM_END" ColumnName="EMP_NUM_END" />
+                <ScalarProperty Name="EMP_CMP_END" ColumnName="EMP_CMP_END" />
+                <ScalarProperty Name="EMP_BRR_END" ColumnName="EMP_BRR_END" />
+                <ScalarProperty Name="EMP_CID_END" ColumnName="EMP_CID_END" />
+                <ScalarProperty Name="EMP_TEL_DDD" ColumnName="EMP_TEL_DDD" />
+                <ScalarProperty Name="EMP_TEL" ColumnName="EMP_TEL" />
+                <ScalarProperty Name="EMP_UF_END" ColumnName="EMP_UF_END" />
+                <ScalarProperty Name="EMP_CEP_END" ColumnName="EMP_CEP_END" />
+                <ScalarProperty Name="EMP_CD_AUX" ColumnName="EMP_CD_AUX" />
+                <ScalarProperty Name="EMP_DT_INC" ColumnName="EMP_DT_INC" />
+                <ScalarProperty Name="EMP_DT_ALT" ColumnName="EMP_DT_ALT" />
+                <ScalarProperty Name="EMP_DT_DES" ColumnName="EMP_DT_DES" />
+                <ScalarProperty Name="EMP_MOT_DES" ColumnName="EMP_MOT_DES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_FILME">
+            <EntityTypeMapping TypeName="Model.TB_FILME">
+              <MappingFragment StoreEntitySet="TB_FILME">
+                <ScalarProperty Name="FIL_CD_ANCINE" ColumnName="FIL_CD_ANCINE" />
+                <ScalarProperty Name="DIS_CNPJ" ColumnName="DIS_CNPJ" />
+                <ScalarProperty Name="FIL_NM" ColumnName="FIL_NM" />
+                <ScalarProperty Name="FIL_ID_NACIO" ColumnName="FIL_ID_NACIO" />
+                <ScalarProperty Name="FIL_DIGITAL" ColumnName="FIL_DIGITAL" />
+                <ScalarProperty Name="FIL_GENERO" ColumnName="FIL_GENERO" />
+                <ScalarProperty Name="FIL_CLASS_ETA" ColumnName="FIL_CLASS_ETA" />
+                <ScalarProperty Name="FIL_DIRETOR" ColumnName="FIL_DIRETOR" />
+                <ScalarProperty Name="FIL_SINOPSE" ColumnName="FIL_SINOPSE" />
+                <ScalarProperty Name="FIL_DT_INICIO" ColumnName="FIL_DT_INICIO" />
+                <ScalarProperty Name="FIL_DT_FIM" ColumnName="FIL_DT_FIM" />
+                <ScalarProperty Name="FIL_ANO_LANC" ColumnName="FIL_ANO_LANC" />
+                <ScalarProperty Name="FIL_PAIS" ColumnName="FIL_PAIS" />
+                <ScalarProperty Name="FIL_CD_AUX" ColumnName="FIL_CD_AUX" />
+                <ScalarProperty Name="FIL_DT_INC" ColumnName="FIL_DT_INC" />
+                <ScalarProperty Name="FIL_DT_ALT" ColumnName="FIL_DT_ALT" />
+                <ScalarProperty Name="FIL_DT_DES" ColumnName="FIL_DT_DES" />
+                <ScalarProperty Name="FIL_MOT_DES" ColumnName="FIL_MOT_DES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_FUNCAO">
+            <EntityTypeMapping TypeName="Model.TB_FUNCAO">
+              <MappingFragment StoreEntitySet="TB_FUNCAO">
+                <ScalarProperty Name="MOD_CD" ColumnName="MOD_CD" />
+                <ScalarProperty Name="FUN_CD" ColumnName="FUN_CD" />
+                <ScalarProperty Name="FUN_DESC" ColumnName="FUN_DESC" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_GRP_CIN">
+            <EntityTypeMapping TypeName="Model.TB_GRP_CIN">
+              <MappingFragment StoreEntitySet="TB_GRP_CIN">
+                <ScalarProperty Name="GRP_CD" ColumnName="GRP_CD" />
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="GRP_NM" ColumnName="GRP_NM" />
+                <ScalarProperty Name="GRP_DT_INC" ColumnName="GRP_DT_INC" />
+                <ScalarProperty Name="GRP_DT_ALT" ColumnName="GRP_DT_ALT" />
+                <ScalarProperty Name="GRP_DT_DES" ColumnName="GRP_DT_DES" />
+                <ScalarProperty Name="GRP_MOT_DES" ColumnName="GRP_MOT_DES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_INGRESSO_TIPO">
+            <EntityTypeMapping TypeName="Model.TB_INGRESSO_TIPO">
+              <MappingFragment StoreEntitySet="TB_INGRESSO_TIPO">
+                <ScalarProperty Name="IGT_CD" ColumnName="IGT_CD" />
+                <ScalarProperty Name="IGT_DESC" ColumnName="IGT_DESC" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_MENSAGEM_ANCINE">
+            <EntityTypeMapping TypeName="Model.TB_MENSAGEM_ANCINE">
+              <MappingFragment StoreEntitySet="TB_MENSAGEM_ANCINE">
+                <ScalarProperty Name="MSA_DT_MSG" ColumnName="MSA_DT_MSG" />
+                <ScalarProperty Name="MSA_DT_HORA_MSG" ColumnName="MSA_DT_HORA_MSG" />
+                <ScalarProperty Name="BIL_ID" ColumnName="BIL_ID" />
+                <ScalarProperty Name="SAL_CD_ANCINE" ColumnName="SAL_CD_ANCINE" />
+                <ScalarProperty Name="SEA_ID" ColumnName="SEA_ID" />
+                <ScalarProperty Name="SEA_DT_HR_INICIO" ColumnName="SEA_DT_HR_INICIO" />
+                <ScalarProperty Name="MSA_TP_MSG" ColumnName="MSA_TP_MSG" />
+                <ScalarProperty Name="MSA_CD_MSG" ColumnName="MSA_CD_MSG" />
+                <ScalarProperty Name="MSA_TXT_MSG" ColumnName="MSA_TXT_MSG" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_MODULO">
+            <EntityTypeMapping TypeName="Model.TB_MODULO">
+              <MappingFragment StoreEntitySet="TB_MODULO">
+                <ScalarProperty Name="MOD_CD" ColumnName="MOD_CD" />
+                <ScalarProperty Name="MOD_DESC" ColumnName="MOD_DESC" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_PERFIL_ACESSO">
+            <EntityTypeMapping TypeName="Model.TB_PERFIL_ACESSO">
+              <MappingFragment StoreEntitySet="TB_PERFIL_ACESSO">
+                <ScalarProperty Name="PER_CD" ColumnName="PER_CD" />
+                <ScalarProperty Name="PER_DESC" ColumnName="PER_DESC" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_PROGRAMA">
+            <EntityTypeMapping TypeName="Model.TB_PROGRAMA">
+              <MappingFragment StoreEntitySet="TB_PROGRAMA">
+                <ScalarProperty Name="PRO_CD" ColumnName="PRO_CD" />
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="EMP_RZ_SOCIAL" ColumnName="EMP_RZ_SOCIAL" />
+                <ScalarProperty Name="EMP_NM_FANT" ColumnName="EMP_NM_FANT" />
+                <ScalarProperty Name="PRO_DT_INI" ColumnName="PRO_DT_INI" />
+                <ScalarProperty Name="PRO_DT_FIM" ColumnName="PRO_DT_FIM" />
+                <ScalarProperty Name="PRO_SEM_CIN" ColumnName="PRO_SEM_CIN" />
+                <ScalarProperty Name="FIL_CD_ANCINE" ColumnName="FIL_CD_ANCINE" />
+                <ScalarProperty Name="FIL_NM" ColumnName="FIL_NM" />
+                <ScalarProperty Name="DIS_CNPJ" ColumnName="DIS_CNPJ" />
+                <ScalarProperty Name="DIS_NM" ColumnName="DIS_NM" />
+                <ScalarProperty Name="SAL_CD_ANCINE" ColumnName="SAL_CD_ANCINE" />
+                <ScalarProperty Name="SAL_NUM" ColumnName="SAL_NUM" />
+                <ScalarProperty Name="SAL_DESC" ColumnName="SAL_DESC" />
+                <ScalarProperty Name="SAL_SERIAL_PROJETOR" ColumnName="SAL_SERIAL_PROJETOR" />
+                <ScalarProperty Name="PRO_SOM" ColumnName="PRO_SOM" />
+                <ScalarProperty Name="PRO_TP_PROJECAO" ColumnName="PRO_TP_PROJECAO" />
+                <ScalarProperty Name="PRO_QTD_SESSAO" ColumnName="PRO_QTD_SESSAO" />
+                <ScalarProperty Name="PRO_STATUS" ColumnName="PRO_STATUS" />
+                <ScalarProperty Name="PRO_AUDIO" ColumnName="PRO_AUDIO" />
+                <ScalarProperty Name="PRO_AUDIO_DESC" ColumnName="PRO_AUDIO_DESC" />
+                <ScalarProperty Name="PRO_TP_TELA" ColumnName="PRO_TP_TELA" />
+                <ScalarProperty Name="PRO_LEG" ColumnName="PRO_LEG" />
+                <ScalarProperty Name="PRO_LEG_DESC_CC" ColumnName="PRO_LEG_DESC_CC" />
+                <ScalarProperty Name="PRO_LIBRA" ColumnName="PRO_LIBRA" />
+                <ScalarProperty Name="PRO_VPF" ColumnName="PRO_VPF" />
+                <ScalarProperty Name="PRO_DT_INC" ColumnName="PRO_DT_INC" />
+                <ScalarProperty Name="PRO_DT_ALT" ColumnName="PRO_DT_ALT" />
+                <ScalarProperty Name="PRO_DT_DES" ColumnName="PRO_DT_DES" />
+                <ScalarProperty Name="PRO_MOT_DES" ColumnName="PRO_MOT_DES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_SALA">
+            <EntityTypeMapping TypeName="Model.TB_SALA">
+              <MappingFragment StoreEntitySet="TB_SALA">
+                <ScalarProperty Name="SAL_CD_ANCINE" ColumnName="SAL_CD_ANCINE" />
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="SAL_NUM" ColumnName="SAL_NUM" />
+                <ScalarProperty Name="SAL_DESC" ColumnName="SAL_DESC" />
+                <ScalarProperty Name="SAL_QTD_LUG_PDR" ColumnName="SAL_QTD_LUG_PDR" />
+                <ScalarProperty Name="SAL_QTD_LUG_ESP" ColumnName="SAL_QTD_LUG_ESP" />
+                <ScalarProperty Name="SAL_SERIAL_PROJETOR" ColumnName="SAL_SERIAL_PROJETOR" />
+                <ScalarProperty Name="SAL_CD_AUX" ColumnName="SAL_CD_AUX" />
+                <ScalarProperty Name="SAL_DT_INC" ColumnName="SAL_DT_INC" />
+                <ScalarProperty Name="SAL_DT_ALT" ColumnName="SAL_DT_ALT" />
+                <ScalarProperty Name="SAL_DT_DES" ColumnName="SAL_DT_DES" />
+                <ScalarProperty Name="SAL_MOT_DES" ColumnName="SAL_MOT_DES" />
+                <ScalarProperty Name="SAL_SOM" ColumnName="SAL_SOM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_SESSAO_ANCINE">
+            <EntityTypeMapping TypeName="Model.TB_SESSAO_ANCINE">
+              <MappingFragment StoreEntitySet="TB_SESSAO_ANCINE">
+                <ScalarProperty Name="SEA_ID" ColumnName="SEA_ID" />
+                <ScalarProperty Name="BIL_ID" ColumnName="BIL_ID" />
+                <ScalarProperty Name="SAL_CD_ANCINE" ColumnName="SAL_CD_ANCINE" />
+                <ScalarProperty Name="FIL_CD_ANCINE" ColumnName="FIL_CD_ANCINE" />
+                <ScalarProperty Name="SEA_DT_HR_INICIO" ColumnName="SEA_DT_HR_INICIO" />
+                <ScalarProperty Name="SEA_MODAL" ColumnName="SEA_MODAL" />
+                <ScalarProperty Name="SEA_FIL_NM" ColumnName="SEA_FIL_NM" />
+                <ScalarProperty Name="SEA_FIL_TP_TELA" ColumnName="SEA_FIL_TP_TELA" />
+                <ScalarProperty Name="SEA_FIL_DIGITAL" ColumnName="SEA_FIL_DIGITAL" />
+                <ScalarProperty Name="SEA_FIL_TP_PROJECAO" ColumnName="SEA_FIL_TP_PROJECAO" />
+                <ScalarProperty Name="SEA_FIL_AUDIO" ColumnName="SEA_FIL_AUDIO" />
+                <ScalarProperty Name="SEA_FIL_LEG" ColumnName="SEA_FIL_LEG" />
+                <ScalarProperty Name="SEA_FIL_PRO_LIBRA" ColumnName="SEA_FIL_PRO_LIBRA" />
+                <ScalarProperty Name="SEA_FIL_LEG_DESC_CC" ColumnName="SEA_FIL_LEG_DESC_CC" />
+                <ScalarProperty Name="SEA_FIL_AUDIO_DESC" ColumnName="SEA_FIL_AUDIO_DESC" />
+                <ScalarProperty Name="SEA_DIS_CNPJ" ColumnName="SEA_DIS_CNPJ" />
+                <ScalarProperty Name="SEA_DIS_NM" ColumnName="SEA_DIS_NM" />
+                <ScalarProperty Name="SEA_VRE_CNPJ" ColumnName="SEA_VRE_CNPJ" />
+                <ScalarProperty Name="SEA_RZ_SOCIAL" ColumnName="SEA_RZ_SOCIAL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_TOT_CATEG_ING">
+            <EntityTypeMapping TypeName="Model.TB_TOT_CATEG_ING">
+              <MappingFragment StoreEntitySet="TB_TOT_CATEG_ING">
+                <ScalarProperty Name="TCI_ID" ColumnName="TCI_ID" />
+                <ScalarProperty Name="TTA_ID" ColumnName="TTA_ID" />
+                <ScalarProperty Name="TCI_CAT" ColumnName="TCI_CAT" />
+                <ScalarProperty Name="TCI_QTD_ESPECT" ColumnName="TCI_QTD_ESPECT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_TOT_MOD_PAGTO">
+            <EntityTypeMapping TypeName="Model.TB_TOT_MOD_PAGTO">
+              <MappingFragment StoreEntitySet="TB_TOT_MOD_PAGTO">
+                <ScalarProperty Name="TMP_ID" ColumnName="TMP_ID" />
+                <ScalarProperty Name="TCI_ID" ColumnName="TCI_ID" />
+                <ScalarProperty Name="TMP_MOD_PAG" ColumnName="TMP_MOD_PAG" />
+                <ScalarProperty Name="TMP_VLR_ARR" ColumnName="TMP_VLR_ARR" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_TOT_TP_ASSENTO">
+            <EntityTypeMapping TypeName="Model.TB_TOT_TP_ASSENTO">
+              <MappingFragment StoreEntitySet="TB_TOT_TP_ASSENTO">
+                <ScalarProperty Name="TTA_ID" ColumnName="TTA_ID" />
+                <ScalarProperty Name="SEA_ID" ColumnName="SEA_ID" />
+                <ScalarProperty Name="TTA_TP_ASSENTO" ColumnName="TTA_TP_ASSENTO" />
+                <ScalarProperty Name="TTA_QTD_DISP" ColumnName="TTA_QTD_DISP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_USUARIO">
+            <EntityTypeMapping TypeName="Model.TB_USUARIO">
+              <MappingFragment StoreEntitySet="TB_USUARIO">
+                <ScalarProperty Name="USU_CD" ColumnName="USU_CD" />
+                <ScalarProperty Name="USU_NM" ColumnName="USU_NM" />
+                <ScalarProperty Name="USU_LOGIN" ColumnName="USU_LOGIN" />
+                <ScalarProperty Name="USU_SENHA" ColumnName="USU_SENHA" />
+                <ScalarProperty Name="USU_DT_INC" ColumnName="USU_DT_INC" />
+                <ScalarProperty Name="USU_DT_ALT" ColumnName="USU_DT_ALT" />
+                <ScalarProperty Name="USU_DT_DES" ColumnName="USU_DT_DES" />
+                <ScalarProperty Name="USU_MOT_DES" ColumnName="USU_MOT_DES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TB_VENDEDOR_REMOTO">
+            <EntityTypeMapping TypeName="Model.TB_VENDEDOR_REMOTO">
+              <MappingFragment StoreEntitySet="TB_VENDEDOR_REMOTO">
+                <ScalarProperty Name="VRE_CNPJ" ColumnName="VRE_CNPJ" />
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="VRE_RZ_SOCIAL" ColumnName="VRE_RZ_SOCIAL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="TB_USUARIO_PERFIL" TypeName="Model.TB_USUARIO_PERFIL" StoreEntitySet="TB_USUARIO_PERFIL">
+            <EndProperty Name="TB_PERFIL_ACESSO">
+              <ScalarProperty Name="PER_CD" ColumnName="PER_CD" />
+            </EndProperty>
+            <EndProperty Name="TB_USUARIO">
+              <ScalarProperty Name="USU_CD" ColumnName="USU_CD" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="up_TB_PROGRAMA_F" FunctionName="Model.Store.up_TB_PROGRAMA_F" />
+          <FunctionImportMapping FunctionImportName="up_TB_PROGRAMA_I" FunctionName="Model.Store.up_TB_PROGRAMA_I" />
+          <FunctionImportMapping FunctionImportName="up_TB_PROGRAMA_R" FunctionName="Model.Store.up_TB_PROGRAMA_R">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model.up_TB_PROGRAMA_R_Result">
+                <ScalarProperty Name="PRO_CD" ColumnName="PRO_CD" />
+                <ScalarProperty Name="EMP_CD_ANCINE" ColumnName="EMP_CD_ANCINE" />
+                <ScalarProperty Name="EMP_RZ_SOCIAL" ColumnName="EMP_RZ_SOCIAL" />
+                <ScalarProperty Name="EMP_NM_FANT" ColumnName="EMP_NM_FANT" />
+                <ScalarProperty Name="PRO_DT_INI" ColumnName="PRO_DT_INI" />
+                <ScalarProperty Name="PRO_DT_FIM" ColumnName="PRO_DT_FIM" />
+                <ScalarProperty Name="PRO_SEM_CIN" ColumnName="PRO_SEM_CIN" />
+                <ScalarProperty Name="FIL_CD_ANCINE" ColumnName="FIL_CD_ANCINE" />
+                <ScalarProperty Name="FIL_NM" ColumnName="FIL_NM" />
+                <ScalarProperty Name="DIS_CNPJ" ColumnName="DIS_CNPJ" />
+                <ScalarProperty Name="DIS_NM" ColumnName="DIS_NM" />
+                <ScalarProperty Name="SAL_CD_ANCINE" ColumnName="SAL_CD_ANCINE" />
+                <ScalarProperty Name="SAL_NUM" ColumnName="SAL_NUM" />
+                <ScalarProperty Name="SAL_DESC" ColumnName="SAL_DESC" />
+                <ScalarProperty Name="SAL_SERIAL_PROJETOR" ColumnName="SAL_SERIAL_PROJETOR" />
+                <ScalarProperty Name="PRO_SOM" ColumnName="PRO_SOM" />
+                <ScalarProperty Name="PRO_TP_PROJECAO" ColumnName="PRO_TP_PROJECAO" />
+                <ScalarProperty Name="PRO_QTD_SESSAO" ColumnName="PRO_QTD_SESSAO" />
+                <ScalarProperty Name="PRO_STATUS" ColumnName="PRO_STATUS" />
+                <ScalarProperty Name="PRO_AUDIO" ColumnName="PRO_AUDIO" />
+                <ScalarProperty Name="PRO_AUDIO_DESC" ColumnName="PRO_AUDIO_DESC" />
+                <ScalarProperty Name="PRO_TP_TELA" ColumnName="PRO_TP_TELA" />
+                <ScalarProperty Name="PRO_LEG" ColumnName="PRO_LEG" />
+                <ScalarProperty Name="PRO_LEG_DESC_CC" ColumnName="PRO_LEG_DESC_CC" />
+                <ScalarProperty Name="PRO_LIBRA" ColumnName="PRO_LIBRA" />
+                <ScalarProperty Name="PRO_VPF" ColumnName="PRO_VPF" />
+                <ScalarProperty Name="PRO_DT_INC" ColumnName="PRO_DT_INC" />
+                <ScalarProperty Name="PRO_DT_ALT" ColumnName="PRO_DT_ALT" />
+                <ScalarProperty Name="PRO_DT_DES" ColumnName="PRO_DT_DES" />
+                <ScalarProperty Name="PRO_MOT_DES" ColumnName="PRO_MOT_DES" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="up_TB_PROGRAMA_U" FunctionName="Model.Store.up_TB_PROGRAMA_U" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

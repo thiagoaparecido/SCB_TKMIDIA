@@ -1,0 +1,63 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.TB_DISTRIBUIDORA>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DIS_NM)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DIS_CD_AUX)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DIS_DT_INC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DIS_DT_ALT)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DIS_DT_DES)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DIS_MOT_DES)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIS_NM)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIS_CD_AUX)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIS_DT_INC)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIS_DT_ALT)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIS_DT_DES)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIS_MOT_DES)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DIS_CNPJ }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DIS_CNPJ }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DIS_CNPJ })
+        </td>
+    </tr>
+}
+
+</table>
