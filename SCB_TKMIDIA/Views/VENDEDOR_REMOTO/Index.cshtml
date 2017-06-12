@@ -1,39 +1,43 @@
 ﻿@model IEnumerable<SCB_TKMIDIA.Models.TB_VENDEDOR_REMOTO>
 
-@{
-    ViewBag.Title = "Index";
+<h3>Vendedor Remoto</h3>
+
+@using (Html.BeginForm())
+{
+    <table class="table">
+        <tr>
+            <th style="text-align:right">
+                <a href="/VENDEDOR_REMOTO/Create" class="btn btn-success btn-sm">Novo Vendedor Remoto</a>
+            </th>
+        </tr>
+    </table>
+
 }
-
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+<table class="table small table-striped table-hover" width="500">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.VRE_RZ_SOCIAL)
+            <label>Exibidor</label>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TB_EMPRESA_COMPLEXO.EMP_RZ_SOCIAL)
+            <label>Vendedor Remoto</label>
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.VRE_RZ_SOCIAL)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TB_EMPRESA_COMPLEXO.EMP_RZ_SOCIAL)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.VRE_CNPJ }) |
-            @Html.ActionLink("Details", "Details", new { id=item.VRE_CNPJ }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.VRE_CNPJ })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TB_EMPRESA_COMPLEXO.EMP_RZ_SOCIAL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VRE_RZ_SOCIAL)
+            </td>
+            <td>
+                <a href="/VENDEDOR_REMOTO/Edit/@item.VRE_CNPJ" class="btn btn-info btn-xs">Editar</a>
+                <a href="/VENDEDOR_REMOTO/Delete/@item.VRE_CNPJ" class="btn btn-danger btn-xs">Excluir</a>
+            </td>
+        </tr>
+    }
 
 </table>

@@ -10,6 +10,7 @@ using SCB_TKMIDIA.Models;
 
 namespace SCB_TKMIDIA.Controllers
 {
+    [Authorize]
     public class VENDEDOR_REMOTOController : Controller
     {
         private SCBEntities db = new SCBEntities();

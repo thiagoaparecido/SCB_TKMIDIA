@@ -1,63 +1,60 @@
-﻿@model IEnumerable<SCB_TKMIDIA.Models.TB_DISTRIBUIDORA>
+﻿@model PagedList.IPagedList<SCB_TKMIDIA.Models.TB_DISTRIBUIDORA>
+@using PagedList.Mvc;
 
-@{
-    ViewBag.Title = "Index";
+<h3>Distribuidoras</h3>
+
+@using (Html.BeginForm())
+{
+    <table class="table">
+        <tr>
+            <th style="text-align:right">
+                <a href="/DISTRIBUIDORA/Create" class="btn btn-success btn-sm">Nova Distribuidora</a>
+            </th>
+        </tr>
+    </table>
+
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
+<table class="table small table-striped table-hover" width="500">
+    <tr class="info">
         <th>
-            @Html.DisplayNameFor(model => model.DIS_NM)
+            CNPJ
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DIS_CD_AUX)
+            <u>@Html.ActionLink("Distribuidora" ,"Index" ,new { sortOrder = ViewBag.DistrSortParm })</u>
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DIS_DT_INC)
+        <th style="text-align:center">
+            <u>@Html.ActionLink("Inclusão" ,"Index" ,new { sortOrder = ViewBag.InclusaoSortParm ,currentFilter = ViewBag.CurrentFilter })</u>
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DIS_DT_ALT)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DIS_DT_DES)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DIS_MOT_DES)
+        <th style="text-align:center">
+            Alteração
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.DIS_NM)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DIS_CD_AUX)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DIS_DT_INC)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DIS_DT_ALT)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DIS_DT_DES)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DIS_MOT_DES)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.DIS_CNPJ }) |
-            @Html.ActionLink("Details", "Details", new { id=item.DIS_CNPJ }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.DIS_CNPJ })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DIS_CNPJ)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DIS_NM)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.DIS_DT_INC)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.DIS_DT_ALT)
+            </td>
+            <td>
+                <a href="/DISTRIBUIDORA/Edit/@item.DIS_CNPJ" class="btn btn-info btn-xs">Editar</a>
+                <a href="/DISTRIBUIDORA/Delete/@item.DIS_CNPJ" class="btn btn-danger btn-xs">Excluir</a>
+            </td>
+        </tr>
+    }
 
 </table>
+
+Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
+@Html.PagedListPager(Model ,page => Url.Action("Index" ,new { page ,sortOrder = ViewBag.CurrentSort ,currentFilter = ViewBag.CurrentFilter }))

@@ -1,18 +1,12 @@
 ﻿@model SCB_TKMIDIA.Models.TB_VENDEDOR_REMOTO
 
-@{
-    ViewBag.Title = "Delete";
-}
+<h3>Tem certeza que deseja excluir este Vendedor Remoto?</h3>
 
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>TB_VENDEDOR_REMOTO</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.VRE_RZ_SOCIAL)
+            Vendedor Remoto
         </dt>
 
         <dd>
@@ -20,7 +14,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.TB_EMPRESA_COMPLEXO.EMP_RZ_SOCIAL)
+            Exibidor
         </dt>
 
         <dd>
@@ -29,12 +23,13 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+        <div class="form-actions no-color" style="text-align:right">
+            <a href="/VENDEDOR_REMOTO" class="btn btn-default btn-md" role="button">Voltar</a>
+            <input type="submit" value="Excluir" class="btn btn-danger" />
         </div>
     }
 </div>
