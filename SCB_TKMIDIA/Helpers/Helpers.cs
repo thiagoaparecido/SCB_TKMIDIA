@@ -9,6 +9,7 @@ using SCB_TKMIDIA.Models;
 using SCB_TKMIDIA.Controllers;
 using System.Data.Entity;
 using System.Threading;
+using System.Configuration;
 
 namespace SCB_TKMIDIA.Helpers
 {
@@ -205,18 +206,24 @@ namespace SCB_TKMIDIA.Helpers
 
         public void LogSCB(string strMensagem)
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-            string arquivo = "LogSCB_";
-            string strDataHora = String.Format("{0:ddMMyyyy}", DateTime.Now);
-            arquivo = path + arquivo + strDataHora + ".txt";
 
-            using (StreamWriter outputFile = System.IO.File.AppendText(arquivo))
+            var logParam = ConfigurationManager.AppSettings["SCB_LOG"];
+
+            if(logParam == "S")
             {
-                string linha_ = DateTime.Now.ToString() + " => " + strMensagem;
-                //string linha_ = String.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}", DateTime.Now.ToString() + " => " + strMensagem);
+                string path = AppDomain.CurrentDomain.BaseDirectory;
+                string arquivo = "LogSCB_";
+                string strDataHora = String.Format("{0:ddMMyyyy}", DateTime.Now);
+                arquivo = path + arquivo + strDataHora + ".txt";
 
-                outputFile.WriteLine(linha_);
+                using (StreamWriter outputFile = System.IO.File.AppendText(arquivo))
+                {
+                    string linha_ = DateTime.Now.ToString() + " => " + strMensagem;
+                    //string linha_ = String.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}", DateTime.Now.ToString() + " => " + strMensagem);
 
+                    outputFile.WriteLine(linha_);
+
+                }
             }
 
         }
