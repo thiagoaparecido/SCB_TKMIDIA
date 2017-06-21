@@ -17,11 +17,11 @@ namespace SCB_TKMIDIA.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TB_EMPRESA_COMPLEXO()
         {
-            this.TB_BILHETERIA = new HashSet<TB_BILHETERIA>();
             this.TB_GRP_CIN = new HashSet<TB_GRP_CIN>();
             this.TB_PROGRAMA = new HashSet<TB_PROGRAMA>();
             this.TB_SALA = new HashSet<TB_SALA>();
             this.TB_VENDEDOR_REMOTO = new HashSet<TB_VENDEDOR_REMOTO>();
+            this.TB_BILHETERIA = new HashSet<TB_BILHETERIA>();
         }
     
         public string EMP_CD_ANCINE { get; set; }
@@ -45,8 +45,6 @@ namespace SCB_TKMIDIA.Models
         public string EMP_MOT_DES { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TB_BILHETERIA> TB_BILHETERIA { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TB_GRP_CIN> TB_GRP_CIN { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TB_PROGRAMA> TB_PROGRAMA { get; set; }
@@ -54,5 +52,7 @@ namespace SCB_TKMIDIA.Models
         public virtual ICollection<TB_SALA> TB_SALA { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TB_VENDEDOR_REMOTO> TB_VENDEDOR_REMOTO { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TB_BILHETERIA> TB_BILHETERIA { get; set; }
     }
 }

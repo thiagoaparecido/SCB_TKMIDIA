@@ -1,5 +1,4 @@
-﻿using SCB_TKMIDIA.Models;
-using SCBIntegration;
+﻿using SCBIntegration;
 using SCBIntegration.Entities;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,8 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SCB_TKMIDIA.Models;
+using SCB_TKMIDIA.Controllers;
 
 namespace SCB_TKMIDIA.Controllers
 {
@@ -26,6 +27,7 @@ namespace SCB_TKMIDIA.Controllers
 
             if( bil_exists.Any() )
             {
+                //*** CARREGA AS QUANTIDADES POR STATUS NA HOME ***//
                 bil_dia_cin = db.TB_BILHETERIA.Max(max => max.BIL_DIA_CIN);
                 ViewBag.bil_dia_cin = bil_dia_cin.ToShortDateString();
 
@@ -37,6 +39,12 @@ namespace SCB_TKMIDIA.Controllers
 
                 var qtdEmAnalise = db.TB_BILHETERIA.Count(bil_err => bil_err.BIL_STATUS_PROT == "A");
                 ViewBag.qtdEmAnalise = qtdEmAnalise;
+
+                //*** EXECUTA O ATUALIZAR ANCINE E ADIMPLÊNCIA DE SALAS *** //
+                Controllers.BilheteriaController clsBil = new Controllers.BilheteriaController();
+
+                //clsBil.AtualizaAncineByDate(bil_dia_cin.ToString());
+                //ViewBag.dtStatusAdimp = bil_dia_cin.ToShortDateString();
             }
             else
             {

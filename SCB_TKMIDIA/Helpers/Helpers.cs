@@ -10,11 +10,29 @@ using SCB_TKMIDIA.Controllers;
 using System.Data.Entity;
 using System.Threading;
 using System.Configuration;
+using System.Text;
 
 namespace SCB_TKMIDIA.Helpers
 {
     public class Helpers
     {
+        public string Left(string param ,int length)
+        {
+            //we start at 0 since we want to get the characters starting from the
+            //left and with the specified lenght and assign it to a variable
+            string result = param.Substring(0, length);
+            //return the result of the operation
+            return result;
+        }
+        public string Right(string param ,int length)
+        {
+            //start at the index based on the lenght of the sting minus
+            //the specified lenght and assign it a variable
+            string result = param.Substring(param.Length - length, length);
+            //return the result of the operation
+            return result;
+        }
+
         public string[] CalcSemanaCine()
         {
             //De quinta à quarta da próxima semana.
@@ -233,5 +251,19 @@ namespace SCB_TKMIDIA.Helpers
             throw new NotImplementedException();
         }
 
+    }
+
+    public class Utf8StringWriter:StringWriter
+    {
+        public Utf8StringWriter(StringBuilder sb)
+            : base(sb)
+        {
+        }
+
+        public Utf8StringWriter()
+            : base()
+        {
+        }
+        public override Encoding Encoding { get { return Encoding.UTF8; } }
     }
 }

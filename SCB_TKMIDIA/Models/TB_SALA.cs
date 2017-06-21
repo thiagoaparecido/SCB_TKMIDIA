@@ -17,10 +17,10 @@ namespace SCB_TKMIDIA.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TB_SALA()
         {
-            this.TB_BILHETERIA = new HashSet<TB_BILHETERIA>();
-            this.TB_MENSAGEM_ANCINE = new HashSet<TB_MENSAGEM_ANCINE>();
             this.TB_PROGRAMA = new HashSet<TB_PROGRAMA>();
             this.TB_SESSAO_ANCINE = new HashSet<TB_SESSAO_ANCINE>();
+            this.TB_BILHETERIA = new HashSet<TB_BILHETERIA>();
+            this.TB_MENSAGEM_ANCINE = new HashSet<TB_MENSAGEM_ANCINE>();
         }
     
         public string SAL_CD_ANCINE { get; set; }
@@ -37,14 +37,14 @@ namespace SCB_TKMIDIA.Models
         public string SAL_MOT_DES { get; set; }
         public string SAL_SOM { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TB_BILHETERIA> TB_BILHETERIA { get; set; }
         public virtual TB_EMPRESA_COMPLEXO TB_EMPRESA_COMPLEXO { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TB_MENSAGEM_ANCINE> TB_MENSAGEM_ANCINE { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TB_PROGRAMA> TB_PROGRAMA { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TB_SESSAO_ANCINE> TB_SESSAO_ANCINE { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TB_BILHETERIA> TB_BILHETERIA { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TB_MENSAGEM_ANCINE> TB_MENSAGEM_ANCINE { get; set; }
     }
 }

@@ -4,15 +4,13 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="2ab56119e4b34f01a2fff2f29702878e" Name="Diagram1">
-        <EntityTypeShape EntityType="Model.TB_BILHETERIA" Width="1.5" PointX="5.25" PointY="21" IsExpanded="true" />
+      <Diagram DiagramId="2ab56119e4b34f01a2fff2f29702878e" Name="Diagram1" ZoomLevel="78">
         <EntityTypeShape EntityType="Model.TB_DISTRIBUIDORA" Width="1.5" PointX="6" PointY="33.25" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_EMPRESA_COMPLEXO" Width="1.5" PointX="0.75" PointY="13.875" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_FILME" Width="1.5" PointX="8.25" PointY="32" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_FUNCAO" Width="1.5" PointX="3" PointY="4.875" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_GRP_CIN" Width="1.5" PointX="3" PointY="16.25" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_INGRESSO_TIPO" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.TB_MENSAGEM_ANCINE" Width="1.5" PointX="7.5" PointY="27.875" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_MODULO" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_PERFIL_ACESSO" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_PROGRAMA" Width="1.5" PointX="8.25" PointY="19.375" IsExpanded="true" />
@@ -23,10 +21,6 @@
         <EntityTypeShape EntityType="Model.TB_TOT_TP_ASSENTO" Width="1.5" PointX="12.75" PointY="25.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_USUARIO" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.TB_VENDEDOR_REMOTO" Width="1.5" PointX="3" PointY="32.875" IsExpanded="true" />
-        <AssociationConnector Association="Model.FK__TB_BILHET__EMP_C__32E0915F" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__TB_BILHET__SAL_C__33D4B598" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__TB_MENSAG__BIL_I__37A5467C" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__TB_SESSAO__BIL_I__3E52440B" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_FILME__DIS_CN__34C8D9D1" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_GRP_CI__EMP_C__36B12243" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_PROGRA__EMP_C__3A81B327" ManuallyRouted="false" />
@@ -35,14 +29,22 @@
         <AssociationConnector Association="Model.FK__TB_PROGRA__FIL_C__3B75D760" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_SESSAO__FIL_C__3F466844" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_FUNCAO__MOD_C__35BCFE0A" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__TB_MENSAG__SAL_C__38996AB5" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__TB_MENSAG__SEA_I__398D8EEE" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_PROGRA__SAL_C__3C69FB99" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_SESSAO__SAL_C__403A8C7D" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_TOT_TP__SEA_I__4316F928" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_TOT_CA__TTA_I__412EB0B6" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__TB_TOT_MO__TCI_I__4222D4EF" ManuallyRouted="false" />
         <AssociationConnector Association="Model.TB_USUARIO_PERFIL" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="Model.vw_PROT_ANALISE" Width="2" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="Model.sysdiagram" Width="1.5" PointX="5.375" PointY="6.75" />
+        <EntityTypeShape EntityType="Model.TB_BILHETERIA" Width="1.5" PointX="5.25" PointY="21" />
+        <EntityTypeShape EntityType="Model.TB_MENSAGEM_ANCINE" Width="1.5" PointX="12.75" PointY="20.875" />
+        <AssociationConnector Association="Model.FK__TB_BILHET__EMP_C__36B12243" />
+        <AssociationConnector Association="Model.FK__TB_BILHET__SAL_C__37A5467C" />
+        <AssociationConnector Association="Model.FK__TB_MENSAG__BIL_I__1BC821DD" />
+        <AssociationConnector Association="Model.FK__TB_SESSAO__BIL_I__4222D4EF" />
+        <AssociationConnector Association="Model.FK__TB_MENSAG__SAL_C__1CBC4616" />
+        <AssociationConnector Association="Model.FK__TB_MENSAG__SEA_I__1DB06A4F" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

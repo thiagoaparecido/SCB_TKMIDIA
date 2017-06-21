@@ -13,18 +13,19 @@
             <div class="col-xs-2">
                 Dia Cinematográfico
                 @{
-                    if (TempData["bil_dia_cin"] == "")
+                    if (TempData["bil_dia_cin"] == null)
                     {
                         ViewBag.bil_dia_cin = DateTime.Now.ToString("dd/MM/yyyy");
+                        TempData["bil_dia_cin"] = DateTime.Now.ToString("dd/MM/yyyy");
                     }
                     else
                     {
-                        ViewBag.bil_dia_cin = TempData["bil_dia_cin"];
+                        //ViewBag.bil_dia_cin = TempData["bil_dia_cin"];
                     }
                 }
 
                 @*@Html.TextBox("BIL_DIA_CIN", ViewBag.bil_dia_cin as string ,new { htmlAttributes = new { @class = "form-control input-sm", maxlength = "10", autocomplete = "off", style = "text-align:center" } })*@
-                <input type="text" id="BIL_DIA_CIN" class="form-control input-sm" name="BIL_DIA_CIN" style="text-align:center" autocomplete="off" maxlength="10" value="@ViewBag.bil_dia_cin " />
+                <input type="text" id="BIL_DIA_CIN" class="form-control input-sm" name="BIL_DIA_CIN" style="text-align:center" autocomplete="off" maxlength="10" value="@TempData["bil_dia_cin"] " />
                 @Html.ValidationMessageFor(model => model.BIL_DIA_CIN, "", new { @class = "text-danger" })
             </div>
             
@@ -343,6 +344,7 @@
         <div class="form-group">
             <div class="col-sx-12" style="text-align:right">
                 <button class="btn btn-default btn-sm" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+                @*<a href="/BILHETERIA/Index?bil_dia_cin=@TempData["bil_dia_cin"]" class="btn btn-default btn-sm">Voltar</a>*@
                 <input type="submit" value="Salvar e Voltar" id="btnSalvarVoltar" class="btn btn-info btn-sm" />
                 <input type="submit" value="Salvar e Criar Novo" id="btnSalvarNovo" class="btn btn-success btn-sm" />
                 @*<input type="button" value="Teste" id="btnTeste" name="btnTeste" class="btn btn-success btn-sm" />*@
