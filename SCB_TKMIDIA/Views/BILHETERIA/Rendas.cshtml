@@ -1,0 +1,260 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.MensagensANCINE>
+
+
+@using (Html.BeginForm("Index" ,"BILHETERIA" ,FormMethod.Post ,htmlAttributes: new { id = "frmPesq" }))
+{
+    <br />
+
+}
+
+<table>
+    <tr>
+        <td style="background-color:#eee">&nbsp;&nbsp;</td>
+        <td style="background-color:#eee">
+            <p style="color:mediumblue;font-size:x-large">Rendas de: </p><p style="font-size:x-large">@ViewBag.bil_dia_cin </p>
+            <br />
+            <p style="color:mediumblue;font-size:x-large"> Sala: </p><p style="font-size:x-large">@ViewBag.sal_desc</p>
+        </td>
+        <td style="background-color:#eee">&nbsp;&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td style="align-items:center">
+            <table class="table small">
+                <tr class="active">
+                    <th width="150px">
+                        Status
+                    </th>
+                    <th>
+                        Obra
+                    </th>
+                    <th style="text-align:center" width="150px">
+                        Horário Início Sessão
+                    </th>
+                    <th style="text-align:center" width="100px">
+                        Houve Sessão
+                    </th>
+                    <th style="text-align:center" width="100px">
+                        Retificadora
+                    </th>
+                    <th style="text-align:center" width="150px">
+                    </th>
+                </tr>
+
+                @{
+                    string status = "";
+                    string houve_ses = "";
+                    string retif = "";
+                    string hora_ini = "";
+                    string RawBotoes = "";
+                    string RawBotoesAux = "";
+                    string RawBotaoRetif = "";
+                }
+
+                @foreach (var item in Model)
+                {
+
+                    {
+                        //STATUS PROTOCOLO
+                        status = item.BIL_STATUS_PROT;
+                        RawBotoes = "";
+
+                        //HOUVE SESSÃO ?
+                        houve_ses = item.BIL_HOUVE_SES;
+
+                        if (houve_ses == "S")
+                        {
+                            houve_ses = "Sim";
+                        }
+                        else
+                        {
+                            houve_ses = "Não";
+                        }
+
+
+                        //RETIFICAÇÃO ?
+                        retif = item.BIL_RETIF;
+
+                        if (retif == "S")
+                        {
+                            retif = "Sim";
+                        }
+                        else
+                        {
+                            retif = "Não";
+                        }
+
+
+                        if (houve_ses == "Sim")
+                        {
+                            hora_ini = item.SEA_DT_HR_INICIO.ToShortTimeString();
+                        }
+                        else
+                        {
+                            hora_ini = "";
+                        }
+
+
+                        switch (status)
+                        {
+                            case "":
+                            status = "<td>Não Enviado</td>";
+                            RawBotoesAux = "Edit";
+                            RawBotaoRetif = "";
+                            RawBotoes = RawBotoes + "<a href='/Bilheteria/Delete?BIL_ID=" + @item.BIL_ID + "&houve_ses=" + @houve_ses + "&retif=" + @retif + "&sala=" + @item.SAL_DESC + "&obra=" + @item.SEA_FIL_NM + "&hora_ini=" + @hora_ini + "&dia_cin=" + @item.BIL_DIA_CIN.ToShortDateString() + "' class='btn btn-danger btn-xs'>Excluir</a> ";
+                            break;
+
+                            case "N":
+                            status = "<td style='color:red'><b>Não Acatado</b></td>";
+                            RawBotoesAux = "Edit";
+                            RawBotaoRetif = "Retif";
+                            RawBotoes = RawBotoes + "<a href='/Bilheteria/Delete?BIL_ID=" + @item.BIL_ID + "&houve_ses=" + @houve_ses + "&retif=" + @retif + "&sala=" + @item.SAL_DESC + "&obra=" + @item.SEA_FIL_NM + "&hora_ini=" + @hora_ini + "&dia_cin=" + @item.BIL_DIA_CIN.ToShortDateString() + "' class='btn btn-danger btn-xs'>Excluir</a> ";
+                            RawBotoes = RawBotoes + "<a href='/MENSAGEM_ANCINE?BIL_ID=" + @item.BIL_ID + "' class='btn btn-default btn-xs'><i class='fa fa-info-circle' aria-hidden='true'></i></a> ";
+                            break;
+
+                            case "V":
+                            status = "<td style='color:green'><b>Validado - OK</b></td>";
+                            RawBotoesAux = "Edit";
+                            RawBotaoRetif = "";
+                            break;
+
+                            case "A":
+                            status = "<td style='color:blue'><b>Em Análise</b></td>";
+                            RawBotoesAux = "";
+                            RawBotaoRetif = "";
+                            break;
+
+                            case "E":
+                            status = "<td style='color:red'><b>Com Erro</b></td>";
+                            RawBotoesAux = "Edit";
+                            RawBotaoRetif = "";
+                            RawBotoes = RawBotoes + "<a href='/Bilheteria/Delete?BIL_ID=" + @item.BIL_ID + "&houve_ses=" + @houve_ses + "&retif=" + @retif + "&sala=" + @item.SAL_DESC + "&obra=" + @item.SEA_FIL_NM + "&hora_ini=" + @hora_ini + "&dia_cin=" + @item.BIL_DIA_CIN.ToShortDateString() + "' class='btn btn-danger btn-xs'>Excluir</a> ";
+                            RawBotoes = RawBotoes + "<a href='/MENSAGEM_ANCINE?BIL_ID=" + @item.BIL_ID + "' class='btn btn-default btn-xs'><i class='fa fa-info-circle' aria-hidden='true'></i></a> ";
+                            //RawBotoes = RawBotoes + "<button type='button' class='btn btn-primary btn-lg' data-toggle='modal' data-target='#myModal'></button>";
+                            break;
+
+                            case "R":
+                            status = "<td style='color:red'><b>Recusado</b></td>";
+                            RawBotoesAux = "Edit";
+                            RawBotaoRetif = "";
+                            RawBotoes = RawBotoes + "<a href='/MENSAGEM_ANCINE?BIL_ID=" + @item.BIL_ID + "' class='btn btn-default btn-xs'><i class='fa fa-info-circle' aria-hidden='true'></i></a> ";
+                            break;
+
+                        }
+
+                        if (RawBotoesAux == "Edit")
+                        {
+                            if (houve_ses == "Sim")
+                            {
+                                RawBotoes = "<a href='/Bilheteria/Edit?BIL_ID=" + @item.BIL_ID + "' class='btn btn-info btn-xs'>Editar</a> " + RawBotoes;
+                            }
+                        }
+
+                        if (RawBotaoRetif == "Retif")
+                        {
+                            if (houve_ses != "Sim")
+                            {
+                                RawBotoes = RawBotoes + "<a href='/Bilheteria/Retif?BIL_ID=" + @item.BIL_ID + "' class='btn btn-warning btn-xs'>Retificar</a> ";
+                            }
+                        }
+
+                    }
+
+                    <tr>
+                        @Html.Raw(status)
+                        <td>
+                            @item.SEA_FIL_NM
+                        </td>
+                        <td style="text-align:center">
+                            @hora_ini
+                        </td>
+                        <td style="text-align:center">
+                            @houve_ses
+                        </td>
+                        <td style="text-align:center">
+                            @retif
+                        </td>
+                        <th>
+                            @Html.Raw(RawBotoes)
+                        </th>
+                    </tr>
+                }
+
+            </table>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td style="text-align:right">
+
+            <div class="well center-block">
+                <button class="btn btn-default btn-sm btn-block" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+                <a href="/Bilheteria/Create" class="btn btn-success btn-sm btn-block">Lançar Renda</a>
+            </div>
+
+        </td>
+    </tr>
+
+</table>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+            nextText: 'Próximo',
+            prevText: 'Anterior'
+        });
+
+        //$('#frmPesq').submit();
+
+
+    });
+
+    var myDate = new Date();
+    var month;
+    var day;
+    var year;
+    var dtIni;
+
+    var txt_dia_cin = document.getElementById('BIL_DIA_CIN');
+
+    if (txt_dia_cin.value == '')
+    {
+        day = myDate.getDate();
+        month = myDate.getMonth() + 1;
+        year = myDate.getFullYear();
+
+        if (day.toString().length == 1)
+            day = "0" + day;
+
+        if (month.toString().length == 1)
+            month = "0" + month;
+
+        dtIni = day + '/' + month + '/' + year;
+
+        SelectElement(dtIni, 'BIL_DIA_CIN');
+    }
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+    //$('#myModal').on('shown.bs.modal', function () {
+    //    $('#myInput').focus()
+    //})
+
+    </script>
+
+}

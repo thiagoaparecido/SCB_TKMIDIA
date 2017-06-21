@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace SCBIntegration
 {
     public class Utf8StringWriter : StringWriter

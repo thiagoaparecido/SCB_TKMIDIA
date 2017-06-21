@@ -1,0 +1,321 @@
+﻿@model IEnumerable<SCB_TKMIDIA.Models.SalaBilheteria>
+
+@using (Html.BeginForm("IndexRendas" ,"BILHETERIA" ,FormMethod.Post ,htmlAttributes: new { id = "frmPesq" }))
+{
+
+    <table class="table small">
+        <tr style="vertical-align:middle">
+            <td>
+                <br />
+                <p style="color:mediumblue;font-size:x-large">Bilheteria e Rendas</p>
+            </td>
+            <td style="text-align:right; vertical-align:middle">
+                <br />
+                <label>Dia Cinematofráfico:</label> &nbsp;
+            </td>
+            <td style="width:150px">
+                <br />
+                @Html.TextBox("BIL_DIA_CIN" ,ViewBag.bil_dia_cin as string ,htmlAttributes: new { @class = "form-control input-sm" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center" ,autocomplete = "off" })
+            </td>
+            <td>
+                <br />
+                <a href="#" id="btnPesquisar" name="btnPesquisar" class="btn btn-info btn-sm" onclick="$('#frmPesq').submit();">Pesquisar</a>
+                &nbsp;&nbsp;
+            </td>
+            <td style="text-align:right">
+                <br />
+                <a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#myModal'>Enviar</a>
+                <button id="btnAtuAncine" class="btn btn-danger btn-sm" role="button">Atualizar Ancine</button>
+                <a href="/Bilheteria/Create" class="btn btn-success btn-sm">Lançar Renda</a>
+            </td>
+        </tr>
+    </table>
+}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Envio de Rendas</h4>
+            </div>
+
+            <table class="table">
+                <tr>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;<input type="checkbox" checked="checked" id="chkAncine">
+                        <img src="~/images/Ancine.png" style="width:70px;height:50px" />
+                    </td>
+                    <td>
+                        <img id="imagemProcessandoEnvio" src="~/images/loader1.gif" class="img" style="width:50px; height:50px" hidden="hidden"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;<input type="checkbox" id="chkRentrak">
+                        <img src="~/images/Rentrak.png" style="width:70px;height:50px" />
+                    </td>
+                    <td>
+                        <img id="imagemProcessandoEnvio" src="~/images/loader1.gif" class="img" style="width:50px; height:50px" hidden="hidden"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;<input type="checkbox" id="chkFilmeB">
+                        <img src="~/images/FilmeB.png" style="width:70px;height:50px" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Voltar</button>
+                <button type="button" class="btn btn-primary " id="btnEnviar" name="btnEnviar">Enviar</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<table class="table small table-hover table-condensed">
+    <tr class="info">
+        <th>
+            SALA
+        </th>
+        <th style="text-align:center">
+            SITUAÇÃO SALA
+        </th>
+        <th style="text-align:center">
+            SESSÕES
+        </th>
+        <th style="text-align:center">
+            STATUS DE ENVIO
+        </th>
+        <th>RENDAS</th>
+    </tr>
+
+    @{
+        string adimp = "";
+        string status = "";
+        string houve_ses = "";
+        string retif = "";
+        string sessoes = "";
+        string RawBotoes = "";
+        string qtdSessoes;
+    }
+
+    @foreach (var item in Model)
+    {
+
+        RawBotoes = "";
+
+        adimp = item.BIL_ADIMP_SALA;
+        status = item.BIL_STATUS_PROT;
+        qtdSessoes = item.QTD_SES_SALA_DIA.ToString();
+        houve_ses = item.BIL_HOUVE_SES;
+        retif = item.BIL_RETIF;
+
+        if (adimp == "V")
+        {
+            adimp = "<td style='text-align:center;color:green'>" + "Ok" + "</td>";
+        }
+        else
+        {
+            adimp = "<td style='text-align:center;color:red'>" + "Inadimplente" + "</td>";
+        }
+
+        sessoes = "<td style='text-align:center'>" + qtdSessoes + "</td>";
+
+        if (qtdSessoes == "0" && (houve_ses == "" || houve_ses == null))
+        {
+            sessoes = "<td style='color:red;text-align:center'>Não Cadastrado</td>";
+            status = "<td></td>";
+        }
+        else
+        {
+            RawBotoes = RawBotoes + "<a href='/BILHETERIA/Rendas?BIL_DIA_CIN=" + item.BIL_DIA_CIN.ToString() + "&SAL_CD=" + item.SAL_CD_ANCINE + "&SAL_DESC=" + item.SAL_DESC + "' class='btn btn-info btn-xs'><i class='fa fa-folder-open-o fa-lg' aria-hidden='true'></i></a>";
+
+            if (houve_ses == "N")
+            {
+                sessoes = "<td style='text-align:center'>Dia Sem Sessão</td>";
+            }
+
+            if (status == "")
+            {
+                status = "<td style='text-align:center'>Não Enviado</td>";
+            }
+            else
+            {
+                if ((item.BIL_STATUS_ERRO != "" && item.BIL_STATUS_ERRO != null) || (item.BIL_STATUS_NAO_ACA != "" && item.BIL_STATUS_NAO_ACA != null) || (item.BIL_STATUS_RECUSADO != "" && item.BIL_STATUS_RECUSADO != null))
+                {
+                    status = "<td style='text-align:center;color:red'>Com Erro</td>";
+                }
+                else
+                {
+                    if (item.BIL_STATUS_ANALISE != "" && item.BIL_STATUS_ANALISE != null)
+                    {
+                        status = "<td style='text-align:center;color:blue'>Em Análise</td>";
+                    }
+                    else
+                    {
+                        if (item.BIL_STATUS_VAL != "" && item.BIL_STATUS_VAL != null)
+                        {
+                            status = "<td style='text-align:center;color:green'>Validado - OK</td>";
+                        }
+                        else
+                        {
+                            status = "<td></td>";
+                        }
+                    }
+                }
+            }
+
+        }
+
+        //if (houve_ses == "S")
+        //{
+        //    RawBotoes = RawBotoes + "<a href='/BILHETERIA/Rendas?BIL_DIA_CIN=" + item.BIL_DIA_CIN.ToString() + "&SAL_CD=" + item.SAL_CD_ANCINE + "&SAL_DESC=" + item.SAL_DESC + "' class='btn btn-info btn-xs'><span class='glyphicon glyphicon-folder-open' aria-hidden='true'></span></a>";
+        //}
+
+
+        <tr>
+            <td>
+                @item.SAL_DESC
+            </td>
+            @Html.Raw(adimp)
+            @Html.Raw(sessoes)
+            @Html.Raw(status)
+            <td>@Html.Raw(RawBotoes)</td>
+            @{ status = "";}
+        </tr>
+                }
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#BIL_DIA_CIN').datepicker({
+            dateFormat: "dd/mm/yy",
+            showStatus: true,
+            showWeek: true,
+            showOtherMonths: false,
+            selectOtherMonths: true,
+            autoSize: true,
+            gotoCurrent: true,
+            highlightWeek: true,
+            nextText: 'Próximo',
+            prevText: 'Anterior'
+        });
+
+        $("#btnAtuAncine").click(function()
+            {
+            var txt_dia = document.getElementById('BIL_DIA_CIN');
+
+            $.ajax({
+                url: "/Bilheteria/AtualizaAncineByDate",
+                data: { bIL_DIA_CIN: txt_dia.value },
+                success: function (data) {
+                    alert("Atualização Concluída!");
+                }
+            });
+            }
+        );
+
+        $('#btnEnviar').click(function ()
+        {
+            var txt_dia = document.getElementById('BIL_DIA_CIN');
+            var chk_Ancine = document.getElementById('chkAncine');
+            var chk_Rentrak = document.getElementById('chkRentrak');
+            var chk_FilmeB = document.getElementById('chkFilmeB');
+
+            //alert("ENVIAR");
+
+            //Colocar arroba depois do post(
+            //$.post("Url.Action("SendByDate" ,"BILHETERIA")", { bIL_DIA_CIN: txt_dia.value });
+
+
+            //$("#prg .progress-bar").progressbar("value", "50")
+
+            //var imgLoading = document.getElementById('processandoEnvio');
+
+            $.ajax({
+                url: "/Bilheteria/SendByDate",
+                data: { bIL_DIA_CIN: txt_dia.value, chkAncine: chk_Ancine.checked, chkRentrak: chk_Rentrak.checked, chkFilmeB: chk_FilmeB.checked },
+                success: function (data)
+                {
+                    alert("Envio Concluído!");
+                },
+                error: function (data)
+                {
+                    alert(Error);
+                }
+            });
+
+
+
+        })
+
+        function updateStatus() {
+            $.ajax({
+                url: "/Admin/AsyncStatus",
+                type: "GET",
+                cache: false,
+                dataType: "json",
+                success: function (data) {
+                    var percentComplete = parseInt(data.PercentComplete);
+                    if (percentComplete == null || percentComplete == 100) {
+                        $(".progress").removeClass("active"); // we're done!
+                        $(".progress .bar").css("width", "100%");
+                    } else { // update the progress bar
+                        $(".progress").addClass("active");
+                        $(".progress .bar").css("width", percentComplete + "%");
+                        setTimeout(updateStatus, 1000); // call self to refresh
+                    }
+                }
+            });
+        }
+
+
+    });
+
+    var myDate = new Date();
+    var month;
+    var day;
+    var year;
+    var dtIni;
+
+    var txt_dia_cin = document.getElementById('BIL_DIA_CIN');
+
+    if (txt_dia_cin.value == '')
+    {
+        day = myDate.getDate();
+        month = myDate.getMonth() + 1;
+        year = myDate.getFullYear();
+
+        if (day.toString().length == 1)
+            day = "0" + day;
+
+        if (month.toString().length == 1)
+            month = "0" + month;
+
+        dtIni = day + '/' + month + '/' + year;
+
+        SelectElement(dtIni, 'BIL_DIA_CIN');
+    }
+
+    function SelectElement(valueToSelect, objToSelect) {
+
+        var element = document.getElementById(objToSelect);
+        element.value = valueToSelect;
+    }
+
+    $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').focus()
+    })
+
+    </script>
+
+}

@@ -152,6 +152,7 @@
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Models\Adimplencia.cs" />
     <Compile Include="Models\BilheteriaEdit.cs" />
+    <Compile Include="Models\BilStatusRelatorioXml.cs" />
     <Compile Include="Models\MensagensANCINE.cs" />
     <Compile Include="Models\Model.Context.cs">
       <AutoGen>True</AutoGen>
@@ -167,6 +168,16 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SalaBilheteria.cs" />
+    <Compile Include="Models\sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_helpdiagrams_Result.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TB_BILHETERIA.cs">
       <DependentUpon>Model.tt</DependentUpon>
@@ -225,6 +236,9 @@
     <Compile Include="Models\up_TB_PROGRAMA_R_Result.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_PROT_ANALISE.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +264,8 @@
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
     <Content Include="images\Ancine.png" />
+    <Content Include="images\default-user.png" />
+    <Content Include="images\FilmeB.png" />
     <Content Include="images\loader1.gif" />
     <Content Include="images\loader10.gif" />
     <Content Include="images\loader2.gif" />
@@ -260,6 +276,8 @@
     <Content Include="images\loader7.gif" />
     <Content Include="images\loader8.gif" />
     <Content Include="images\loader9.gif" />
+    <Content Include="images\logoTicketMidia_new.bmp" />
+    <Content Include="images\Rentrak.png" />
     <Content Include="Models\Model.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model.edmx</DependentUpon>
@@ -364,6 +382,8 @@
     <Content Include="Views\MENSAGEM_ANCINE\Edit.cshtml" />
     <Content Include="Views\MENSAGEM_ANCINE\Index.cshtml" />
     <Content Include="Views\SALA\Index.cshtml" />
+    <Content Include="Views\BILHETERIA\IndexRendas.cshtml" />
+    <Content Include="Views\BILHETERIA\Rendas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

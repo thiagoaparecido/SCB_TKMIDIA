@@ -12,7 +12,7 @@
                 <label>Dia Cinematofráfico:</label> &nbsp;
             </td>
             <td style="width:150px">
-                @Html.TextBox("BIL_DIA_CIN" ,ViewBag.bil_dia_cin as string ,htmlAttributes: new { @class = "form-control input-xs" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center" ,autocomplete = "off" })
+                @Html.TextBox("BIL_DIA_CIN" ,TempData["bil_dia_cin"] as string ,htmlAttributes: new { @class = "form-control input-xs" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center" ,autocomplete = "off" })
             </td>
             <td>
                 <a href="#" id="btnPesquisar" name="btnPesquisar" class="btn btn-info btn-sm" onclick="$('#frmPesq').submit();">Pesquisar</a>
@@ -181,8 +181,9 @@
                 @Html.Raw(RawBotoes)
             </td>
         </tr>
-    }
 
+        TempData["bil_dia_cin"] = item.BIL_DIA_CIN.ToShortDateString();
+    }
 </table>
 
 @section Scripts {

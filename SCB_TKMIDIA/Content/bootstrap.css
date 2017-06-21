@@ -17,7 +17,11 @@ aside,
 details,
 figcaption,
 figure,
-footer,
+footer{
+    /*position: absolute;*/
+    bottom: 5px;
+    padding-top:inherit
+}
 header,
 hgroup,
 main,
@@ -1582,10 +1586,11 @@ pre code {
   overflow-y: scroll;
 }
 .container {
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: initial;
+  padding-left: initial;
   margin-right: auto;
-  margin-left: 15px;
+  margin-left: auto;
+  /*padding: 0 15px 0 0:*/
 }
 @media (min-width: 768px) {
   .container {

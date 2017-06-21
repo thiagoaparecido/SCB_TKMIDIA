@@ -18,8 +18,14 @@ namespace SCB_TKMIDIA.Controllers
         // GET: MENSAGEM_ANCINE
         public ActionResult Index(long BIL_ID)
         {
-            var tB_MENSAGEM_ANCINE = db.TB_MENSAGEM_ANCINE.Include(t => t.TB_BILHETERIA).Include(t => t.TB_SALA).Include(t => t.TB_SESSAO_ANCINE).Where(T => T.BIL_ID == BIL_ID).OrderByDescending(t => t.MSA_DT_HORA_MSG);
-            return View(tB_MENSAGEM_ANCINE.ToList());
+            //var tB_MENSAGEM_ANCINE = db.TB_MENSAGEM_ANCINE.Include(t => t.TB_BILHETERIA).Include(t => t.TB_SALA).Include(t => t.TB_SESSAO_ANCINE).Where(T => T.BIL_ID == BIL_ID).OrderByDescending(t => t.MSA_DT_HORA_MSG);
+
+            var tB_MENSAGEM_ANCINE = from m in db.TB_MENSAGEM_ANCINE
+                                     where m.BIL_ID == BIL_ID
+                                     orderby m.MSA_DT_HORA_MSG descending
+                                     select m;
+
+            return View(tB_MENSAGEM_ANCINE);
         }
 
         // GET: MENSAGEM_ANCINE/Details/5

@@ -17,8 +17,8 @@ namespace SCB_TKMIDIA.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TB_SESSAO_ANCINE()
         {
-            this.TB_MENSAGEM_ANCINE = new HashSet<TB_MENSAGEM_ANCINE>();
             this.TB_TOT_TP_ASSENTO = new HashSet<TB_TOT_TP_ASSENTO>();
+            this.TB_MENSAGEM_ANCINE = new HashSet<TB_MENSAGEM_ANCINE>();
         }
     
         public long SEA_ID { get; set; }
@@ -41,12 +41,12 @@ namespace SCB_TKMIDIA.Models
         public Nullable<long> SEA_VRE_CNPJ { get; set; }
         public string SEA_RZ_SOCIAL { get; set; }
     
-        public virtual TB_BILHETERIA TB_BILHETERIA { get; set; }
         public virtual TB_FILME TB_FILME { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TB_MENSAGEM_ANCINE> TB_MENSAGEM_ANCINE { get; set; }
         public virtual TB_SALA TB_SALA { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TB_TOT_TP_ASSENTO> TB_TOT_TP_ASSENTO { get; set; }
+        public virtual TB_BILHETERIA TB_BILHETERIA { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TB_MENSAGEM_ANCINE> TB_MENSAGEM_ANCINE { get; set; }
     }
 }
