@@ -2866,6 +2866,9 @@ namespace SCB_TKMIDIA.Controllers
                 clsHelper.LogSCB("AtualizaProtocolo - MÉTODO objSCBIntegrationManager - BilheteriaController");
                 StatusRelatorioBilheteria objReturn = objSCBIntegrationManager.ConsultaProtocoloPorID(IdProtocolo);
 
+                // ******* AGUARDA 5 SEGUNDOS PARA CONTINUAR - PALIATIVO ATÉ SOLUÇÃO DE MAIS PERFORMANCE ******//
+                System.Threading.Thread.Sleep(5000);
+
                 // VALIDA SE O RETORNO NÃO É NULO
                 if (objReturn != null)
                 {
