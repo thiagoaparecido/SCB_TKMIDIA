@@ -144,7 +144,7 @@
                         {
                             if (houve_ses == "Sim")
                             {
-                                RawBotoes = "<a href='/Bilheteria/Edit?BIL_ID=" + @item.BIL_ID + "' class='btn btn-info btn-xs'>Editar</a> " + RawBotoes;
+                                RawBotoes = "<a href='/Bilheteria/Edit?BIL_ID=" + @item.BIL_ID + "' class='btn btn-success btn-xs'>Editar</a> " + RawBotoes;
                             }
                         }
 
@@ -184,7 +184,8 @@
         <td style="text-align:right">
 
             <div class="well center-block">
-                <button class="btn btn-default btn-sm btn-block" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+                @*<button class="btn btn-default btn-sm btn-block" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>*@
+                <a href="/Bilheteria/IndexRendas" class="btn btn-default btn-sm btn-block">Voltar</a>
                 <a href="/Bilheteria/Create" class="btn btn-success btn-sm btn-block">Lançar Renda</a>
             </div>
 

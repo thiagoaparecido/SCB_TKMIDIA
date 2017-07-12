@@ -41,29 +41,30 @@
 
             <table class="table">
                 <tr>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;<input type="checkbox" checked="checked" id="chkAncine">
+                    <td style="text-align:center">
                         <img src="~/images/Ancine.png" style="width:70px;height:50px" />
                     </td>
-                    <td>
-                        <img id="imagemProcessandoEnvio" src="~/images/loader1.gif" class="img" style="width:50px; height:50px" hidden="hidden"/>
+                    <td style="vertical-align:middle">
+                        <input type="checkbox" checked="checked" id="chkAncine">
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;<input type="checkbox" id="chkRentrak">
-                        <img src="~/images/Rentrak.png" style="width:70px;height:50px" />
+                    <td style="text-align:center">
+                        <img src="~/images/File-XML-01-icon.png" style="width:50px;height:50px"/>
                     </td>
-                    <td>
-                        <img id="imagemProcessandoEnvio" src="~/images/loader1.gif" class="img" style="width:50px; height:50px" hidden="hidden"/>
+                    <td style="vertical-align:middle">
+                        <input type="checkbox" id="chkXML">
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;<input type="checkbox" id="chkFilmeB">
-                        <img src="~/images/FilmeB.png" style="width:70px;height:50px" />
+                    <td style="text-align:center">
+
+                        <img src="~/images/feature0.png" style="width:50px;height:40px" />
                     </td>
-                    <td></td>
+                    <td style="vertical-align:middle">
+                        <input type="checkbox" id="chkFTP">
+                        <img id="imagemProcessandoEnvio" src="~/images/loader1.gif" class="img" style="width:50px; height:50px" hidden="hidden" />
+                    </td>
                 </tr>
             </table>
 
@@ -219,6 +220,11 @@
                 data: { bIL_DIA_CIN: txt_dia.value },
                 success: function (data) {
                     alert("Atualização Concluída!");
+
+                    //$('#EMP_CD_ANCINE').val(data).trigger('change');
+                    $('#btnPesquisar').trigger('click')
+                    
+
                 }
             });
             }
@@ -227,34 +233,21 @@
         $('#btnEnviar').click(function ()
         {
             var txt_dia = document.getElementById('BIL_DIA_CIN');
-            var chk_Ancine = document.getElementById('chkAncine');
-            var chk_Rentrak = document.getElementById('chkRentrak');
-            var chk_FilmeB = document.getElementById('chkFilmeB');
-
-            //alert("ENVIAR");
-
-            //Colocar arroba depois do post(
-            //$.post("Url.Action("SendByDate" ,"BILHETERIA")", { bIL_DIA_CIN: txt_dia.value });
-
-
-            //$("#prg .progress-bar").progressbar("value", "50")
-
-            //var imgLoading = document.getElementById('processandoEnvio');
+            var chkAncine = document.getElementById('chkAncine');
 
             $.ajax({
                 url: "/Bilheteria/SendByDate",
-                data: { bIL_DIA_CIN: txt_dia.value, chkAncine: chk_Ancine.checked, chkRentrak: chk_Rentrak.checked, chkFilmeB: chk_FilmeB.checked },
+                data: { bIL_DIA_CIN: txt_dia.value, chkAncine: chkAncine.checked, chkXML: chkXML.checked, chkFTP: chkFTP.checked },
                 success: function (data)
                 {
-                    alert("Envio Concluído!");
+                    alert("Concluído");
+                    //window.open("/Bilheteria/IndexRendas");
                 },
-                error: function (data)
+                error: function (error)
                 {
-                    alert(Error);
+                    alert(error.status + ' - ' + error.statusText);
                 }
             });
-
-
 
         })
 
@@ -277,7 +270,6 @@
                 }
             });
         }
-
 
     });
 

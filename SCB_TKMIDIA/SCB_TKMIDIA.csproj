@@ -265,7 +265,12 @@
     <Content Include="Global.asax" />
     <Content Include="images\Ancine.png" />
     <Content Include="images\default-user.png" />
+    <Content Include="images\feature0.png" />
+    <Content Include="images\File-XML-01-icon.png" />
     <Content Include="images\FilmeB.png" />
+    <Content Include="images\FTP.png" />
+    <Content Include="images\GlyphIcons-Upload-512.png" />
+    <Content Include="images\images.jpg" />
     <Content Include="images\loader1.gif" />
     <Content Include="images\loader10.gif" />
     <Content Include="images\loader2.gif" />
@@ -350,7 +355,7 @@
     <Content Include="Views\BILHETERIA\Delete.cshtml" />
     <Content Include="Views\BILHETERIA\Details.cshtml" />
     <Content Include="Views\BILHETERIA\Edit.cshtml" />
-    <Content Include="Views\BILHETERIA\Index.cshtml" />
+    <Content Include="Views\BILHETERIA\Index_OLD.cshtml" />
     <Content Include="Views\EMPRESA_COMPLEXO\Create.cshtml" />
     <Content Include="Views\EMPRESA_COMPLEXO\Delete.cshtml" />
     <Content Include="Views\EMPRESA_COMPLEXO\Details.cshtml" />

@@ -51,9 +51,9 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Rendas" ,"Index" ,"BILHETERIA")</li>
-                    <li>@Html.ActionLink("Envio Ancine" ,"SendReceive" ,"BILHETERIA")</li>
-                    <li>@Html.ActionLink("Acompanhar Envios" ,"IndexStatus" ,"BILHETERIA")</li>
+                    <li>@Html.ActionLink("Rendas" ,"IndexRendas" ,"BILHETERIA")</li>
+                    @*<li>@Html.ActionLink("Envio Ancine" ,"SendReceive" ,"BILHETERIA")</li>
+                    <li>@Html.ActionLink("Acompanhar Envios" ,"IndexStatus" ,"BILHETERIA")</li>*@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >Cadastros <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -95,11 +95,14 @@
             })
         }
 
-        for (i = 0; i < document.links.length; i++) {
+        for (i = 0; i < document.links.length; i++)
+        {
             var objLink = document.links[i];
 
-            if ($(objLink).attr('href').slice(1) != "#") {
-                $(objLink).on("click", function () {
+            if ($(objLink).attr('href').slice(1) != "#")
+            {
+                $(objLink).on("click", function ()
+                {
                     $('#processando').css({ display: 'block' });
                 })
             }

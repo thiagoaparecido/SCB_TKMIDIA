@@ -1,8 +1,18 @@
 ﻿@model IEnumerable<SCB_TKMIDIA.Models.TB_MENSAGEM_ANCINE>
 
-<h3 style="color:seagreen">Mensagens de retorno Ancine</h3>
+<table class="table small">
+    <tr style="vertical-align:middle">
+        <td>
+            <br />
+            <p style="color:seagreen;font-size:x-large">Mensagens de retorno Ancine</p>
+        </td>
+        <td style="text-align:right">
+            <br />
+            <button class="btn btn-default btn-md" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
+        </td>
+    </tr>
+</table>
 
-<br />
 <table class="table small">
     <tr class="info">
         <th>
@@ -100,9 +110,3 @@
     }
 
 </table>
-
-<div class="form-group">
-    <div class="col-sx-12" style="text-align:right">
-        <button class="btn btn-default btn-sm" id="btnVoltar" name="btnVoltar" onclick="goBack()">Voltar</button>
-    </div>
-</div>
