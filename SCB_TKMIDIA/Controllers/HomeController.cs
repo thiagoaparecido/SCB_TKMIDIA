@@ -43,8 +43,8 @@ namespace SCB_TKMIDIA.Controllers
                 //*** EXECUTA O ATUALIZAR ANCINE E ADIMPLÊNCIA DE SALAS *** //
                 Controllers.BilheteriaController clsBil = new Controllers.BilheteriaController();
 
-                //clsBil.AtualizaAncineByDate(bil_dia_cin.ToString());
-                //ViewBag.dtStatusAdimp = bil_dia_cin.ToShortDateString();
+                clsBil.AtualizaAncineByDate(bil_dia_cin.ToString());
+                ViewBag.dtStatusAdimp = bil_dia_cin.ToShortDateString();
             }
             else
             {

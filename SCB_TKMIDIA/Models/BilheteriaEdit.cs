@@ -16,6 +16,8 @@ namespace SCB_TKMIDIA.Models
         public string BIL_PROT { get; set; }
         public string BIL_ADIMP_SALA { get; set; }
         public string BIL_STATUS_PROT { get; set; }
+        public Nullable<System.DateTime> BIL_DT_ALT_ADIMP { get; set; }
+        public Nullable<System.DateTime> BIL_DT_ALT_STAT_PROT { get; set; }
 
         public long SEA_ID { get; set; }
         public string FIL_CD_ANCINE { get; set; }

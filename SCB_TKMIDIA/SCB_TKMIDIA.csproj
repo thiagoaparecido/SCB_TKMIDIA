@@ -265,7 +265,12 @@
     <Content Include="Global.asax" />
     <Content Include="images\Ancine.png" />
     <Content Include="images\default-user.png" />
+    <Content Include="images\feature0.png" />
+    <Content Include="images\File-XML-01-icon.png" />
     <Content Include="images\FilmeB.png" />
+    <Content Include="images\FTP.png" />
+    <Content Include="images\GlyphIcons-Upload-512.png" />
+    <Content Include="images\images.jpg" />
     <Content Include="images\loader1.gif" />
     <Content Include="images\loader10.gif" />
     <Content Include="images\loader2.gif" />

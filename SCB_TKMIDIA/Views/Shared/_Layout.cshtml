@@ -95,11 +95,14 @@
             })
         }
 
-        for (i = 0; i < document.links.length; i++) {
+        for (i = 0; i < document.links.length; i++)
+        {
             var objLink = document.links[i];
 
-            if ($(objLink).attr('href').slice(1) != "#") {
-                $(objLink).on("click", function () {
+            if ($(objLink).attr('href').slice(1) != "#")
+            {
+                $(objLink).on("click", function ()
+                {
                     $('#processando').css({ display: 'block' });
                 })
             }

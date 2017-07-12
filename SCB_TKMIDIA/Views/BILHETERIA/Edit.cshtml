@@ -134,7 +134,7 @@
                                 long tci_id = 0;
                                 long tmp_id = 0;
 
-                                int numLabel=0;
+                                int numLabel = 0;
 
 
                             }
@@ -146,6 +146,9 @@
                             @Html.Raw("<div hidden='hidden'><input type='text' id='SEA_ID' name='SEA_ID' value='" + Model.FirstOrDefault().SEA_ID + "' /></div>")
                             @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_PROT' name='BIL_PROT' value='" + Model.FirstOrDefault().BIL_PROT + "' /></div>")
                             @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_STATUS_PROT' name='BIL_STATUS_PROT' value='" + Model.FirstOrDefault().BIL_STATUS_PROT + "' /></div>")
+
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_DT_ALT_ADIMP' name='BIL_DT_ALT_ADIMP' value='" + Model.FirstOrDefault().BIL_DT_ALT_ADIMP + "' /></div>")
+                            @Html.Raw("<div hidden='hidden'><input type='text' id='BIL_DT_ALT_STAT_PROT' name='BIL_DT_ALT_STAT_PROT' value='" + Model.FirstOrDefault().BIL_DT_ALT_STAT_PROT + "' /></div>")
                             
                                 @foreach (var item in Model)
                                 {

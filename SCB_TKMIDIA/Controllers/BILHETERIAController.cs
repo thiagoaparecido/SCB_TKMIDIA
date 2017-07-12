@@ -587,7 +587,7 @@ namespace SCB_TKMIDIA.Controllers
         }
 
         //************************************************
-        public ActionResult SendByDate(string bIL_DIA_CIN ,bool chkAncine ,bool chkRentrak ,bool chkFilmeB)
+        public JsonResult SendByDate(string bIL_DIA_CIN ,bool chkAncine, bool chkXML, bool chkFTP)
         {
             try
             {
@@ -595,33 +595,38 @@ namespace SCB_TKMIDIA.Controllers
 
                 // PEGA TODAS DAS RENDAS DO DIA **** TODAS AS SALAS **** //
                 var listaSes = (from b in db.TB_BILHETERIA
-                                where b.BIL_DIA_CIN == bIL_DIA_CIN_aux &&  (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
+                                where b.BIL_DIA_CIN == bIL_DIA_CIN_aux 
+                                && ((b.BIL_STATUS_PROT == "") 
+                                || (b.BIL_STATUS_PROT == "N") 
+                                || (b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                || (b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S"))
+
                                 group b by new { b.BIL_DIA_CIN, b.SAL_CD_ANCINE, b.BIL_HOUVE_SES } into pg
                                 orderby pg.FirstOrDefault().BIL_DIA_CIN, pg.FirstOrDefault().SAL_CD_ANCINE
                                 select pg);
 
                 foreach (var ses in listaSes)
                 {
-                    var strenvio = SendLoop(bIL_DIA_CIN, ses.FirstOrDefault().SAL_CD_ANCINE, ses.FirstOrDefault().BIL_HOUVE_SES, chkAncine, chkRentrak, chkFilmeB);
+                    var strenvio = SendLoop(bIL_DIA_CIN, ses.FirstOrDefault().SAL_CD_ANCINE, ses.FirstOrDefault().BIL_HOUVE_SES, chkAncine, chkXML, chkFTP);
 
                 }
 
                 db.SaveChanges();
                 TempData["bil_dia_cin"] = bIL_DIA_CIN_aux.ToShortDateString();
-
+                
             }
             catch (Exception ex)
             {
                 ViewBag.ex = ex.Message;
                 clsHelper.LogSCB("Send - BilheteriaController" + ex.Message);
-                return RedirectToAction("IndexRendas");
+                return Json(ex.Message, JsonRequestBehavior.AllowGet);
             }
 
-            return RedirectToAction("IndexRendas");
+            return Json("OK", JsonRequestBehavior.AllowGet);
         }
 
-        //*******************************************************************************
-        public string SendLoop(string bIL_DIA_CIN ,string sAL_CD_ANCINE ,string houve_ses ,bool chkAncine ,bool chkRentrak ,bool chkFilmeB)
+        //*****************************************************************************************************************
+        public string SendLoop(string bIL_DIA_CIN ,string sAL_CD_ANCINE ,string houve_ses ,bool chkAncine ,bool chkXML, bool chkFTP)
         {
             try
             {
@@ -664,7 +669,10 @@ namespace SCB_TKMIDIA.Controllers
                 if (houve_ses == "N")
                 {
                     var listaBil = from b in db.TB_BILHETERIA
-                                   where b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "N" && (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
+                                   where (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "N" && b.BIL_STATUS_PROT == "" )
+                                      || (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "N" && b.BIL_STATUS_PROT == "N" )
+                                      || (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "N" && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                      || (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "N" && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
                                    select b;
 
                     foreach (var Itembil in listaBil)
@@ -684,7 +692,12 @@ namespace SCB_TKMIDIA.Controllers
                 // PEGA TODAS DAS RENDAS DO DIA E SALA - COM SESSÃO//
                 var listaSes = from b in db.TB_BILHETERIA
                                join s in db.TB_SESSAO_ANCINE on b.BIL_ID equals s.BIL_ID
-                               where b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "S" && (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
+
+                               where (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "S" && b.BIL_STATUS_PROT == "" )
+                                  || (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "S" && b.BIL_STATUS_PROT == "N" )
+                                  || (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "S" && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                  || (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "S" && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
+
                                orderby b.BIL_DIA_CIN, b.SAL_CD_ANCINE
                                select new MensagensANCINE()
                                {
@@ -1303,248 +1316,268 @@ namespace SCB_TKMIDIA.Controllers
 
                 Envio:
 
-                // BUSCA OS PARAMETROS NO APP.CONFIG, ou DEPOIS PODE BUSCAR EM ALGUMA TABELA DE PARAMETROS GLOBAIS
-                string str_SCB_URL_Endpoint = ConfigurationManager.AppSettings["SCB_URL_Endpoint"];
-                string str_SCB_AuthorizationToken = ConfigurationManager.AppSettings["SCB_AuthorizationToken"];
-
-                // AQUI VOCÊ INSTANCIA O OBJETO 'MANAGER' DO SERVIÇO, PARA DEPOIS CHAMAR O MÉTODO DESEJADO
-                // - VOCÊ JÁ TEM QUE ENVIAR A URL E O TOKEN
-                SCBIntegrationManager objSCBIntegrationManager = new SCBIntegrationManager(str_SCB_URL_Endpoint, str_SCB_AuthorizationToken);
-
-                // AQUI VOCÊ CHAMA O MÉTODO, PASSANDO COMO PARAMETRO O OBJETO 'BILHETERIA' JÁ PREENCHIDO
-                clsHelper.LogSCB("Send - MÉTODO objSCBIntegrationManager - BilheteriaController");
-                StatusRelatorioBilheteria objReturn = objSCBIntegrationManager.RegistroBilheteriaSalaExibicao(objBilheteria);
-
-                // VALIDA SE O RETORNO NÃO É NULO
-                if (objReturn != null)
+                if (chkFTP || chkXML)
                 {
+                    var stringwriter = new System.IO.StringWriter();
+                    var serializer = new XmlSerializer(objBilheteria.GetType());
+                    serializer.Serialize(stringwriter ,objBilheteria);
 
-                    string[] stringSeparators = new string[] { "," };
-                    string[] strBilIds;
-                    string strBilIdsAux = "";
-                    string[] strProt;
-                    string strProtAux = "";
-                    string[] strStProt;
-                    string strStProtAux = "";
+                    string strDiaCinArq = "";
+                    string[] FormatoDiaCin = objBilheteria.diaCinematografico.GetDateTimeFormats();
+                    strDiaCinArq = FormatoDiaCin[9]; //[9]: "21.06.2017"
 
-                    //bool chkRentrak = false;
+                    SendFTP(stringwriter.ToString(), objBilheteria.registroANCINESala.ToString() + "-" + strDiaCinArq + ".xml", chkFTP);
 
-                    if (chkRentrak)
+                }
+
+                if (chkAncine)
+                {
+                    // BUSCA OS PARAMETROS NO APP.CONFIG, ou DEPOIS PODE BUSCAR EM ALGUMA TABELA DE PARAMETROS GLOBAIS
+                    string str_SCB_URL_Endpoint = ConfigurationManager.AppSettings["SCB_URL_Endpoint"];
+                    string str_SCB_AuthorizationToken = ConfigurationManager.AppSettings["SCB_AuthorizationToken"];
+
+                    // AQUI VOCÊ INSTANCIA O OBJETO 'MANAGER' DO SERVIÇO, PARA DEPOIS CHAMAR O MÉTODO DESEJADO
+                    // - VOCÊ JÁ TEM QUE ENVIAR A URL E O TOKEN
+                    SCBIntegrationManager objSCBIntegrationManager = new SCBIntegrationManager(str_SCB_URL_Endpoint, str_SCB_AuthorizationToken);
+
+                    // AQUI VOCÊ CHAMA O MÉTODO, PASSANDO COMO PARAMETRO O OBJETO 'BILHETERIA' JÁ PREENCHIDO
+                    clsHelper.LogSCB("Send - MÉTODO objSCBIntegrationManager - BilheteriaController");
+                    StatusRelatorioBilheteria objReturn = objSCBIntegrationManager.RegistroBilheteriaSalaExibicao(objBilheteria);
+
+                    // VALIDA SE O RETORNO NÃO É NULO
+                    if (objReturn != null)
                     {
 
-                        SendRentrac("scb_13286_2014-08-15.XML");
+                        string[] stringSeparators = new string[] { "," };
+                        string[] strBilIds;
+                        string strBilIdsAux = "";
+                        string[] strProt;
+                        string strProtAux = "";
+                        string[] strStProt;
+                        string strStProtAux = "";
 
-                    }
-
-
-                    // EXIBE POSSIVEIS MENSAGENS DE RETORNO: I - Informativa; A - Alerta; E - Erro
-                    if (objReturn.mensagens != null && objReturn.mensagens.Count() > 0)
-                    {
-                        foreach (var msg in objReturn.mensagens)
+                        // EXIBE POSSIVEIS MENSAGENS DE RETORNO: I - Informativa; A - Alerta; E - Erro
+                        if (objReturn.mensagens != null && objReturn.mensagens.Count() > 0)
                         {
-                            string emp_cd = objReturn.registroANCINEExibidor.ToString();
-                            string sal_cd = objReturn.registroANCINESala.ToString();
-                            DateTime dia_cin = objReturn.diaCinematografico;
-
-                            // MENSAGEM COM SESSÃO ESPECIFICADA.
-                            if (msg.dataHoraInicio != null)
+                            foreach (var msg in objReturn.mensagens)
                             {
-                                DateTime dtHoraIni = Convert.ToDateTime(msg.dataHoraInicio);
+                                string emp_cd = objReturn.registroANCINEExibidor.ToString();
+                                string sal_cd = objReturn.registroANCINESala.ToString();
+                                DateTime dia_cin = objReturn.diaCinematografico;
 
-                                var listaBilMsg = (from b in db.TB_BILHETERIA
-                                                   join s in db.TB_SESSAO_ANCINE on b.BIL_ID equals s.BIL_ID
-                                                   where b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
-
-                                                   select new MensagensANCINE()
-                                                   {
-                                                       BIL_ID = b.BIL_ID,
-                                                       BIL_DIA_CIN = b.BIL_DIA_CIN,
-                                                       SAL_CD_ANCINE = b.SAL_CD_ANCINE,
-                                                       BIL_HOUVE_SES = b.BIL_HOUVE_SES,
-                                                       BIL_ADIMP_SALA = b.BIL_ADIMP_SALA,
-                                                       BIL_PROT = b.BIL_PROT,
-                                                       BIL_STATUS_PROT = b.BIL_STATUS_PROT,
-                                                       BIL_RETIF = b.BIL_RETIF,
-                                                       EMP_CD_ANCINE = b.EMP_CD_ANCINE,
-                                                       SEA_ID = s.SEA_ID,
-                                                       FIL_CD_ANCINE = s.FIL_CD_ANCINE,
-                                                       SEA_DIS_CNPJ = s.SEA_DIS_CNPJ,
-                                                       SEA_DIS_NM = s.SEA_DIS_NM,
-                                                       SEA_DT_HR_INICIO = s.SEA_DT_HR_INICIO,
-                                                       SEA_FIL_NM = s.SEA_FIL_NM,
-                                                       SEA_FIL_TP_PROJECAO = s.SEA_FIL_TP_PROJECAO,
-                                                       SEA_MODAL = s.SEA_MODAL,
-                                                       SEA_RZ_SOCIAL = s.SEA_RZ_SOCIAL,
-                                                       SEA_VRE_CNPJ = s.SEA_VRE_CNPJ
-                                                   });
-
-                                foreach (var itemMsg in listaBilMsg)
+                                // MENSAGEM COM SESSÃO ESPECIFICADA.
+                                if (msg.dataHoraInicio != null)
                                 {
+                                    DateTime dtHoraIni = Convert.ToDateTime(msg.dataHoraInicio);
 
-                                    TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
-                                    TB_MSG.BIL_ID = itemMsg.BIL_ID;
-                                    TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
-                                    TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
-                                    TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
-                                    TB_MSG.SEA_ID = itemMsg.SEA_ID;
-                                    TB_MSG.SEA_DT_HR_INICIO = itemMsg.SEA_DT_HR_INICIO;
-                                    TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
-                                    TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
-                                    TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
-                                    db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
+                                    var listaBilMsg = (from b in db.TB_BILHETERIA
+                                                       join s in db.TB_SESSAO_ANCINE on b.BIL_ID equals s.BIL_ID
 
-                                    if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
-                                    else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
+                                                       where (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "")
+                                                   || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "N")
+                                                   || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "E"  && b.BIL_RETIF == "S")
+                                                   || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "R"  && b.BIL_RETIF == "S")
 
-                                    if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
-                                    else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
+                                                       select new MensagensANCINE()
+                                                       {
+                                                           BIL_ID = b.BIL_ID,
+                                                           BIL_DIA_CIN = b.BIL_DIA_CIN,
+                                                           SAL_CD_ANCINE = b.SAL_CD_ANCINE,
+                                                           BIL_HOUVE_SES = b.BIL_HOUVE_SES,
+                                                           BIL_ADIMP_SALA = b.BIL_ADIMP_SALA,
+                                                           BIL_PROT = b.BIL_PROT,
+                                                           BIL_STATUS_PROT = b.BIL_STATUS_PROT,
+                                                           BIL_RETIF = b.BIL_RETIF,
+                                                           EMP_CD_ANCINE = b.EMP_CD_ANCINE,
+                                                           SEA_ID = s.SEA_ID,
+                                                           FIL_CD_ANCINE = s.FIL_CD_ANCINE,
+                                                           SEA_DIS_CNPJ = s.SEA_DIS_CNPJ,
+                                                           SEA_DIS_NM = s.SEA_DIS_NM,
+                                                           SEA_DT_HR_INICIO = s.SEA_DT_HR_INICIO,
+                                                           SEA_FIL_NM = s.SEA_FIL_NM,
+                                                           SEA_FIL_TP_PROJECAO = s.SEA_FIL_TP_PROJECAO,
+                                                           SEA_MODAL = s.SEA_MODAL,
+                                                           SEA_RZ_SOCIAL = s.SEA_RZ_SOCIAL,
+                                                           SEA_VRE_CNPJ = s.SEA_VRE_CNPJ
+                                                       });
 
-                                    if (strProtAux == "")
-                                    { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                                    else
-                                    { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-
-                                    if (strBil_Id_Inicio_Aux == "")
+                                    foreach (var itemMsg in listaBilMsg)
                                     {
-                                        strBil_Id_Inicio_Aux = itemMsg.BIL_ID.ToString();
+
+                                        TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
+                                        TB_MSG.BIL_ID = itemMsg.BIL_ID;
+                                        TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
+                                        TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
+                                        TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
+                                        TB_MSG.SEA_ID = itemMsg.SEA_ID;
+                                        TB_MSG.SEA_DT_HR_INICIO = itemMsg.SEA_DT_HR_INICIO;
+                                        TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
+                                        TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
+                                        TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
+                                        db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
+
+                                        if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
+                                        else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
+
+                                        if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
+                                        else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
+
+                                        if (strProtAux == "")
+                                        { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                        else
+                                        { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+
+                                        if (strBil_Id_Inicio_Aux == "")
+                                        {
+                                            strBil_Id_Inicio_Aux = itemMsg.BIL_ID.ToString();
+                                        }
+                                        else
+                                        {
+                                            strBil_Id_Inicio_Aux = strBil_Id_Inicio_Aux + "," + itemMsg.BIL_ID.ToString();
+                                        }
+
                                     }
-                                    else
-                                    {
-                                        strBil_Id_Inicio_Aux = strBil_Id_Inicio_Aux + "," + itemMsg.BIL_ID.ToString();
-                                    }
-
-                                }
-                                //db.SaveChanges();
-
-                                strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
-                                strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
-                                strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
-
-                                TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
-
-                                strBilIdsAux = "";
-                                strStProtAux = "";
-                                strProtAux = "";
-
-                            }
-
-                            // ERRO SEM SESSÃO ESPECÍFICA.
-                            else
-                            {
-                                var listaBilERRO = from b in db.TB_BILHETERIA
-                                                   where b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
-
-                                                   select new MensagensANCINE()
-                                                   {
-                                                       BIL_ID = b.BIL_ID ,
-                                                       BIL_DIA_CIN = b.BIL_DIA_CIN ,
-                                                       SAL_CD_ANCINE = b.SAL_CD_ANCINE ,
-                                                       BIL_HOUVE_SES = b.BIL_HOUVE_SES ,
-                                                       BIL_ADIMP_SALA = b.BIL_ADIMP_SALA ,
-                                                       BIL_PROT = b.BIL_PROT ,
-                                                       BIL_STATUS_PROT = b.BIL_STATUS_PROT ,
-                                                       BIL_RETIF = b.BIL_RETIF ,
-                                                       EMP_CD_ANCINE = b.EMP_CD_ANCINE ,
-                                                   };
-
-
-                                foreach (var itemMsg in listaBilERRO)
-                                {
-                                    TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
-                                    TB_MSG.BIL_ID = itemMsg.BIL_ID;
-                                    TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
-                                    TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
-                                    TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
-                                    TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
-                                    TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
-                                    TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
-                                    db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
-
-                                    if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
-                                    else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
-
-                                    if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
-                                    else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
-
-                                    if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                                    else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                    //db.SaveChanges();
 
                                     strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
                                     strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
                                     strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
 
                                     TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
+
+                                    strBilIdsAux = "";
+                                    strStProtAux = "";
+                                    strProtAux = "";
+
                                 }
-                                //db.SaveChanges();
+
+                                // ERRO SEM SESSÃO ESPECÍFICA.
+                                else
+                                {
+                                    var listaBilERRO = from b in db.TB_BILHETERIA
+
+                                                       where (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT == "")
+                                               || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT == "N")
+                                               || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT ==  "E"  && b.BIL_RETIF == "S")
+                                               || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT ==  "R"  && b.BIL_RETIF == "S")
+
+                                                       select new MensagensANCINE()
+                                                       {
+                                                           BIL_ID = b.BIL_ID ,
+                                                           BIL_DIA_CIN = b.BIL_DIA_CIN ,
+                                                           SAL_CD_ANCINE = b.SAL_CD_ANCINE ,
+                                                           BIL_HOUVE_SES = b.BIL_HOUVE_SES ,
+                                                           BIL_ADIMP_SALA = b.BIL_ADIMP_SALA ,
+                                                           BIL_PROT = b.BIL_PROT ,
+                                                           BIL_STATUS_PROT = b.BIL_STATUS_PROT ,
+                                                           BIL_RETIF = b.BIL_RETIF ,
+                                                           EMP_CD_ANCINE = b.EMP_CD_ANCINE ,
+                                                       };
+
+
+                                    foreach (var itemMsg in listaBilERRO)
+                                    {
+                                        TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
+                                        TB_MSG.BIL_ID = itemMsg.BIL_ID;
+                                        TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
+                                        TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
+                                        TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
+                                        TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
+                                        TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
+                                        TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
+                                        db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
+
+                                        if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
+                                        else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
+
+                                        if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
+                                        else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
+
+                                        if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                        else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+
+                                        strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
+                                        strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
+                                        strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
+
+                                        TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
+                                    }
+                                    //db.SaveChanges();
+                                }
+
                             }
 
+                            string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
+                            string sal_cd_ok = objReturn.registroANCINESala.ToString();
+                            DateTime dia_cin_ok = objReturn.diaCinematografico;
+
+                            strBil_Id_Inicio = strBil_Id_Inicio_Aux.Split(stringSeparators ,StringSplitOptions.None);
+
+                            var listaBil_ok = (from b in db.TB_BILHETERIA
+
+                                               where (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "")
+                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "N")
+                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
+
+                                               select b);
+                            foreach (var item in listaBil_ok)
+                            {
+
+                                //if (strBil_Id_Inicio_Aux.IndexOf(item.BIL_ID.ToString()) != 0)
+                                //{
+                                if (strBilIdsAux == "") { strBilIdsAux = item.BIL_ID.ToString(); }
+                                else { strBilIdsAux = strBilIdsAux + "," + item.BIL_ID.ToString(); }
+
+                                if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
+                                else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
+
+                                if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                //}
+                            }
+
+                            strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
+                            strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
+                            strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
+                            TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
+
+                            //db.SaveChanges();
                         }
-
-                        string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
-                        string sal_cd_ok = objReturn.registroANCINESala.ToString();
-                        DateTime dia_cin_ok = objReturn.diaCinematografico;
-
-                        strBil_Id_Inicio = strBil_Id_Inicio_Aux.Split(stringSeparators ,StringSplitOptions.None);
-
-                        var listaBil_ok = (from b in db.TB_BILHETERIA
-                                           where b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
-                                           select b);
-                        foreach (var item in listaBil_ok)
+                        else
                         {
 
-                            //if (strBil_Id_Inicio_Aux.IndexOf(item.BIL_ID.ToString()) != 0)
-                            //{
-                            if (strBilIdsAux == "") { strBilIdsAux = item.BIL_ID.ToString(); }
-                            else { strBilIdsAux = strBilIdsAux + "," + item.BIL_ID.ToString(); }
+                            string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
+                            string sal_cd_ok = objReturn.registroANCINESala.ToString();
+                            DateTime dia_cin_ok = objReturn.diaCinematografico;
 
-                            if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
-                            else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
+                            var listaBil_ok = (from b in db.TB_BILHETERIA
 
-                            if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                            else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                            //}
+                                               where (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "")
+                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "N")
+                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
+
+                                               select b);
+                            foreach (var item in listaBil_ok)
+                            {
+                                TB_BILHETERIA TB_BIL_OK = db.TB_BILHETERIA.Find(item.BIL_ID);
+                                TB_BIL_OK.BIL_PROT = objReturn.numeroProtocolo;
+                                TB_BIL_OK.BIL_STATUS_PROT = objReturn.statusProtocolo;
+                                TB_BIL_OK.BIL_DT_ALT_STAT_PROT = DateTime.Now.ToLocalTime();
+                                db.Entry(TB_BIL_OK).State = EntityState.Modified;
+                            }
+                            db.SaveChanges();
                         }
-
-                        strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
-                        strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
-                        strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
-                        TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
-
-                        //db.SaveChanges();
-                    }
-                    else
-                    {
-                        string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
-                        string sal_cd_ok = objReturn.registroANCINESala.ToString();
-                        DateTime dia_cin_ok = objReturn.diaCinematografico;
-
-                        var listaBil_ok = (from b in db.TB_BILHETERIA
-                                           where b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && (b.BIL_STATUS_PROT != "A" && b.BIL_STATUS_PROT != "V") || (b.BIL_STATUS_PROT != "A" && b.BIL_RETIF == "S")
-                                           select b);
-                        foreach (var item in listaBil_ok)
-                        {
-                            TB_BILHETERIA TB_BIL_OK = db.TB_BILHETERIA.Find(item.BIL_ID);
-                            TB_BIL_OK.BIL_PROT = objReturn.numeroProtocolo;
-                            TB_BIL_OK.BIL_STATUS_PROT = objReturn.statusProtocolo;
-                            TB_BIL_OK.BIL_DT_ALT_STAT_PROT = DateTime.Now.ToLocalTime();
-                            db.Entry(TB_BIL_OK).State = EntityState.Modified;
-                        }
-                        //db.SaveChanges();
                     }
                 }
-                //db.SaveChanges();
+
+                db.SaveChanges();
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                switch (ex.Number)
-                {
-                    case 2601:
-                    db.SaveChanges();
-                    break;
-
-                    default:
-                    throw;
-                }
+                ViewBag.ex = ex.Message;
+                clsHelper.LogSCB("SendLoop - BilheteriaController: " + ex.Message);
                 return "ERRO" + ex.Message; ;
             }
 
@@ -3164,6 +3197,8 @@ namespace SCB_TKMIDIA.Controllers
                                 BIL_STATUS_PROT = b.BIL_STATUS_PROT,
                                 BIL_RETIF = b.BIL_RETIF,
                                 EMP_CD_ANCINE = b.EMP_CD_ANCINE,
+                                BIL_DT_ALT_ADIMP = b.BIL_DT_ALT_ADIMP,
+                                BIL_DT_ALT_STAT_PROT = b.BIL_DT_ALT_STAT_PROT,
 
                                 SEA_ID = s.SEA_ID,
                                 FIL_CD_ANCINE = s.FIL_CD_ANCINE,
@@ -3210,6 +3245,8 @@ namespace SCB_TKMIDIA.Controllers
                     BIL_STATUS_PROT = item.BIL_STATUS_PROT,
                     BIL_RETIF = item.BIL_RETIF,
                     EMP_CD_ANCINE = item.EMP_CD_ANCINE,
+                    BIL_DT_ALT_ADIMP = item.BIL_DT_ALT_ADIMP ,
+                    BIL_DT_ALT_STAT_PROT = item.BIL_DT_ALT_STAT_PROT ,
 
                     SEA_ID = item.SEA_ID,
                     FIL_CD_ANCINE = item.FIL_CD_ANCINE,
@@ -3372,6 +3409,8 @@ namespace SCB_TKMIDIA.Controllers
                         string[] BIL_PROT;
                         string[] BIL_ADIMP_SALA;
                         string[] BIL_STATUS_PROT;
+                        string[] BIL_DT_ALT_ADIMP;
+                        string[] BIL_DT_ALT_STAT_PROT;
 
                         string strBIL_ID_aux = "";
                         string strEMP_CD_ANCINE_aux = "";
@@ -3382,6 +3421,8 @@ namespace SCB_TKMIDIA.Controllers
                         string strBIL_PROT_aux = "";
                         string strBIL_ADIMP_SALA_aux = "";
                         string strBIL_STATUS_PROT_aux = "";
+                        string strBIL_DT_ALT_ADIMP_aux = "";
+                        string strBIL_DT_ALT_STAT_PROT_aux = "";
 
                         string[] SEA_ID;
                         string[] SEA_DT_HR_INICIO;
@@ -3455,6 +3496,8 @@ namespace SCB_TKMIDIA.Controllers
                             if (key == "BIL_PROT") { strBIL_PROT_aux = value; }
                             if (key == "BIL_ADIMP_SALA") { strBIL_ADIMP_SALA_aux = value; }
                             if (key == "BIL_STATUS_PROT") { strBIL_STATUS_PROT_aux = value; }
+                            if (key == "BIL_DT_ALT_ADIMP") { strBIL_DT_ALT_ADIMP_aux = value; }
+                            if (key == "BIL_DT_ALT_STAT_PROT") { strBIL_DT_ALT_STAT_PROT_aux = value; }
 
                             //..........TB_SESSAO.........//
                             if (key == "SEA_ID") { strSEA_ID_aux = value; }
@@ -3497,6 +3540,8 @@ namespace SCB_TKMIDIA.Controllers
                         BIL_PROT = strBIL_PROT_aux.Split(stringSeparators, StringSplitOptions.None);
                         BIL_ADIMP_SALA = strBIL_ADIMP_SALA_aux.Split(stringSeparators, StringSplitOptions.None);
                         BIL_STATUS_PROT = strBIL_STATUS_PROT_aux.Split(stringSeparators, StringSplitOptions.None);
+                        BIL_DT_ALT_ADIMP = strBIL_DT_ALT_ADIMP_aux.Split(stringSeparators ,StringSplitOptions.None);
+                        BIL_DT_ALT_STAT_PROT = strBIL_DT_ALT_STAT_PROT_aux.Split(stringSeparators ,StringSplitOptions.None);
 
                         SEA_ID = strSEA_ID_aux.Split(stringSeparators, StringSplitOptions.None);
                         SEA_DT_HR_INICIO = strSEA_DT_HR_INICIO_aux.Split(stringSeparators, StringSplitOptions.None);
@@ -3533,7 +3578,7 @@ namespace SCB_TKMIDIA.Controllers
 
                         //.......TB_BILHETERIA........//
                         long bil_id_find = 0;
-                        bil_id_find = Convert.ToUInt16(BIL_ID[0]);
+                        bil_id_find = Convert.ToUInt32(BIL_ID[0]);
                         TB_BILHETERIA tb_bil = context.TB_BILHETERIA.Find(bil_id_find);
                         tb_bil.EMP_CD_ANCINE = EMP_CD_ANCINE[0];
                         tb_bil.SAL_CD_ANCINE = SAL_CD_ANCINE[0];
@@ -3541,8 +3586,15 @@ namespace SCB_TKMIDIA.Controllers
                         tb_bil.BIL_HOUVE_SES = BIL_HOUVE_SES[0];
                         tb_bil.BIL_RETIF = BIL_RETIF[0];
                         tb_bil.BIL_PROT = BIL_PROT[0];
-                        //tb_bil.BIL_ADIMP_SALA = BIL_ADIMP_SALA[0];
+                        tb_bil.BIL_ADIMP_SALA = BIL_ADIMP_SALA[0];
                         tb_bil.BIL_STATUS_PROT = BIL_STATUS_PROT[0];
+
+                        if (BIL_DT_ALT_ADIMP[0] != "") { tb_bil.BIL_DT_ALT_ADIMP = Convert.ToDateTime(BIL_DT_ALT_ADIMP[0]); }
+                        if (BIL_DT_ALT_STAT_PROT[0] != "") { tb_bil.BIL_DT_ALT_STAT_PROT = Convert.ToDateTime(BIL_DT_ALT_STAT_PROT[0]); }
+
+                        //tb_bil.BIL_DT_ALT_ADIMP = BIL_DT_ALT_ADIMP[0] == "" ? DateTime.MinValue : Convert.ToDateTime(BIL_DT_ALT_ADIMP[0]);
+                        //tb_bil.BIL_DT_ALT_STAT_PROT = BIL_DT_ALT_STAT_PROT[0] == "" ? DateTime.MinValue : Convert.ToDateTime(BIL_DT_ALT_STAT_PROT[0]);
+
                         context.Entry(tb_bil).State = EntityState.Modified;
                         context.SaveChanges();
 
@@ -3551,7 +3603,7 @@ namespace SCB_TKMIDIA.Controllers
 
                         //..........TB_SESSAO.........//
                         long sea_id_find = 0;
-                        sea_id_find = Convert.ToUInt16(SEA_ID[0]);
+                        sea_id_find = Convert.ToUInt32(SEA_ID[0]);
                         TB_SESSAO_ANCINE tb_sea = context.TB_SESSAO_ANCINE.Find(sea_id_find);
 
                         DataAux = tb_bil.BIL_DIA_CIN.ToShortDateString();
@@ -3572,7 +3624,7 @@ namespace SCB_TKMIDIA.Controllers
                         tb_sea.SEA_DIS_CNPJ = dist.DIS_CNPJ;
                         tb_sea.SEA_DIS_NM = dist.DIS_NM;
 
-                        tb_sea.SEA_VRE_CNPJ = (SEA_VRE_CNPJ[0] == "" ? 0 : Convert.ToUInt16(SEA_VRE_CNPJ[0]));
+                        tb_sea.SEA_VRE_CNPJ = (SEA_VRE_CNPJ[0] == "" ? 0 : Convert.ToUInt32(SEA_VRE_CNPJ[0]));
                         tb_sea.SEA_RZ_SOCIAL = SEA_RZ_SOCIAL[0];
 
 
@@ -3592,13 +3644,13 @@ namespace SCB_TKMIDIA.Controllers
                             strSAL_QTD_LUG_PDR_ESP = "0";
                         }
 
-                        long tta_id_find = Convert.ToUInt16(TTA_ID[0]);
+                        long tta_id_find = Convert.ToUInt32(TTA_ID[0]);
                         TB_TOT_TP_ASSENTO tb_tta = context.TB_TOT_TP_ASSENTO.Find(tta_id_find);
                         tb_tta.TTA_TP_ASSENTO = "P";
                         tb_tta.TTA_QTD_DISP = Convert.ToUInt16(strSAL_QTD_LUG_PDR_AUX);
                         context.Entry(tb_tta).State = EntityState.Modified;
 
-                        long tta_id_find2 = Convert.ToUInt16(TTA_ID[12]);
+                        long tta_id_find2 = Convert.ToUInt32(TTA_ID[12]);
                         TB_TOT_TP_ASSENTO tb_tta2 = context.TB_TOT_TP_ASSENTO.Find(tta_id_find2);
                         tb_tta2.TTA_TP_ASSENTO = "E";
                         tb_tta2.TTA_QTD_DISP = Convert.ToUInt16(strSAL_QTD_LUG_PDR_ESP);
@@ -3609,25 +3661,25 @@ namespace SCB_TKMIDIA.Controllers
                         //..........TB_TOT_CATEG_ING.........//
                         // ASSENTO PADRÃO.
 
-                        long tci_id_find = Convert.ToUInt16(TCI_ID[0]);
+                        long tci_id_find = Convert.ToUInt32(TCI_ID[0]);
                         TB_TOT_CATEG_ING tb_tci = context.TB_TOT_CATEG_ING.Find(tci_id_find);
                         tb_tci.TCI_CAT = 1;
                         tb_tci.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[0]);
                         context.Entry(tb_tci).State = EntityState.Modified;
 
-                        long tci_id_find2 = Convert.ToUInt16(TCI_ID[3]);
+                        long tci_id_find2 = Convert.ToUInt32(TCI_ID[3]);
                         TB_TOT_CATEG_ING tb_tci2 = context.TB_TOT_CATEG_ING.Find(tci_id_find2);
                         tb_tci2.TCI_CAT = 2;
                         tb_tci2.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[1]);
                         context.Entry(tb_tci2).State = EntityState.Modified;
 
-                        long tci_id_find3 = Convert.ToUInt16(TCI_ID[6]);
+                        long tci_id_find3 = Convert.ToUInt32(TCI_ID[6]);
                         TB_TOT_CATEG_ING tb_tci3 = context.TB_TOT_CATEG_ING.Find(tci_id_find3);
                         tb_tci3.TCI_CAT = 4;
                         tb_tci3.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[2]);
                         context.Entry(tb_tci3).State = EntityState.Modified;
 
-                        long tci_id_find4 = Convert.ToUInt16(TCI_ID[9]);
+                        long tci_id_find4 = Convert.ToUInt32(TCI_ID[9]);
                         TB_TOT_CATEG_ING tb_tci4 = context.TB_TOT_CATEG_ING.Find(tci_id_find4);
                         tb_tci4.TCI_CAT = 3;
                         tb_tci4.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[3]);
@@ -3635,25 +3687,25 @@ namespace SCB_TKMIDIA.Controllers
 
                         //..........TB_TOT_CATEG_ING.........//
                         // ASSENTO ESPECIAL.
-                        long tci_id_find5 = Convert.ToUInt16(TCI_ID[12]);
+                        long tci_id_find5 = Convert.ToUInt32(TCI_ID[12]);
                         TB_TOT_CATEG_ING tb_tci5 = context.TB_TOT_CATEG_ING.Find(tci_id_find5);
                         tb_tci5.TCI_CAT = 1;
                         tb_tci5.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[4]);
                         context.Entry(tb_tci5).State = EntityState.Modified;
 
-                        long tci_id_find6 = Convert.ToUInt16(TCI_ID[15]);
+                        long tci_id_find6 = Convert.ToUInt32(TCI_ID[15]);
                         TB_TOT_CATEG_ING tb_tci6 = context.TB_TOT_CATEG_ING.Find(tci_id_find6);
                         tb_tci6.TCI_CAT = 2;
                         tb_tci6.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[5]);
                         context.Entry(tb_tci6).State = EntityState.Modified;
 
-                        long tci_id_find7 = Convert.ToUInt16(TCI_ID[18]);
+                        long tci_id_find7 = Convert.ToUInt32(TCI_ID[18]);
                         TB_TOT_CATEG_ING tb_tci7 = context.TB_TOT_CATEG_ING.Find(tci_id_find7);
                         tb_tci7.TCI_CAT = 4;
                         tb_tci7.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[6]);
                         context.Entry(tb_tci7).State = EntityState.Modified;
 
-                        long tci_id_find8 = Convert.ToUInt16(TCI_ID[21]);
+                        long tci_id_find8 = Convert.ToUInt32(TCI_ID[21]);
                         TB_TOT_CATEG_ING tb_tci8 = context.TB_TOT_CATEG_ING.Find(tci_id_find8);
                         tb_tci8.TCI_CAT = 3;
                         tb_tci8.TCI_QTD_ESPECT = Convert.ToUInt16(TCI_QTD_ESPECT[7]);
@@ -3662,19 +3714,19 @@ namespace SCB_TKMIDIA.Controllers
 
 
 
-                        long tmp_id_find = Convert.ToUInt16(TMP_ID[0]);
+                        long tmp_id_find = Convert.ToUInt32(TMP_ID[0]);
                         TB_TOT_MOD_PAGTO tb_tmp = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find);
                         tb_tmp.TMP_MOD_PAG = 1;
                         tb_tmp.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_TRAD[0]);
                         context.Entry(tb_tmp).State = EntityState.Modified;
 
-                        long tmp_id_find2 = Convert.ToUInt16(TMP_ID[1]);
+                        long tmp_id_find2 = Convert.ToUInt32(TMP_ID[1]);
                         TB_TOT_MOD_PAGTO tb_tmp2 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find2);
                         tb_tmp2.TMP_MOD_PAG = 2;
                         tb_tmp2.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_VC[0]);
                         context.Entry(tb_tmp2).State = EntityState.Modified;
 
-                        long tmp_id_find3 = Convert.ToUInt16(TMP_ID[2]);
+                        long tmp_id_find3 = Convert.ToUInt32(TMP_ID[2]);
                         TB_TOT_MOD_PAGTO tb_tmp3 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find3);
                         tb_tmp3.TMP_MOD_PAG = 3;
                         tb_tmp3.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_OUT[0]);
@@ -3682,19 +3734,19 @@ namespace SCB_TKMIDIA.Controllers
 
 
 
-                        long tmp_id_find4 = Convert.ToUInt16(TMP_ID[3]);
+                        long tmp_id_find4 = Convert.ToUInt32(TMP_ID[3]);
                         TB_TOT_MOD_PAGTO tb_tmp4 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find4);
                         tb_tmp4.TMP_MOD_PAG = 1;
                         tb_tmp4.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_TRAD[1]);
                         context.Entry(tb_tmp4).State = EntityState.Modified;
 
-                        long tmp_id_find5 = Convert.ToUInt16(TMP_ID[4]);
+                        long tmp_id_find5 = Convert.ToUInt32(TMP_ID[4]);
                         TB_TOT_MOD_PAGTO tb_tmp5 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find5);
                         tb_tmp5.TMP_MOD_PAG = 2;
                         tb_tmp5.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_VC[1]);
                         context.Entry(tb_tmp5).State = EntityState.Modified;
 
-                        long tmp_id_find6 = Convert.ToUInt16(TMP_ID[5]);
+                        long tmp_id_find6 = Convert.ToUInt32(TMP_ID[5]);
                         TB_TOT_MOD_PAGTO tb_tmp6 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find6);
                         tb_tmp6.TMP_MOD_PAG = 3;
                         tb_tmp6.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_OUT[1]);
@@ -3702,19 +3754,19 @@ namespace SCB_TKMIDIA.Controllers
 
 
 
-                        long tmp_id_find7 = Convert.ToUInt16(TMP_ID[6]);
+                        long tmp_id_find7 = Convert.ToUInt32(TMP_ID[6]);
                         TB_TOT_MOD_PAGTO tb_tmp7 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find7);
                         tb_tmp7.TMP_MOD_PAG = 1;
                         tb_tmp7.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_TRAD[2]);
                         context.Entry(tb_tmp7).State = EntityState.Modified;
 
-                        long tmp_id_find8 = Convert.ToUInt16(TMP_ID[7]);
+                        long tmp_id_find8 = Convert.ToUInt32(TMP_ID[7]);
                         TB_TOT_MOD_PAGTO tb_tmp8 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find8);
                         tb_tmp8.TMP_MOD_PAG = 2;
                         tb_tmp8.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_VC[2]);
                         context.Entry(tb_tmp8).State = EntityState.Modified;
 
-                        long tmp_id_find9 = Convert.ToUInt16(TMP_ID[8]);
+                        long tmp_id_find9 = Convert.ToUInt32(TMP_ID[8]);
                         TB_TOT_MOD_PAGTO tb_tmp9 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find9);
                         tb_tmp9.TMP_MOD_PAG = 3;
                         tb_tmp9.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_OUT[2]);
@@ -3722,19 +3774,19 @@ namespace SCB_TKMIDIA.Controllers
 
 
 
-                        long tmp_id_find10 = Convert.ToUInt16(TMP_ID[12]);
+                        long tmp_id_find10 = Convert.ToUInt32(TMP_ID[12]);
                         TB_TOT_MOD_PAGTO tb_tmp10 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find10);
                         tb_tmp10.TMP_MOD_PAG = 1;
                         tb_tmp10.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_TRAD[3]);
                         context.Entry(tb_tmp10).State = EntityState.Modified;
 
-                        long tmp_id_find11 = Convert.ToUInt16(TMP_ID[13]);
+                        long tmp_id_find11 = Convert.ToUInt32(TMP_ID[13]);
                         TB_TOT_MOD_PAGTO tb_tmp11 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find11);
                         tb_tmp11.TMP_MOD_PAG = 2;
                         tb_tmp11.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_VC[3]);
                         context.Entry(tb_tmp11).State = EntityState.Modified;
 
-                        long tmp_id_find12 = Convert.ToUInt16(TMP_ID[14]);
+                        long tmp_id_find12 = Convert.ToUInt32(TMP_ID[14]);
                         TB_TOT_MOD_PAGTO tb_tmp12 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find12);
                         tb_tmp12.TMP_MOD_PAG = 3;
                         tb_tmp12.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_OUT[3]);
@@ -3743,19 +3795,19 @@ namespace SCB_TKMIDIA.Controllers
 
 
 
-                        long tmp_id_find13 = Convert.ToUInt16(TMP_ID[15]);
+                        long tmp_id_find13 = Convert.ToUInt32(TMP_ID[15]);
                         TB_TOT_MOD_PAGTO tb_tmp13 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find13);
                         tb_tmp13.TMP_MOD_PAG = 1;
                         tb_tmp13.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_TRAD[4]);
                         context.Entry(tb_tmp13).State = EntityState.Modified;
 
-                        long tmp_id_find14 = Convert.ToUInt16(TMP_ID[16]);
+                        long tmp_id_find14 = Convert.ToUInt32(TMP_ID[16]);
                         TB_TOT_MOD_PAGTO tb_tmp14 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find14);
                         tb_tmp14.TMP_MOD_PAG = 2;
                         tb_tmp14.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_VC[4]);
                         context.Entry(tb_tmp14).State = EntityState.Modified;
 
-                        long tmp_id_find15 = Convert.ToUInt16(TMP_ID[17]);
+                        long tmp_id_find15 = Convert.ToUInt32(TMP_ID[17]);
                         TB_TOT_MOD_PAGTO tb_tmp15 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find15);
                         tb_tmp15.TMP_MOD_PAG = 3;
                         tb_tmp15.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_OUT[4]);
@@ -3763,19 +3815,19 @@ namespace SCB_TKMIDIA.Controllers
 
 
 
-                        long tmp_id_find16 = Convert.ToUInt16(TMP_ID[18]);
+                        long tmp_id_find16 = Convert.ToUInt32(TMP_ID[18]);
                         TB_TOT_MOD_PAGTO tb_tmp16 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find16);
                         tb_tmp16.TMP_MOD_PAG = 1;
                         tb_tmp16.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_TRAD[5]);
                         context.Entry(tb_tmp16).State = EntityState.Modified;
 
-                        long tmp_id_find17 = Convert.ToUInt16(TMP_ID[19]);
+                        long tmp_id_find17 = Convert.ToUInt32(TMP_ID[19]);
                         TB_TOT_MOD_PAGTO tb_tmp17 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find17);
                         tb_tmp17.TMP_MOD_PAG = 2;
                         tb_tmp17.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_VC[5]);
                         context.Entry(tb_tmp17).State = EntityState.Modified;
 
-                        long tmp_id_find18 = Convert.ToUInt16(TMP_ID[20]);
+                        long tmp_id_find18 = Convert.ToUInt32(TMP_ID[20]);
                         TB_TOT_MOD_PAGTO tb_tmp18 = context.TB_TOT_MOD_PAGTO.Find(tmp_id_find18);
                         tb_tmp18.TMP_MOD_PAG = 3;
                         tb_tmp18.TMP_VLR_ARR = Convert.ToDouble(TMP_VLR_ARR_OUT[5]);
@@ -3990,23 +4042,23 @@ namespace SCB_TKMIDIA.Controllers
             {
                 DateTime bil_dia_cin_aux = Convert.ToDateTime(bil_dia_cin);
 
-                //var listaBil = (from b in db.TB_BILHETERIA
-                //                where b.BIL_PROT != "" && b.BIL_STATUS_PROT == "A" && b.BIL_DIA_CIN == bil_dia_cin_aux
-                //                group b by new { b.BIL_DIA_CIN, b.SAL_CD_ANCINE, b.BIL_PROT } into pg
-                //                orderby pg.FirstOrDefault().BIL_DIA_CIN, pg.FirstOrDefault().SAL_CD_ANCINE
-                //                select new MensagensANCINE()
-                //                {
-                //                    BIL_DIA_CIN = pg.FirstOrDefault().BIL_DIA_CIN,
-                //                    SAL_CD_ANCINE = pg.FirstOrDefault().SAL_CD_ANCINE,
-                //                    BIL_PROT = pg.FirstOrDefault().BIL_PROT,
-                //                }).ToList();
-
                 var listaBil = db.vw_PROT_ANALISE.Where(d => d.BIL_DIA_CIN == bil_dia_cin_aux).ToList();
 
                 foreach (var item in listaBil)
                 {
                     if (item.BIL_PROT != "")
                     {
+
+                        ObjectParameter cdErro = new ObjectParameter("erro" ,0);
+                        ObjectParameter msgErro = new ObjectParameter("msgErr" , "");
+
+                        var strRet = AtualizaProtocolo(item.BIL_DIA_CIN, item.SAL_CD_ANCINE, item.BIL_PROT, cdErro, msgErro);
+
+                        if (strRet != "S")
+                        {
+                            ViewBag.ex = ViewBag.ex + "<br />" + strRet;
+                        }
+
                         //AtualizaProtocolo(item.BIL_DIA_CIN, item.SAL_CD_ANCINE ,item.BIL_PROT);
                     }
                 }
@@ -4098,7 +4150,7 @@ namespace SCB_TKMIDIA.Controllers
             return RedirectToAction("IndexStatus");
         }
 
-        //******************************************************************************************
+        //******************************************************************************************************************************************
         public string AtualizaProtocolo(DateTime BilDiaCin, string salCdAncine , string IdProtocolo,ObjectParameter cdErro, ObjectParameter msgErro)
         {
 
@@ -4315,7 +4367,7 @@ namespace SCB_TKMIDIA.Controllers
 
                 for (var item = 0; item < strBilIds.Length; item++)
                 {
-                    bilAux = Convert.ToInt16(strBilIds[item]);
+                    bilAux = Convert.ToInt32(strBilIds[item]);
 
                     TB_BILHETERIA TB_BIL = db.TB_BILHETERIA.Find(bilAux);
                     if (TB_BIL != null)
@@ -4381,7 +4433,7 @@ namespace SCB_TKMIDIA.Controllers
             return "true";
         }
 
-        public void SendRentrac(string strFileName)
+        public void SendFTP(string strFileContent, string strFileName, bool chkFTP)
         {
             string str_FTP_User = ConfigurationManager.AppSettings["FTP_User"];
             string str_FTP_Pwd = ConfigurationManager.AppSettings["FTP_Pwd"];
@@ -4389,53 +4441,62 @@ namespace SCB_TKMIDIA.Controllers
             string str_FTP_Dir_Rentrac = ConfigurationManager.AppSettings["FTP_Dir_Rentrac"];
             string str_FTP_Dir_Local = ConfigurationManager.AppSettings["FTP_Dir_Local"];
 
-            //Caminho do arquivo para upload
-            FileInfo fileInf = new FileInfo(str_FTP_Dir_Local + strFileName);
-
-            //Cria comunicação com o servidor
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(str_FTP_URL + str_FTP_Dir_Rentrac + "/" + strFileName);
-
-            //Define que a ação vai ser de upload
-            request.Method = WebRequestMethods.Ftp.UploadFile;
-
-            //Credenciais para o login (usuario, senha)
-            request.Credentials = new NetworkCredential(str_FTP_User ,str_FTP_Pwd);
-
-            //modo passivo
-            request.UsePassive = true;
-
-            //dados binarios
-            request.UseBinary = true;
-
-            //setar o KeepAlive para false
-            request.KeepAlive = false;
-
-            request.ContentLength = fileInf.Length;
-
-            //cria a stream que será usada para mandar o arquivo via FTP
-            Stream responseStream = request.GetRequestStream();
-            byte[] buffer = new byte[2048];
-
-            //Lê o arquivo de origem
-            FileStream fs = fileInf.OpenRead();
-            try
+            using (StreamWriter outputFile = System.IO.File.AppendText(str_FTP_Dir_Local + strFileName))
             {
-                //Enquanto vai lendo o arquivo de origem, vai escrevendo no FTP
-                int readCount = fs.Read(buffer, 0, buffer.Length);
-                while (readCount > 0)
+                string linha_ = strFileContent;
+
+                outputFile.WriteLine(linha_);
+
+            }
+
+            if (chkFTP)
+            {
+                //Caminho do arquivo para upload
+                FileInfo fileInf = new FileInfo(str_FTP_Dir_Local + strFileName);
+
+                //Cria comunicação com o servidor
+                FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(str_FTP_URL + str_FTP_Dir_Rentrac + "/" + strFileName);
+
+                //Define que a ação vai ser de upload
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+
+                //Credenciais para o login (usuario, senha)
+                request.Credentials = new NetworkCredential(str_FTP_User ,str_FTP_Pwd);
+
+                //modo passivo
+                request.UsePassive = true;
+
+                //dados binarios
+                request.UseBinary = true;
+
+                //setar o KeepAlive para false
+                request.KeepAlive = false;
+
+                request.ContentLength = fileInf.Length;
+
+                //cria a stream que será usada para mandar o arquivo via FTP
+                Stream responseStream = request.GetRequestStream();
+                byte[] buffer = new byte[2048];
+
+                //Lê o arquivo de origem
+                FileStream fs = fileInf.OpenRead();
+                try
                 {
-                    //Esceve o arquivo
-                    responseStream.Write(buffer ,0 ,readCount);
-                    readCount = fs.Read(buffer ,0 ,buffer.Length);
+                    //Enquanto vai lendo o arquivo de origem, vai escrevendo no FTP
+                    int readCount = fs.Read(buffer, 0, buffer.Length);
+                    while (readCount > 0)
+                    {
+                        //Esceve o arquivo
+                        responseStream.Write(buffer ,0 ,readCount);
+                        readCount = fs.Read(buffer ,0 ,buffer.Length);
+                    }
+                }
+                finally
+                {
+                    fs.Close();
+                    responseStream.Close();
                 }
             }
-            finally
-            {
-                fs.Close();
-                responseStream.Close();
-            }
-
         }
-
     }
 }
