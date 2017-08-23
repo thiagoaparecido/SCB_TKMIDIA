@@ -1,55 +1,86 @@
 ﻿
 <div style="align-items:center">
-    <br />
-    <br />
-    <table class="table">
-        <tr>
-            <td>
-                <h2>
-                    TKMidia SCB<br />
-                    <small>Envio de Bilheteria para Ancine</small>&nbsp;&nbsp;&nbsp;
-                </h2>
-            </td>
-            <td >
-                @{
-                    string data_atual;
-                    string[] dateformats = DateTime.Today.GetDateTimeFormats();
-                    data_atual = dateformats[14];
-                    data_atual = char.ToUpper(data_atual[0]) + data_atual.Substring(1);
-                    data_atual = "<p class='lead'>&nbsp;" + data_atual + "</p>";
-                 }
-                @Html.Raw(data_atual)
-                
-                <ul class="nav nav-pills" role="tablist">
-                    <li role="presentation" class="navbar-default"><a href="/BILHETERIA">Não enviados <span class="badge">@ViewBag.qtdNaoEnviado</span></a></li>
-                    <li role="presentation" class="navbar-default"><a href="/BILHETERIA/IndexStatus" style="color:red">Envios com Erros <span class="badge">@ViewBag.qtdErro</span></a></li>
-                    <li role="presentation" class="navbar-default"><a href="/BILHETERIA/IndexStatus">Envios em Análise <span class="badge">@ViewBag.qtdEmAnalise</span></a></li>
-                </ul>
-            </td>
-        </tr>
-    </table>
-    <br />
-    <br />
-    <br />
+	<br />
+	<br />
+	<table class="table">
+		<tr>
+			<td>
+				<h2>
+					SCB TicketMidia<br />
+					<small>Envio de Bilheteria para Ancine</small>&nbsp;&nbsp;&nbsp;
+				</h2>
+				<br />
+				<br />
+				@{
+					string data_atual;
+					string[] dateformats = DateTime.Today.GetDateTimeFormats();
+					data_atual = dateformats[14];
+					data_atual = char.ToUpper(data_atual[0]) + data_atual.Substring(1);
+					data_atual = "<p class='lead'>&nbsp;" + data_atual + "</p>";
+				}
+				@Html.Raw(data_atual)
+			</td>
+			<td>
+
+				
+				<br />
+				<br />
+
+				<table style="font-size:larger">
+					<tr>
+						<td>Último Movimento Cadastrado: </td>
+						<td>&nbsp;&nbsp;&nbsp;</td>
+						<td style="color:deepskyblue"><a href="/BILHETERIA/IndexRendas">@ViewBag.dtStatusAdimp</a></td>
+					</tr>
+				</table>
+
+				<br />
+
+				<ul class="nav nav-pills" role="tablist">
+					<li role="presentation" class="navbar-default"><a href="/BILHETERIA/IndexRendas">Não enviados <span class="badge">@ViewBag.qtdNaoEnviado</span></a></li>
+					<li role="presentation" class="navbar-default"><a href="/BILHETERIA/IndexRendas" style="color:red">Envios com Erros <span class="badge">@ViewBag.qtdErro</span></a></li>
+					<li role="presentation" class="navbar-default"><a href="/BILHETERIA/IndexRendas">Envios em Análise <span class="badge">@ViewBag.qtdEmAnalise</span></a></li>
+				</ul>
+				<br />
+				<br />
+				<br />
+				<div class="well center-block col-md-10" style="text-align:center">
+					<div class="col-md-4">
+						<a href="/BILHETERIA/CREATE" class="btn btn-success center-block" role="button"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Lançar Renda</a>
+					</div>
+
+					<div class="col-md-4">
+						<a href="~/FILME/CREATE" class="btn bg-primary center-block" role="button"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Obras (Filmes)&nbsp;&nbsp;<i class="fa fa-film" aria-hidden="true"></i></a>
+					</div>
+
+					<div class="col-md-4">
+						<a href="/DISTRIBUIDORA/CREATE" class="btn btn-info center-block" role="button"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Distribuidora</a>
+					</div>
+
+				</div>
+
+			</td>
+		</tr>
+		<tr>
+
+		</tr>
+	</table>
+	<br />
+	<br />
+	<br />
 
 
 
-    <div class="table">
-        <div class="row" style="text-align:justify">
-            <div class="col-md-2">
-                <a href="/BILHETERIA/CREATE" class="btn btn-success" role="button"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Lançar Renda</a>
-            </div>
-            <div class="col-md-2">
-                <a href="~/FILME" class="btn bg-primary" role="button"><i class="fa fa-film" aria-hidden="true"></i>&nbsp;&nbsp;Obras (Filmes)</a>
-            </div>
-            <div class="col-md-2">
-                <a href="/BILHETERIA/AtualizaAncine" class="btn btn-danger" role="button"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;Atualizar Ancine</a>
-            </div>
-            <div class="col-md-2">
-                <a href="/SALA" class="btn btn-warning" role="button"><i class="fa fa-video-camera" aria-hidden="true"></i>&nbsp;&nbsp;Adimplência Salas</a>
-            </div>
-        </div>
-        <br />
-        <br />
-    </div>
+	<div class="table">
+		<div class="row" style="text-align:justify">
+			@*<div class="col-md-2">
+				<a href="/BILHETERIA/CREATE" class="btn btn-success" role="button"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Lançar Renda</a>
+			</div>
+			<div class="col-md-2">
+				<a href="~/FILME/CREATE" class="btn bg-primary" role="button"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Obras (Filmes)&nbsp;&nbsp;<i class="fa fa-film" aria-hidden="true"></i></a>
+			</div>*@
+		</div>
+		<br />
+		<br />
+	</div>
 </div>

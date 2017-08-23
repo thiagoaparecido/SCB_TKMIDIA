@@ -10,10 +10,11 @@ using SCBIntegration.Entities;
 using System.Configuration;
 using SCBIntegration;
 using System.Web.Routing;
-using SCB_TKMIDIA.Helpers;
 using System.Xml.Serialization;
 using System.Net;
 using System.Data.Entity.Core.Objects;
+using System.Text;
+using System.Xml;
 
 namespace SCB_TKMIDIA.Controllers
 {
@@ -587,7 +588,833 @@ namespace SCB_TKMIDIA.Controllers
         }
 
         //************************************************
-        public JsonResult SendByDate(string bIL_DIA_CIN ,bool chkAncine, bool chkXML, bool chkFTP)
+        public JsonResult SendByDateXMLFTP(string bIL_DIA_CIN, bool chkXML, bool chkFTP)
+        {
+            try
+            {
+                DateTime bIL_DIA_CIN_aux = Convert.ToDateTime(bIL_DIA_CIN);
+
+                // PEGA TODAS DAS RENDAS DO DIA **** SOMENTE AS ENVIADAS OK PARA ANCINE**** //
+                var listaSes = (from b in db.TB_BILHETERIA
+                                where b.BIL_DIA_CIN == bIL_DIA_CIN_aux
+                                && ((b.BIL_STATUS_PROT == "V"))
+
+                                group b by new { b.BIL_DIA_CIN, b.SAL_CD_ANCINE, b.BIL_HOUVE_SES } into pg
+                                orderby pg.FirstOrDefault().BIL_DIA_CIN, pg.FirstOrDefault().SAL_CD_ANCINE
+                                select pg);
+
+                if (listaSes.Any() == false)
+                {
+                    TempData["bil_dia_cin"] = Convert.ToDateTime(bIL_DIA_CIN);
+                    return Json("Não existem Rendas com Status Validado - OK para geração de arquivos !" ,JsonRequestBehavior.AllowGet);
+                }
+
+                foreach (var ses in listaSes)
+                {
+                    var strenvio = SendLoopXMLFTP(bIL_DIA_CIN, ses.FirstOrDefault().SAL_CD_ANCINE, ses.FirstOrDefault().BIL_HOUVE_SES, chkXML, chkFTP);
+
+                    if (strenvio != "SendLoopXMLFTP OK")
+                    {
+                        return Json(strenvio ,JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+                db.SaveChanges();
+                TempData["bil_dia_cin"] = bIL_DIA_CIN_aux.ToShortDateString();
+
+                return Json("OK" ,JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ex = ex.Message;
+                clsHelper.LogSCB("SendByDateXMLFTP - BilheteriaController" + ex.Message);
+                return Json(ex.Message ,JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        //*****************************************************************************************************************
+        public string SendLoopXMLFTP(string bIL_DIA_CIN ,string sAL_CD_ANCINE ,string houve_ses, bool chkXML, bool chkFTP)
+        {
+            string msgRet = "SendLoopXMLFTP OK";
+
+            try
+            {
+                Bilheteria objBilheteria = new Bilheteria();
+                List<Sessao> listaSessoes = new List<Sessao>();
+
+                DateTime bIL_DIA_CIN_aux = Convert.ToDateTime(bIL_DIA_CIN);
+
+                long tta_idP = 0;
+                string cdTipoAssentoP = "";
+                int qtdDisponibilizadaP = 0;
+
+                string[] strBil_Id_Inicio;
+                string strBil_Id_Inicio_Aux = "";
+                int Bil_Id_Inicio = 0;
+                int qtdBil_Id_Inicio = 0;
+
+                long tta_idE = 0;
+                string cdTipoAssentoE = "";
+                int qtdDisponibilizadaE = 0;
+
+                int qtdEspectadoresIntP = 0;
+                int qtdEspectadoresMeiaP = 0;
+                int qtdEspectadoresCortP = 0;
+                int qtdEspectadoresPromP = 0;
+
+                int qtdEspectadoresIntE = 0;
+                int qtdEspectadoresMeiaE = 0;
+                int qtdEspectadoresCortE = 0;
+                int qtdEspectadoresPromE = 0;
+
+                //string strfil_cd_Aux = "";
+
+                string[] TotaisModPagto;
+                TotaisModPagto = new string[24];
+
+                DateTime bIL_DIA_CIN_aux2 = Convert.ToDateTime(bIL_DIA_CIN_aux);
+
+                // PEGA TODAS DAS RENDAS DO DIA E SALA - SEM SESSÃO //
+                if (houve_ses == "N")
+                {
+                    var listaBil = from b in db.TB_BILHETERIA
+                                   where (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "N" && b.BIL_STATUS_PROT == "V" )
+                                   select b;
+
+                    foreach (var Itembil in listaBil)
+                    {
+                        objBilheteria.registroANCINEExibidor = Convert.ToUInt16(Itembil.EMP_CD_ANCINE);
+                        objBilheteria.registroANCINESala = Convert.ToUInt32(Itembil.SAL_CD_ANCINE);
+                        objBilheteria.diaCinematografico = Itembil.BIL_DIA_CIN;
+                        objBilheteria.houveSessoes = Itembil.BIL_HOUVE_SES;
+                        objBilheteria.retificador = Itembil.BIL_RETIF;
+
+                        goto Envio;
+                    }
+
+                }
+
+
+                // PEGA TODAS DAS RENDAS DO DIA E SALA - COM SESSÃO//
+                var listaSes = from b in db.TB_BILHETERIA
+                               join s in db.TB_SESSAO_ANCINE on b.BIL_ID equals s.BIL_ID
+
+                               where (b.BIL_DIA_CIN == bIL_DIA_CIN_aux2 && b.SAL_CD_ANCINE == sAL_CD_ANCINE && b.BIL_HOUVE_SES == "S" && b.BIL_STATUS_PROT == "V" )
+                               orderby b.BIL_DIA_CIN, b.SAL_CD_ANCINE
+                               select new MensagensANCINE()
+                               {
+                                   BIL_ID = b.BIL_ID,
+                                   BIL_DIA_CIN = b.BIL_DIA_CIN,
+                                   SAL_CD_ANCINE = b.SAL_CD_ANCINE,
+                                   BIL_HOUVE_SES = b.BIL_HOUVE_SES,
+                                   BIL_ADIMP_SALA = b.BIL_ADIMP_SALA,
+                                   BIL_PROT = b.BIL_PROT,
+                                   BIL_STATUS_PROT = b.BIL_STATUS_PROT,
+                                   BIL_RETIF = b.BIL_RETIF,
+                                   EMP_CD_ANCINE = b.EMP_CD_ANCINE,
+
+                                   SEA_ID = s.SEA_ID,
+                                   FIL_CD_ANCINE = s.FIL_CD_ANCINE,
+                                   SEA_DT_HR_INICIO = s.SEA_DT_HR_INICIO,
+                                   SEA_MODAL = s.SEA_MODAL,
+                                   SEA_FIL_NM = s.SEA_FIL_NM,
+                                   SEA_FIL_TP_TELA = s.SEA_FIL_TP_TELA,
+                                   SEA_FIL_DIGITAL = s.SEA_FIL_DIGITAL,
+                                   SEA_FIL_TP_PROJECAO = s.SEA_FIL_TP_PROJECAO,
+                                   SEA_FIL_AUDIO = s.SEA_FIL_AUDIO,
+                                   SEA_FIL_LEG = s.SEA_FIL_LEG,
+                                   SEA_FIL_PRO_LIBRA = s.SEA_FIL_PRO_LIBRA,
+                                   SEA_FIL_LEG_DESC_CC = s.SEA_FIL_LEG_DESC_CC,
+                                   SEA_FIL_AUDIO_DESC = s.SEA_FIL_AUDIO_DESC,
+                                   SEA_DIS_CNPJ = s.SEA_DIS_CNPJ,
+                                   SEA_DIS_NM = s.SEA_DIS_NM,
+                                   SEA_RZ_SOCIAL = s.SEA_RZ_SOCIAL,
+                                   SEA_VRE_CNPJ = s.SEA_VRE_CNPJ
+                               };
+
+                foreach (var ses in listaSes)
+                {
+                    model.Add(new MensagensANCINE()
+                    {
+                        BIL_ID = ses.BIL_ID ,
+                        BIL_DIA_CIN = ses.BIL_DIA_CIN ,
+                        SAL_CD_ANCINE = ses.SAL_CD_ANCINE ,
+                        BIL_HOUVE_SES = ses.BIL_HOUVE_SES ,
+                        BIL_ADIMP_SALA = ses.BIL_ADIMP_SALA ,
+                        BIL_PROT = ses.BIL_PROT ,
+                        BIL_STATUS_PROT = ses.BIL_STATUS_PROT ,
+                        BIL_RETIF = ses.BIL_RETIF ,
+                        EMP_CD_ANCINE = ses.EMP_CD_ANCINE ,
+
+                        SEA_ID = ses.SEA_ID ,
+                        FIL_CD_ANCINE = ses.FIL_CD_ANCINE ,
+                        SEA_DT_HR_INICIO = ses.SEA_DT_HR_INICIO ,
+                        SEA_MODAL = ses.SEA_MODAL ,
+                        SEA_FIL_NM = ses.SEA_FIL_NM ,
+                        SEA_FIL_TP_TELA = ses.SEA_FIL_TP_TELA ,
+                        SEA_FIL_DIGITAL = ses.SEA_FIL_DIGITAL ,
+                        SEA_FIL_TP_PROJECAO = ses.SEA_FIL_TP_PROJECAO ,
+                        SEA_FIL_AUDIO = ses.SEA_FIL_AUDIO ,
+                        SEA_FIL_LEG = ses.SEA_FIL_LEG ,
+                        SEA_FIL_PRO_LIBRA = ses.SEA_FIL_PRO_LIBRA ,
+                        SEA_FIL_LEG_DESC_CC = ses.SEA_FIL_LEG_DESC_CC ,
+                        SEA_FIL_AUDIO_DESC = ses.SEA_FIL_AUDIO_DESC ,
+                        SEA_DIS_CNPJ = ses.SEA_DIS_CNPJ ,
+                        SEA_DIS_NM = ses.SEA_DIS_NM ,
+                        SEA_RZ_SOCIAL = ses.SEA_RZ_SOCIAL ,
+                        SEA_VRE_CNPJ = ses.SEA_VRE_CNPJ
+                    });
+
+                }
+
+                foreach (var ses in listaSes)
+                {
+                    qtdBil_Id_Inicio++;
+
+
+                    objBilheteria.registroANCINEExibidor = Convert.ToUInt16(ses.EMP_CD_ANCINE);
+                    objBilheteria.registroANCINESala = Convert.ToUInt32(ses.SAL_CD_ANCINE);
+                    objBilheteria.diaCinematografico = ses.BIL_DIA_CIN;
+                    objBilheteria.houveSessoes = ses.BIL_HOUVE_SES;
+
+                    //if (ses.BIL_RETIF == "N" && (ses.BIL_STATUS_PROT == "N" || ses.BIL_STATUS_PROT == "E" || ses.BIL_STATUS_PROT == "R"))
+                    //{
+                    //    objBilheteria.retificador = "S";
+                    //}
+                    //else
+                    //{
+                    objBilheteria.retificador = ses.BIL_RETIF;
+                    //}
+
+                    if (ses.BIL_HOUVE_SES == "N")
+                    {
+                        ViewBag.ex = "Dia Cinematográfico para a Sala especificada com conflito na informação 'Houve Sessão'.";
+                        continue;
+                    }
+
+                    // ---------------------------------------------------------------
+                    // 1.a.i - SESSAO 1
+                    // ---------------------------------------------------------------
+
+                    Sessao sessao1 = new Sessao();
+
+                    long cnpjAux = 0;
+                    string[] FormatoHorarioInicio = ses.SEA_DT_HR_INICIO.GetDateTimeFormats();
+                    sessao1.dataHoraInicio = FormatoHorarioInicio[47]; //[47]: "2017-04-01 21:00:00"
+
+                    sessao1.modalidade = ses.SEA_MODAL;
+
+                    sessao1.vendedorRemoto = new VendedorRemoto();
+                    cnpjAux = Convert.ToUInt32(ses.SEA_VRE_CNPJ);
+                    sessao1.vendedorRemoto.cnpj = cnpjAux.ToString("00000000000000");
+                    sessao1.vendedorRemoto.razaoSocial = ses.SEA_RZ_SOCIAL;
+
+
+                    // -----------------------------------------------------
+                    // SESSAO 1 - INICIALIZA LISTA DE OBRAS DA SESSAO 1
+                    // -----------------------------------------------------
+                    List<Obra> listaObrasSessao1 = new List<Obra>();
+
+                    if (listaObrasSessao1 != null)
+                    {
+                        // ------------------------------------
+                        // OBRA 1 DA SESSAO 1
+                        // ------------------------------------
+                        Obra obra1_da_sessao1 = new Obra();
+
+                        // TRATA OBRA COM CÓDIGO GENÉRICO
+                        if (ses.FIL_CD_ANCINE.Substring(0 ,1) == "G")
+                        {
+                            // var clsHelper = new Helpers.Helpers();
+                            obra1_da_sessao1.numeroObra = clsHelper.FormataCodigoObraGenerica(ses.FIL_CD_ANCINE);
+                        }
+                        else
+                        {
+                            obra1_da_sessao1.numeroObra = ses.FIL_CD_ANCINE;
+                        }
+
+                        obra1_da_sessao1.tituloObra = ses.SEA_FIL_NM;
+                        obra1_da_sessao1.tipoTela = ses.SEA_FIL_TP_TELA;
+                        obra1_da_sessao1.digital = ses.SEA_FIL_DIGITAL;
+                        obra1_da_sessao1.tipoProjecao = Convert.ToUInt16(ses.SEA_FIL_TP_PROJECAO);
+                        obra1_da_sessao1.audio = ses.SEA_FIL_AUDIO;
+                        obra1_da_sessao1.legenda = ses.SEA_FIL_LEG;
+                        obra1_da_sessao1.libras = ses.SEA_FIL_PRO_LIBRA;
+                        obra1_da_sessao1.legendagemDescritiva = ses.SEA_FIL_LEG_DESC_CC;
+                        obra1_da_sessao1.audioDescricao = ses.SEA_FIL_AUDIO_DESC;
+
+                        // DISTRIBUIDOR DA OBRA 1
+                        obra1_da_sessao1.distribuidor = new Distribuidor();
+                        cnpjAux = Convert.ToInt64(ses.SEA_DIS_CNPJ);
+                        obra1_da_sessao1.distribuidor.cnpj = cnpjAux.ToString("00000000000000");
+                        obra1_da_sessao1.distribuidor.razaoSocial = ses.SEA_DIS_NM;
+
+                        // -----------------------------------------------------
+                        // ADICIONA A OBRA 1 DENTRO DA LISTA DE OBRAS DA SESSAO 1                        
+                        listaObrasSessao1.Add(obra1_da_sessao1);
+                        // -----------------------------------------------------
+
+                    }
+
+                    // PREENCHE O ARRAY DE OBRAS DENTRO DA SESSAO 1
+                    sessao1.obras = listaObrasSessao1.ToArray();
+
+                    // ****************************
+                    // LOTAÇÃO POR TIPO DE ASSENTO //
+                    var listaTotTpAssP = (from t in db.TB_TOT_TP_ASSENTO
+                                          where t.SEA_ID == ses.SEA_ID && t.TTA_TP_ASSENTO == "P" // ASSENTOS PADRÃO
+                                          select t).FirstOrDefault();
+
+                    tta_idP = listaTotTpAssP.TTA_ID;
+                    cdTipoAssentoP = listaTotTpAssP.TTA_TP_ASSENTO;
+                    qtdDisponibilizadaP = listaTotTpAssP.TTA_QTD_DISP;
+
+                    var listaTotTpAssE = (from t in db.TB_TOT_TP_ASSENTO
+                                          where t.SEA_ID == ses.SEA_ID && t.TTA_TP_ASSENTO == "E" // ASSENTOS ESPECIAIS
+                                          select t).FirstOrDefault();
+
+                    tta_idE = listaTotTpAssE.TTA_ID;
+                    cdTipoAssentoE = listaTotTpAssE.TTA_TP_ASSENTO;
+                    qtdDisponibilizadaE = listaTotTpAssE.TTA_QTD_DISP;
+
+                    // ***********************************************
+                    // TOTAL CATEGORIA INGRESSO - ASSENTO PADRÃO //
+                    // ***********************************************
+                    var ListaTotCatIngP = (from t in db.TB_TOT_CATEG_ING
+                                           where t.TTA_ID == tta_idP && t.TCI_CAT == 1 // INTEIRA
+                                           select t).FirstOrDefault();
+                    qtdEspectadoresIntP = ListaTotCatIngP.TCI_QTD_ESPECT;
+
+                    var ListaTotMeioP1 = (from t in db.TB_TOT_MOD_PAGTO
+                                          where t.TCI_ID == ListaTotCatIngP.TCI_ID && t.TMP_MOD_PAG == 1
+                                          select t).FirstOrDefault();
+                    TotaisModPagto[0] = ListaTotMeioP1.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[0] = FormataValorXML(TotaisModPagto[0]);
+
+                    var ListaTotMeioP2 = (from t in db.TB_TOT_MOD_PAGTO
+                                          where t.TCI_ID == ListaTotCatIngP.TCI_ID && t.TMP_MOD_PAG == 2
+                                          select t).FirstOrDefault();
+                    TotaisModPagto[1] = ListaTotMeioP2.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[1] = FormataValorXML(TotaisModPagto[1]);
+
+                    var ListaTotMeioP3 = (from t in db.TB_TOT_MOD_PAGTO
+                                          where t.TCI_ID == ListaTotCatIngP.TCI_ID && t.TMP_MOD_PAG == 3
+                                          select t).FirstOrDefault();
+                    TotaisModPagto[2] = ListaTotMeioP3.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[2] = FormataValorXML(TotaisModPagto[2]);
+
+                    var ListaTotCatIngM = (from t in db.TB_TOT_CATEG_ING
+                                           where t.TTA_ID == tta_idP && t.TCI_CAT == 2 // MEIA-ENTRADA
+                                           select t).FirstOrDefault();
+                    qtdEspectadoresMeiaP = ListaTotCatIngM.TCI_QTD_ESPECT;
+
+                    var ListaTotMeioP4 = (from t in db.TB_TOT_MOD_PAGTO
+                                          where t.TCI_ID == ListaTotCatIngM.TCI_ID && t.TMP_MOD_PAG == 1
+                                          select t).FirstOrDefault();
+                    TotaisModPagto[3] = ListaTotMeioP4.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[3] = FormataValorXML(TotaisModPagto[3]);
+
+                    var ListaTotMeioP5 = (from t in db.TB_TOT_MOD_PAGTO
+                                          where t.TCI_ID == ListaTotCatIngM.TCI_ID && t.TMP_MOD_PAG == 2
+                                          select t).FirstOrDefault();
+                    TotaisModPagto[4] = ListaTotMeioP5.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[4] = FormataValorXML(TotaisModPagto[4]);
+
+                    var ListaTotMeioP6 = (from t in db.TB_TOT_MOD_PAGTO
+                                          where t.TCI_ID == ListaTotCatIngM.TCI_ID && t.TMP_MOD_PAG == 3
+                                          select t).FirstOrDefault();
+                    TotaisModPagto[5] = ListaTotMeioP6.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[5] = FormataValorXML(TotaisModPagto[5]);
+
+                    var ListaTotCatIngC = (from t in db.TB_TOT_CATEG_ING
+                                           where t.TTA_ID == tta_idP && t.TCI_CAT == 3 // CORTESIA
+                                           select t).FirstOrDefault();
+                    qtdEspectadoresCortP = ListaTotCatIngC.TCI_QTD_ESPECT;
+
+                    //var ListaTotMeioP7 = (from t in db.TB_TOT_MOD_PAGTO
+                    //                      where t.TCI_ID == ListaTotCatIngC.TCI_ID && t.TMP_MOD_PAG == 1
+                    //                      select t).FirstOrDefault();
+                    //TotaisModPagto[6] = ListaTotMeioP7.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[6] = "0.00";
+
+                    //var ListaTotMeioP8 = (from t in db.TB_TOT_MOD_PAGTO
+                    //                      where t.TCI_ID == ListaTotCatIngC.TCI_ID && t.TMP_MOD_PAG == 2
+                    //                      select t).FirstOrDefault();
+                    //TotaisModPagto[7] = ListaTotMeioP8.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[7] = "0.00";
+
+                    //var ListaTotMeioP9 = (from t in db.TB_TOT_MOD_PAGTO
+                    //                      where t.TCI_ID == ListaTotCatIngC.TCI_ID && t.TMP_MOD_PAG == 3
+                    //                      select t).FirstOrDefault();
+                    //TotaisModPagto[8] = ListaTotMeioP9.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[8] = "0.00";
+
+                    var ListaTotCatIngPR = (from t in db.TB_TOT_CATEG_ING
+                                            where t.TTA_ID == tta_idP && t.TCI_CAT == 4 // PROMOCIONAL
+                                            select t).FirstOrDefault();
+                    qtdEspectadoresPromP = ListaTotCatIngPR.TCI_QTD_ESPECT;
+
+                    var ListaTotMeioP10 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPR.TCI_ID && t.TMP_MOD_PAG == 1
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[9] = ListaTotMeioP10.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[9] = FormataValorXML(TotaisModPagto[9]);
+
+                    var ListaTotMeioP11 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPR.TCI_ID && t.TMP_MOD_PAG == 2
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[10] = ListaTotMeioP11.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[10] = FormataValorXML(TotaisModPagto[10]);
+
+                    var ListaTotMeioP12 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPR.TCI_ID && t.TMP_MOD_PAG == 3
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[11] = ListaTotMeioP12.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[11] = FormataValorXML(TotaisModPagto[11]);
+
+                    // ***********************************************
+                    // TOTAL CATEGORIA INGRESSO - ASSENTO ESPECIAL //
+                    // ***********************************************
+                    var ListaTotCatIngPE = (from t in db.TB_TOT_CATEG_ING
+                                            where t.TTA_ID == tta_idE && t.TCI_CAT == 1 // INTEIRA
+                                            select t).FirstOrDefault();
+                    qtdEspectadoresIntE = ListaTotCatIngPE.TCI_QTD_ESPECT;
+
+                    var ListaTotMeioP13 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPE.TCI_ID && t.TMP_MOD_PAG == 1
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[12] = ListaTotMeioP13.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[12] = FormataValorXML(TotaisModPagto[12]);
+
+                    var ListaTotMeioP14 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotMeioP13.TCI_ID && t.TMP_MOD_PAG == 2
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[13] = ListaTotMeioP14.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[13] = FormataValorXML(TotaisModPagto[13]);
+
+                    var ListaTotMeioP15 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotMeioP13.TCI_ID && t.TMP_MOD_PAG == 3
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[14] = ListaTotMeioP15.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[14] = FormataValorXML(TotaisModPagto[14]);
+
+                    var ListaTotCatIngME = (from t in db.TB_TOT_CATEG_ING
+                                            where t.TTA_ID == tta_idE && t.TCI_CAT == 2 // MEIA-ENTRADA
+                                            select t).FirstOrDefault();
+                    qtdEspectadoresMeiaE = ListaTotCatIngME.TCI_QTD_ESPECT;
+
+                    var ListaTotMeioP16 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngME.TCI_ID && t.TMP_MOD_PAG == 1
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[15] = ListaTotMeioP16.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[15] = FormataValorXML(TotaisModPagto[15]);
+
+                    var ListaTotMeioP17 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngME.TCI_ID && t.TMP_MOD_PAG == 2
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[16] = ListaTotMeioP17.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[16] = FormataValorXML(TotaisModPagto[16]);
+
+                    var ListaTotMeioP18 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngME.TCI_ID && t.TMP_MOD_PAG == 3
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[17] = ListaTotMeioP18.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[17] = FormataValorXML(TotaisModPagto[17]);
+
+                    var ListaTotCatIngCE = (from t in db.TB_TOT_CATEG_ING
+                                            where t.TTA_ID == tta_idE && t.TCI_CAT == 3 // CORTESIA
+                                            select t).FirstOrDefault();
+                    qtdEspectadoresCortE = ListaTotCatIngCE.TCI_QTD_ESPECT;
+
+                    //var ListaTotMeioP19 = (from t in db.TB_TOT_MOD_PAGTO
+                    //                       where t.TCI_ID == ListaTotCatIngCE.TCI_ID && t.TMP_MOD_PAG == 1
+                    //                       select t).FirstOrDefault();
+                    //TotaisModPagto[18] = ListaTotMeioP19.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[18] = "0.00";
+
+                    //var ListaTotMeioP20 = (from t in db.TB_TOT_MOD_PAGTO
+                    //                       where t.TCI_ID == ListaTotCatIngCE.TCI_ID && t.TMP_MOD_PAG == 2
+                    //                       select t).FirstOrDefault();
+                    //TotaisModPagto[19] = ListaTotMeioP20.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[19] = "0.00";
+
+                    //var ListaTotMeioP21 = (from t in db.TB_TOT_MOD_PAGTO
+                    //                       where t.TCI_ID == ListaTotCatIngCE.TCI_ID && t.TMP_MOD_PAG == 3
+                    //                       select t).FirstOrDefault();
+                    //TotaisModPagto[20] = ListaTotMeioP21.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[20] = "0.00";
+
+                    var ListaTotCatIngPRE = (from t in db.TB_TOT_CATEG_ING
+                                             where t.TTA_ID == tta_idE && t.TCI_CAT == 4 // PROMOCIONAL
+                                             select t).FirstOrDefault();
+                    qtdEspectadoresPromE = ListaTotCatIngPRE.TCI_QTD_ESPECT;
+
+                    var ListaTotMeioP22 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPRE.TCI_ID && t.TMP_MOD_PAG == 1
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[21] = ListaTotMeioP22.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[21] = FormataValorXML(TotaisModPagto[21]);
+
+                    var ListaTotMeioP23 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPRE.TCI_ID && t.TMP_MOD_PAG == 2
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[22] = ListaTotMeioP23.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[22] = FormataValorXML(TotaisModPagto[22]);
+
+                    var ListaTotMeioP24 = (from t in db.TB_TOT_MOD_PAGTO
+                                           where t.TCI_ID == ListaTotCatIngPRE.TCI_ID && t.TMP_MOD_PAG == 3
+                                           select t).FirstOrDefault();
+                    TotaisModPagto[23] = ListaTotMeioP24.TMP_VLR_ARR.ToString();
+                    TotaisModPagto[23] = FormataValorXML(TotaisModPagto[23]);
+
+                    // -----------------------------------------------------
+                    // SESSAO 1 - ADICIONA OS DADOS DE TOTALIZAÇÃO PARA A SESSÃO 1
+                    // -----------------------------------------------------
+                    sessao1.totalizacoesTipoAssento = new TotalizacaoTipoAssento[] {
+
+                            // ------------------------------------
+                            // TOTALIZACAO TIPO ASSENTO "P"
+                            // ------------------------------------
+
+                            new TotalizacaoTipoAssento
+                            {
+
+                                codigoTipoAssento = "P",
+                                quantidadeDisponibilizada = Convert.ToUInt16(qtdDisponibilizadaP),
+                                totalizacoesCategoriaIngresso = new TotalizacaoCategoriaIngresso[]
+                                {
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 1, // INTEIRA
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresIntP) ,
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[0])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[1])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[2])
+                                            }
+                                        }
+                                    },
+
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 2, // MEIA-ENTRADA
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresMeiaP),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[3])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[4])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[5])
+                                            }
+                                        }
+                                    },
+
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 3, // CORTESIA
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresCortP),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[6])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[7])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[8])
+                                            }
+                                        }
+                                    },
+
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 4, // PROMOCIONAL
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresPromP),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[9])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[10])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[11])
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+
+                            // ------------------------------------
+                            // TOTALIZACAO TIPO ASSENTO "E"
+                            // ------------------------------------
+                            new TotalizacaoTipoAssento
+                            {
+                                codigoTipoAssento = "E",
+                                quantidadeDisponibilizada = Convert.ToUInt16(qtdDisponibilizadaE),
+                                totalizacoesCategoriaIngresso = new TotalizacaoCategoriaIngresso[]
+                                {
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 1, // INTEIRA
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresIntE),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[12])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[13])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[14])
+                                            }
+                                        }
+                                    },
+
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 2, // MEIA-ENTRADA
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresMeiaE),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[15])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[16])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[17])
+                                            }
+                                        }
+                                    },
+
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 3, // CORTESIA
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresCortE),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[18])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[19])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[20])
+                                            }
+                                        }
+                                    },
+
+                                    new TotalizacaoCategoriaIngresso
+                                    {
+                                        codigoCategoriaIngresso = 4, // PROMOCIONAL
+                                        quantidadeEspectadores = Convert.ToUInt16(qtdEspectadoresPromE),
+                                        totalizacoesModalidadePagamento = new TotalizacaoModalidadePagamento[]
+                                        {
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 1, // MEIO TRADICIONAL
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[21])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 2, // VALE CULTURA
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[22])
+                                            },
+
+                                            new TotalizacaoModalidadePagamento
+                                            {
+                                                codigoModalidadePagamento = 3, // OUTROS
+                                                valorArrecadado = Convert.ToDecimal(TotaisModPagto[23])
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        };
+
+
+                    // ADICIONA NA LISTA DE SESSOES
+                    listaSessoes.Add(sessao1);
+                }
+
+
+                // PREENCHE O ARRAY DE SESSOES
+                objBilheteria.sessoes = listaSessoes.ToArray();
+
+                Envio:
+
+                //if (chkFTP || chkXML)
+                //{
+                    MemoryStream memoryStream = new MemoryStream ( );
+                    var serializer = new XmlSerializer(objBilheteria.GetType());
+                    XmlTextWriter  stringwriter = new XmlTextWriter ( memoryStream, Encoding.UTF8 );
+                    serializer.Serialize(memoryStream ,objBilheteria);
+                    memoryStream.Position = 0;
+                    XmlDocument xmlDocument = new XmlDocument();
+                    xmlDocument.Load(memoryStream);
+
+                    //string result = Encoding.UTF8.GetString(memoryStream .ToArray());
+
+                    string strDiaCinArq = "";
+                    string[] FormatoDiaCin = bIL_DIA_CIN_aux.GetDateTimeFormats();
+                    strDiaCinArq = FormatoDiaCin[9]; //[9]: "21.06.2017"
+
+                    //SendFTP(result ,objBilheteria.registroANCINESala.ToString() + "-" + strDiaCinArq + ".xml" ,chkFTP);
+
+                    string str_FTP_User = ConfigurationManager.AppSettings["FTP_User"];
+                    string str_FTP_Pwd = ConfigurationManager.AppSettings["FTP_Pwd"];
+                    string str_FTP_URL = ConfigurationManager.AppSettings["FTP_URL"];
+                    string str_FTP_Dir_Rentrac = ConfigurationManager.AppSettings["FTP_Dir_Rentrac"];
+                    string str_FTP_Dir_Local = ConfigurationManager.AppSettings["FTP_Dir_Local"];
+
+
+                    string strFileName = objBilheteria.registroANCINESala.ToString() + "-" + strDiaCinArq + ".xml";
+
+                    string path = str_FTP_Dir_Local + strFileName;
+
+                    xmlDocument.Save(path);
+                    memoryStream.Close();
+
+                if (chkXML == false) { chkXML = true; }
+
+                if (chkFTP)
+                {
+                    //Caminho do arquivo para upload
+                    FileInfo fileInf = new FileInfo(path);
+
+                    //Cria comunicação com o servidor
+                    FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(str_FTP_URL + str_FTP_Dir_Rentrac + "/" + strFileName);
+
+                    //Define que a ação vai ser de upload
+                    request.Method = WebRequestMethods.Ftp.UploadFile;
+
+                    //Credenciais para o login (usuario, senha)
+                    request.Credentials = new NetworkCredential(str_FTP_User ,str_FTP_Pwd);
+
+                    //modo passivo
+                    request.UsePassive = true;
+
+                    //dados binarios
+                    request.UseBinary = true;
+
+                    //setar o KeepAlive para false
+                    request.KeepAlive = false;
+
+                    request.ContentLength = fileInf.Length;
+
+                    //cria a stream que será usada para mandar o arquivo via FTP
+                    Stream responseStream = request.GetRequestStream();
+                    byte[] buffer = new byte[2048];
+
+                    //Lê o arquivo de origem
+                    FileStream fs = fileInf.OpenRead();
+                    try
+                    {
+                        //Enquanto vai lendo o arquivo de origem, vai escrevendo no FTP
+                        int readCount = fs.Read(buffer, 0, buffer.Length);
+                        while (readCount > 0)
+                        {
+                            //Esceve o arquivo
+                            responseStream.Write(buffer ,0 ,readCount);
+                            readCount = fs.Read(buffer ,0 ,buffer.Length);
+                        }
+                    }
+                    finally
+                    {
+                        fs.Close();
+                        responseStream.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsHelper.LogSCB("SendLoopXMLFTP - BilheteriaController: " + ex.Message);
+                msgRet = "SendLoopXMLFTP Erro: " + ex.Message;
+
+                return msgRet;
+            }
+
+            return msgRet;
+        }
+
+        //************************************************
+        public JsonResult SendByDate(string bIL_DIA_CIN)
         {
             try
             {
@@ -605,29 +1432,42 @@ namespace SCB_TKMIDIA.Controllers
                                 orderby pg.FirstOrDefault().BIL_DIA_CIN, pg.FirstOrDefault().SAL_CD_ANCINE
                                 select pg);
 
+                if(listaSes.Any() == false)
+                {
+                    TempData["bil_dia_cin"] = Convert.ToDateTime(bIL_DIA_CIN);
+                    return Json("Não existem Rendas a serem enviadas !" ,JsonRequestBehavior.AllowGet);
+                }
+
                 foreach (var ses in listaSes)
                 {
-                    var strenvio = SendLoop(bIL_DIA_CIN, ses.FirstOrDefault().SAL_CD_ANCINE, ses.FirstOrDefault().BIL_HOUVE_SES, chkAncine, chkXML, chkFTP);
+                    //var strenvio = SendLoop(bIL_DIA_CIN, ses.FirstOrDefault().SAL_CD_ANCINE, ses.FirstOrDefault().BIL_HOUVE_SES, chkAncine, chkXML, chkFTP);
+                    var strenvio = SendLoop(bIL_DIA_CIN, ses.FirstOrDefault().SAL_CD_ANCINE, ses.FirstOrDefault().BIL_HOUVE_SES);
 
+                    if (strenvio != "SendLoop OK")
+                    {
+                        return Json(strenvio ,JsonRequestBehavior.AllowGet);
+                    }
                 }
 
                 db.SaveChanges();
                 TempData["bil_dia_cin"] = bIL_DIA_CIN_aux.ToShortDateString();
-                
+
+                return Json("OK" ,JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 ViewBag.ex = ex.Message;
-                clsHelper.LogSCB("Send - BilheteriaController" + ex.Message);
+                clsHelper.LogSCB("SendByDate - BilheteriaController" + ex.Message);
                 return Json(ex.Message, JsonRequestBehavior.AllowGet);
             }
 
-            return Json("OK", JsonRequestBehavior.AllowGet);
         }
 
         //*****************************************************************************************************************
-        public string SendLoop(string bIL_DIA_CIN ,string sAL_CD_ANCINE ,string houve_ses ,bool chkAncine ,bool chkXML, bool chkFTP)
+        public string SendLoop(string bIL_DIA_CIN ,string sAL_CD_ANCINE ,string houve_ses)
         {
+            string msgRet = "SendLoop OK";
+
             try
             {
                 Bilheteria objBilheteria = new Bilheteria();
@@ -1316,272 +2156,253 @@ namespace SCB_TKMIDIA.Controllers
 
                 Envio:
 
-                if (chkFTP || chkXML)
+                // BUSCA OS PARAMETROS NO APP.CONFIG, ou DEPOIS PODE BUSCAR EM ALGUMA TABELA DE PARAMETROS GLOBAIS
+                string str_SCB_URL_Endpoint = ConfigurationManager.AppSettings["SCB_URL_Endpoint"];
+                string str_SCB_AuthorizationToken = ConfigurationManager.AppSettings["SCB_AuthorizationToken"];
+
+                // AQUI VOCÊ INSTANCIA O OBJETO 'MANAGER' DO SERVIÇO, PARA DEPOIS CHAMAR O MÉTODO DESEJADO
+                // - VOCÊ JÁ TEM QUE ENVIAR A URL E O TOKEN
+                SCBIntegrationManager objSCBIntegrationManager = new SCBIntegrationManager(str_SCB_URL_Endpoint, str_SCB_AuthorizationToken);
+
+                // AQUI VOCÊ CHAMA O MÉTODO, PASSANDO COMO PARAMETRO O OBJETO 'BILHETERIA' JÁ PREENCHIDO
+                clsHelper.LogSCB("Send - MÉTODO objSCBIntegrationManager - BilheteriaController");
+                StatusRelatorioBilheteria objReturn = objSCBIntegrationManager.RegistroBilheteriaSalaExibicao(objBilheteria);
+
+                // VALIDA SE O RETORNO NÃO É NULO
+                if (objReturn != null)
                 {
-                    var stringwriter = new System.IO.StringWriter();
-                    var serializer = new XmlSerializer(objBilheteria.GetType());
-                    serializer.Serialize(stringwriter ,objBilheteria);
 
-                    string strDiaCinArq = "";
-                    string[] FormatoDiaCin = objBilheteria.diaCinematografico.GetDateTimeFormats();
-                    strDiaCinArq = FormatoDiaCin[9]; //[9]: "21.06.2017"
+                    string[] stringSeparators = new string[] { "," };
+                    string[] strBilIds;
+                    string strBilIdsAux = "";
+                    string[] strProt;
+                    string strProtAux = "";
+                    string[] strStProt;
+                    string strStProtAux = "";
 
-                    SendFTP(stringwriter.ToString(), objBilheteria.registroANCINESala.ToString() + "-" + strDiaCinArq + ".xml", chkFTP);
-
-                }
-
-                if (chkAncine)
-                {
-                    // BUSCA OS PARAMETROS NO APP.CONFIG, ou DEPOIS PODE BUSCAR EM ALGUMA TABELA DE PARAMETROS GLOBAIS
-                    string str_SCB_URL_Endpoint = ConfigurationManager.AppSettings["SCB_URL_Endpoint"];
-                    string str_SCB_AuthorizationToken = ConfigurationManager.AppSettings["SCB_AuthorizationToken"];
-
-                    // AQUI VOCÊ INSTANCIA O OBJETO 'MANAGER' DO SERVIÇO, PARA DEPOIS CHAMAR O MÉTODO DESEJADO
-                    // - VOCÊ JÁ TEM QUE ENVIAR A URL E O TOKEN
-                    SCBIntegrationManager objSCBIntegrationManager = new SCBIntegrationManager(str_SCB_URL_Endpoint, str_SCB_AuthorizationToken);
-
-                    // AQUI VOCÊ CHAMA O MÉTODO, PASSANDO COMO PARAMETRO O OBJETO 'BILHETERIA' JÁ PREENCHIDO
-                    clsHelper.LogSCB("Send - MÉTODO objSCBIntegrationManager - BilheteriaController");
-                    StatusRelatorioBilheteria objReturn = objSCBIntegrationManager.RegistroBilheteriaSalaExibicao(objBilheteria);
-
-                    // VALIDA SE O RETORNO NÃO É NULO
-                    if (objReturn != null)
+                    // EXIBE POSSIVEIS MENSAGENS DE RETORNO: I - Informativa; A - Alerta; E - Erro
+                    if (objReturn.mensagens != null && objReturn.mensagens.Count() > 0)
                     {
-
-                        string[] stringSeparators = new string[] { "," };
-                        string[] strBilIds;
-                        string strBilIdsAux = "";
-                        string[] strProt;
-                        string strProtAux = "";
-                        string[] strStProt;
-                        string strStProtAux = "";
-
-                        // EXIBE POSSIVEIS MENSAGENS DE RETORNO: I - Informativa; A - Alerta; E - Erro
-                        if (objReturn.mensagens != null && objReturn.mensagens.Count() > 0)
+                        foreach (var msg in objReturn.mensagens)
                         {
-                            foreach (var msg in objReturn.mensagens)
+                            string emp_cd = objReturn.registroANCINEExibidor.ToString();
+                            string sal_cd = objReturn.registroANCINESala.ToString();
+                            DateTime dia_cin = objReturn.diaCinematografico;
+
+                            // MENSAGEM COM SESSÃO ESPECIFICADA.
+                            if (msg.dataHoraInicio != null)
                             {
-                                string emp_cd = objReturn.registroANCINEExibidor.ToString();
-                                string sal_cd = objReturn.registroANCINESala.ToString();
-                                DateTime dia_cin = objReturn.diaCinematografico;
+                                DateTime dtHoraIni = Convert.ToDateTime(msg.dataHoraInicio);
 
-                                // MENSAGEM COM SESSÃO ESPECIFICADA.
-                                if (msg.dataHoraInicio != null)
+                                var listaBilMsg = (from b in db.TB_BILHETERIA
+                                                    join s in db.TB_SESSAO_ANCINE on b.BIL_ID equals s.BIL_ID
+
+                                                    where (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "")
+                                                || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "N")
+                                                || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "E"  && b.BIL_RETIF == "S")
+                                                || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "R"  && b.BIL_RETIF == "S")
+
+                                                    select new MensagensANCINE()
+                                                    {
+                                                        BIL_ID = b.BIL_ID,
+                                                        BIL_DIA_CIN = b.BIL_DIA_CIN,
+                                                        SAL_CD_ANCINE = b.SAL_CD_ANCINE,
+                                                        BIL_HOUVE_SES = b.BIL_HOUVE_SES,
+                                                        BIL_ADIMP_SALA = b.BIL_ADIMP_SALA,
+                                                        BIL_PROT = b.BIL_PROT,
+                                                        BIL_STATUS_PROT = b.BIL_STATUS_PROT,
+                                                        BIL_RETIF = b.BIL_RETIF,
+                                                        EMP_CD_ANCINE = b.EMP_CD_ANCINE,
+                                                        SEA_ID = s.SEA_ID,
+                                                        FIL_CD_ANCINE = s.FIL_CD_ANCINE,
+                                                        SEA_DIS_CNPJ = s.SEA_DIS_CNPJ,
+                                                        SEA_DIS_NM = s.SEA_DIS_NM,
+                                                        SEA_DT_HR_INICIO = s.SEA_DT_HR_INICIO,
+                                                        SEA_FIL_NM = s.SEA_FIL_NM,
+                                                        SEA_FIL_TP_PROJECAO = s.SEA_FIL_TP_PROJECAO,
+                                                        SEA_MODAL = s.SEA_MODAL,
+                                                        SEA_RZ_SOCIAL = s.SEA_RZ_SOCIAL,
+                                                        SEA_VRE_CNPJ = s.SEA_VRE_CNPJ
+                                                    });
+
+                                foreach (var itemMsg in listaBilMsg)
                                 {
-                                    DateTime dtHoraIni = Convert.ToDateTime(msg.dataHoraInicio);
 
-                                    var listaBilMsg = (from b in db.TB_BILHETERIA
-                                                       join s in db.TB_SESSAO_ANCINE on b.BIL_ID equals s.BIL_ID
+                                    TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
+                                    TB_MSG.BIL_ID = itemMsg.BIL_ID;
+                                    TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
+                                    TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
+                                    TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
+                                    TB_MSG.SEA_ID = itemMsg.SEA_ID;
+                                    TB_MSG.SEA_DT_HR_INICIO = itemMsg.SEA_DT_HR_INICIO;
+                                    TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
+                                    TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
+                                    TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
+                                    db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
 
-                                                       where (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "")
-                                                   || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "N")
-                                                   || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "E"  && b.BIL_RETIF == "S")
-                                                   || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && s.SEA_DT_HR_INICIO == dtHoraIni && b.BIL_STATUS_PROT == "R"  && b.BIL_RETIF == "S")
+                                    if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
+                                    else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
 
-                                                       select new MensagensANCINE()
-                                                       {
-                                                           BIL_ID = b.BIL_ID,
-                                                           BIL_DIA_CIN = b.BIL_DIA_CIN,
-                                                           SAL_CD_ANCINE = b.SAL_CD_ANCINE,
-                                                           BIL_HOUVE_SES = b.BIL_HOUVE_SES,
-                                                           BIL_ADIMP_SALA = b.BIL_ADIMP_SALA,
-                                                           BIL_PROT = b.BIL_PROT,
-                                                           BIL_STATUS_PROT = b.BIL_STATUS_PROT,
-                                                           BIL_RETIF = b.BIL_RETIF,
-                                                           EMP_CD_ANCINE = b.EMP_CD_ANCINE,
-                                                           SEA_ID = s.SEA_ID,
-                                                           FIL_CD_ANCINE = s.FIL_CD_ANCINE,
-                                                           SEA_DIS_CNPJ = s.SEA_DIS_CNPJ,
-                                                           SEA_DIS_NM = s.SEA_DIS_NM,
-                                                           SEA_DT_HR_INICIO = s.SEA_DT_HR_INICIO,
-                                                           SEA_FIL_NM = s.SEA_FIL_NM,
-                                                           SEA_FIL_TP_PROJECAO = s.SEA_FIL_TP_PROJECAO,
-                                                           SEA_MODAL = s.SEA_MODAL,
-                                                           SEA_RZ_SOCIAL = s.SEA_RZ_SOCIAL,
-                                                           SEA_VRE_CNPJ = s.SEA_VRE_CNPJ
-                                                       });
+                                    if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
+                                    else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
 
-                                    foreach (var itemMsg in listaBilMsg)
+                                    if (strProtAux == "")
+                                    { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                    else
+                                    { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+
+                                    if (strBil_Id_Inicio_Aux == "")
                                     {
-
-                                        TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
-                                        TB_MSG.BIL_ID = itemMsg.BIL_ID;
-                                        TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
-                                        TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
-                                        TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
-                                        TB_MSG.SEA_ID = itemMsg.SEA_ID;
-                                        TB_MSG.SEA_DT_HR_INICIO = itemMsg.SEA_DT_HR_INICIO;
-                                        TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
-                                        TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
-                                        TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
-                                        db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
-
-                                        if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
-                                        else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
-
-                                        if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
-                                        else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
-
-                                        if (strProtAux == "")
-                                        { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                                        else
-                                        { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-
-                                        if (strBil_Id_Inicio_Aux == "")
-                                        {
-                                            strBil_Id_Inicio_Aux = itemMsg.BIL_ID.ToString();
-                                        }
-                                        else
-                                        {
-                                            strBil_Id_Inicio_Aux = strBil_Id_Inicio_Aux + "," + itemMsg.BIL_ID.ToString();
-                                        }
-
+                                        strBil_Id_Inicio_Aux = itemMsg.BIL_ID.ToString();
                                     }
-                                    //db.SaveChanges();
+                                    else
+                                    {
+                                        strBil_Id_Inicio_Aux = strBil_Id_Inicio_Aux + "," + itemMsg.BIL_ID.ToString();
+                                    }
+
+                                }
+                                //db.SaveChanges();
+
+                                strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
+                                strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
+                                strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
+
+                                TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
+
+                                strBilIdsAux = "";
+                                strStProtAux = "";
+                                strProtAux = "";
+
+                            }
+
+                            // ERRO SEM SESSÃO ESPECÍFICA.
+                            else
+                            {
+                                var listaBilERRO = from b in db.TB_BILHETERIA
+
+                                                    where (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT == "")
+                                            || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT == "N")
+                                            || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT ==  "E"  && b.BIL_RETIF == "S")
+                                            || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT ==  "R"  && b.BIL_RETIF == "S")
+
+                                                    select new MensagensANCINE()
+                                                    {
+                                                        BIL_ID = b.BIL_ID ,
+                                                        BIL_DIA_CIN = b.BIL_DIA_CIN ,
+                                                        SAL_CD_ANCINE = b.SAL_CD_ANCINE ,
+                                                        BIL_HOUVE_SES = b.BIL_HOUVE_SES ,
+                                                        BIL_ADIMP_SALA = b.BIL_ADIMP_SALA ,
+                                                        BIL_PROT = b.BIL_PROT ,
+                                                        BIL_STATUS_PROT = b.BIL_STATUS_PROT ,
+                                                        BIL_RETIF = b.BIL_RETIF ,
+                                                        EMP_CD_ANCINE = b.EMP_CD_ANCINE ,
+                                                    };
+
+
+                                foreach (var itemMsg in listaBilERRO)
+                                {
+                                    TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
+                                    TB_MSG.BIL_ID = itemMsg.BIL_ID;
+                                    TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
+                                    TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
+                                    TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
+                                    TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
+                                    TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
+                                    TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
+                                    db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
+
+                                    if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
+                                    else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
+
+                                    if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
+                                    else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
+
+                                    if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                                    else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
 
                                     strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
                                     strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
                                     strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
 
                                     TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
-
-                                    strBilIdsAux = "";
-                                    strStProtAux = "";
-                                    strProtAux = "";
-
                                 }
-
-                                // ERRO SEM SESSÃO ESPECÍFICA.
-                                else
-                                {
-                                    var listaBilERRO = from b in db.TB_BILHETERIA
-
-                                                       where (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT == "")
-                                               || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT == "N")
-                                               || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT ==  "E"  && b.BIL_RETIF == "S")
-                                               || (b.EMP_CD_ANCINE == emp_cd && b.SAL_CD_ANCINE == sal_cd && b.BIL_DIA_CIN == dia_cin && b.BIL_STATUS_PROT ==  "R"  && b.BIL_RETIF == "S")
-
-                                                       select new MensagensANCINE()
-                                                       {
-                                                           BIL_ID = b.BIL_ID ,
-                                                           BIL_DIA_CIN = b.BIL_DIA_CIN ,
-                                                           SAL_CD_ANCINE = b.SAL_CD_ANCINE ,
-                                                           BIL_HOUVE_SES = b.BIL_HOUVE_SES ,
-                                                           BIL_ADIMP_SALA = b.BIL_ADIMP_SALA ,
-                                                           BIL_PROT = b.BIL_PROT ,
-                                                           BIL_STATUS_PROT = b.BIL_STATUS_PROT ,
-                                                           BIL_RETIF = b.BIL_RETIF ,
-                                                           EMP_CD_ANCINE = b.EMP_CD_ANCINE ,
-                                                       };
-
-
-                                    foreach (var itemMsg in listaBilERRO)
-                                    {
-                                        TB_MENSAGEM_ANCINE TB_MSG = new TB_MENSAGEM_ANCINE();
-                                        TB_MSG.BIL_ID = itemMsg.BIL_ID;
-                                        TB_MSG.MSA_DT_MSG = DateTime.Now.ToLocalTime();
-                                        TB_MSG.MSA_DT_HORA_MSG = DateTime.Now.ToLocalTime();
-                                        TB_MSG.SAL_CD_ANCINE = itemMsg.SAL_CD_ANCINE;
-                                        TB_MSG.MSA_TP_MSG = msg.tipoMensagem;
-                                        TB_MSG.MSA_CD_MSG = msg.codigoMensagem;
-                                        TB_MSG.MSA_TXT_MSG = msg.textoMensagem;
-                                        db.TB_MENSAGEM_ANCINE.Add(TB_MSG);
-
-                                        if (strBilIdsAux == "") { strBilIdsAux = itemMsg.BIL_ID.ToString(); }
-                                        else { strBilIdsAux = strBilIdsAux + "," + itemMsg.BIL_ID.ToString(); }
-
-                                        if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
-                                        else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
-
-                                        if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                                        else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-
-                                        strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
-                                        strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
-                                        strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
-
-                                        TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
-                                    }
-                                    //db.SaveChanges();
-                                }
-
+                                //db.SaveChanges();
                             }
 
-                            string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
-                            string sal_cd_ok = objReturn.registroANCINESala.ToString();
-                            DateTime dia_cin_ok = objReturn.diaCinematografico;
-
-                            strBil_Id_Inicio = strBil_Id_Inicio_Aux.Split(stringSeparators ,StringSplitOptions.None);
-
-                            var listaBil_ok = (from b in db.TB_BILHETERIA
-
-                                               where (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "")
-                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "N")
-                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
-                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
-
-                                               select b);
-                            foreach (var item in listaBil_ok)
-                            {
-
-                                //if (strBil_Id_Inicio_Aux.IndexOf(item.BIL_ID.ToString()) != 0)
-                                //{
-                                if (strBilIdsAux == "") { strBilIdsAux = item.BIL_ID.ToString(); }
-                                else { strBilIdsAux = strBilIdsAux + "," + item.BIL_ID.ToString(); }
-
-                                if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
-                                else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
-
-                                if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                                else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
-                                //}
-                            }
-
-                            strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
-                            strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
-                            strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
-                            TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
-
-                            //db.SaveChanges();
                         }
-                        else
+
+                        string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
+                        string sal_cd_ok = objReturn.registroANCINESala.ToString();
+                        DateTime dia_cin_ok = objReturn.diaCinematografico;
+
+                        strBil_Id_Inicio = strBil_Id_Inicio_Aux.Split(stringSeparators ,StringSplitOptions.None);
+
+                        var listaBil_ok = (from b in db.TB_BILHETERIA
+
+                                            where (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "")
+                                        || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "N")
+                                        || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                        || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
+
+                                            select b);
+                        foreach (var item in listaBil_ok)
                         {
 
-                            string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
-                            string sal_cd_ok = objReturn.registroANCINESala.ToString();
-                            DateTime dia_cin_ok = objReturn.diaCinematografico;
+                            //if (strBil_Id_Inicio_Aux.IndexOf(item.BIL_ID.ToString()) != 0)
+                            //{
+                            if (strBilIdsAux == "") { strBilIdsAux = item.BIL_ID.ToString(); }
+                            else { strBilIdsAux = strBilIdsAux + "," + item.BIL_ID.ToString(); }
 
-                            var listaBil_ok = (from b in db.TB_BILHETERIA
+                            if (strStProtAux == "") { strStProtAux = objReturn.statusProtocolo; }
+                            else { strStProtAux = strStProtAux + "," + objReturn.statusProtocolo; }
 
-                                               where (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "")
-                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "N")
-                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
-                                           || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
+                            if (strProtAux == "") { strProtAux = (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                            else { strProtAux = strProtAux + "," + (objReturn.numeroProtocolo == null ? "0" : objReturn.numeroProtocolo); }
+                            //}
+                        }
 
-                                               select b);
-                            foreach (var item in listaBil_ok)
-                            {
-                                TB_BILHETERIA TB_BIL_OK = db.TB_BILHETERIA.Find(item.BIL_ID);
-                                TB_BIL_OK.BIL_PROT = objReturn.numeroProtocolo;
-                                TB_BIL_OK.BIL_STATUS_PROT = objReturn.statusProtocolo;
-                                TB_BIL_OK.BIL_DT_ALT_STAT_PROT = DateTime.Now.ToLocalTime();
-                                db.Entry(TB_BIL_OK).State = EntityState.Modified;
-                            }
-                            db.SaveChanges();
+                        strBilIds = strBilIdsAux.Split(stringSeparators ,StringSplitOptions.None);
+                        strStProt = strStProtAux.Split(stringSeparators ,StringSplitOptions.None);
+                        strProt = strProtAux.Split(stringSeparators ,StringSplitOptions.None);
+                        TrataXMLSend(strBilIds ,strStProt ,strProt ,db);
+
+                        //db.SaveChanges();
+                    }
+                    else
+                    {
+
+                        string emp_cd_ok = objReturn.registroANCINEExibidor.ToString();
+                        string sal_cd_ok = objReturn.registroANCINESala.ToString();
+                        DateTime dia_cin_ok = objReturn.diaCinematografico;
+
+                        var listaBil_ok = (from b in db.TB_BILHETERIA
+
+                                            where (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "")
+                                        || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "N")
+                                        || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "E" && b.BIL_RETIF == "S")
+                                        || (b.EMP_CD_ANCINE == emp_cd_ok && b.SAL_CD_ANCINE == sal_cd_ok && b.BIL_DIA_CIN == dia_cin_ok && b.BIL_STATUS_PROT == "R" && b.BIL_RETIF == "S")
+
+                                            select b);
+                        foreach (var item in listaBil_ok)
+                        {
+                            TB_BILHETERIA TB_BIL_OK = db.TB_BILHETERIA.Find(item.BIL_ID);
+                            TB_BIL_OK.BIL_PROT = objReturn.numeroProtocolo;
+                            TB_BIL_OK.BIL_STATUS_PROT = objReturn.statusProtocolo;
+                            TB_BIL_OK.BIL_DT_ALT_STAT_PROT = DateTime.Now.ToLocalTime();
+                            db.Entry(TB_BIL_OK).State = EntityState.Modified;
                         }
                     }
                 }
-
-                db.SaveChanges();
             }
             catch (Exception ex)
             {
-                ViewBag.ex = ex.Message;
                 clsHelper.LogSCB("SendLoop - BilheteriaController: " + ex.Message);
-                return "ERRO" + ex.Message; ;
+                msgRet = "SendLoop Erro: " + ex.Message;
+                
+                return msgRet;
             }
 
-            return "OK";
+            return msgRet;
         }
 
         //***************************************************************************************************
@@ -4454,70 +5275,5 @@ namespace SCB_TKMIDIA.Controllers
             return "true";
         }
 
-        public void SendFTP(string strFileContent, string strFileName, bool chkFTP)
-        {
-            string str_FTP_User = ConfigurationManager.AppSettings["FTP_User"];
-            string str_FTP_Pwd = ConfigurationManager.AppSettings["FTP_Pwd"];
-            string str_FTP_URL = ConfigurationManager.AppSettings["FTP_URL"];
-            string str_FTP_Dir_Rentrac = ConfigurationManager.AppSettings["FTP_Dir_Rentrac"];
-            string str_FTP_Dir_Local = ConfigurationManager.AppSettings["FTP_Dir_Local"];
-
-            using (StreamWriter outputFile = System.IO.File.AppendText(str_FTP_Dir_Local + strFileName))
-            {
-                string linha_ = strFileContent;
-
-                outputFile.WriteLine(linha_);
-
-            }
-
-            if (chkFTP)
-            {
-                //Caminho do arquivo para upload
-                FileInfo fileInf = new FileInfo(str_FTP_Dir_Local + strFileName);
-
-                //Cria comunicação com o servidor
-                FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(str_FTP_URL + str_FTP_Dir_Rentrac + "/" + strFileName);
-
-                //Define que a ação vai ser de upload
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-
-                //Credenciais para o login (usuario, senha)
-                request.Credentials = new NetworkCredential(str_FTP_User ,str_FTP_Pwd);
-
-                //modo passivo
-                request.UsePassive = true;
-
-                //dados binarios
-                request.UseBinary = true;
-
-                //setar o KeepAlive para false
-                request.KeepAlive = false;
-
-                request.ContentLength = fileInf.Length;
-
-                //cria a stream que será usada para mandar o arquivo via FTP
-                Stream responseStream = request.GetRequestStream();
-                byte[] buffer = new byte[2048];
-
-                //Lê o arquivo de origem
-                FileStream fs = fileInf.OpenRead();
-                try
-                {
-                    //Enquanto vai lendo o arquivo de origem, vai escrevendo no FTP
-                    int readCount = fs.Read(buffer, 0, buffer.Length);
-                    while (readCount > 0)
-                    {
-                        //Esceve o arquivo
-                        responseStream.Write(buffer ,0 ,readCount);
-                        readCount = fs.Read(buffer ,0 ,buffer.Length);
-                    }
-                }
-                finally
-                {
-                    fs.Close();
-                    responseStream.Close();
-                }
-            }
-        }
     }
 }

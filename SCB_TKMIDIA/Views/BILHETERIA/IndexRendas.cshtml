@@ -7,15 +7,23 @@
         <tr style="vertical-align:middle">
             <td>
                 <br />
-                <p style="color:mediumblue;font-size:x-large">Bilheteria e Rendas</p>
+                <p style="color:mediumblue;font-size:x-large" id="LabelRendas">Bilheteria e Rendas - @ViewBag.bil_dia_cin</p>
             </td>
             <td style="text-align:right; vertical-align:middle">
                 <br />
                 <label>Dia Cinematofráfico:</label> &nbsp;
             </td>
-            <td style="width:150px">
+            <td style="text-align:right;width:auto;padding-left:0;padding-right:0">
                 <br />
-                @Html.TextBox("BIL_DIA_CIN" ,ViewBag.bil_dia_cin as string ,htmlAttributes: new { @class = "form-control input-sm" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center" ,autocomplete = "off" })
+                <a href="#" style="color:blue" id="btnMais" name="btnMais" class="btn btn-default btn-sm" role="button" onclick="javascript:Menos1()"><b>- 1</b></a>
+            </td>
+            <td style="width:150px;padding-left:0;padding-right:0">
+                <br />
+                @Html.TextBox("BIL_DIA_CIN" ,ViewBag.bil_dia_cin as string ,htmlAttributes: new { @class = "form-control input-sm" ,id = "BIL_DIA_CIN" ,maxlength = "10" ,style = "text-align:center; width:150px" ,autocomplete = "off" })
+            </td>
+            <td style="text-align:left;width:auto;padding-left:0;padding-right:0">
+                <br />
+                <a href="#" style="color:blue" id="btnMais" name="btnMais" class="btn btn-default btn-sm" role="button" onclick="javascript:Mais1()"><b>+ 1</b></a>
             </td>
             <td>
                 <br />
@@ -32,46 +40,55 @@
     </table>
 }
 <div class="modal fade" tabindex="-1" role="dialog" id="myModal" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="width:500px">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Envio de Rendas</h4>
             </div>
 
-            <table class="table">
+            <table class="table" style="width:500px">
                 <tr>
-                    <td style="text-align:center">
-                        <img src="~/images/Ancine.png" style="width:70px;height:50px" />
-                    </td>
-                    <td style="vertical-align:middle">
+                    <td style="width:auto"></td>
+                    <td style="text-align:left;width:auto;vertical-align:middle">
                         <input type="checkbox" checked="checked" id="chkAncine">
+                        &nbsp;&nbsp;
+                        <label>Envio para Ancine</label>
+                    </td>
+                    <td style="width:auto;text-align:left">
+                        <div id="processandoAncine" style="text-align:left"><img id="imgProcessandoEnvioAncine" src="~/Images/loader8.gif" class="img" style="width:30px; height:30px; visibility:hidden" /></div>
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:center">
-                        <img src="~/images/File-XML-01-icon.png" style="width:50px;height:50px"/>
-                    </td>
-                    <td style="vertical-align:middle">
+                    <td style="width:auto"></td>
+                    <td style="text-align:left;width:auto;vertical-align:middle">
                         <input type="checkbox" id="chkXML">
+                        &nbsp;&nbsp;
+                        <label>Gerar XML</label><br /> (Rendas com Status Validado - OK)
+                    </td>
+                    <td style="width:auto;text-align:left">
+                        <div id="processandoXML" style="text-align:left"><img id="imgProcessandoEnvioXML" src="~/Images/loader8.gif" class="img" style="width:30px; height:30px; visibility:hidden" /></div>
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:center">
-
-                        <img src="~/images/feature0.png" style="width:50px;height:40px" />
-                    </td>
-                    <td style="vertical-align:middle">
+                    <td style="width:150px"></td>
+                    <td style="text-align:left;width:auto;vertical-align:middle">
                         <input type="checkbox" id="chkFTP">
-                        <img id="imagemProcessandoEnvio" src="~/images/loader1.gif" class="img" style="width:50px; height:50px" hidden="hidden" />
+                        &nbsp;&nbsp;
+                        <label>Envio Via FTP</label><br /> (Rendas com Status Validado - OK)
+                    </td>
+                    <td style="width:auto;text-align:left">
+                        <div id="processandoFTP" style="text-align:left"><img id="imgProcessandoEnvioFTP" src="~/Images/loader8.gif" class="img" style="width:30px; height:30px; visibility:hidden" /></div>
                     </td>
                 </tr>
             </table>
 
             <div class="modal-footer">
+                @*<div id="processando" style="text-align:center"><img id="imgProcessandoEnvio" src="~/Images/loader8.gif" class="img" style="width:50px; height:50px; visibility:hidden" /></div>*@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Voltar</button>
                 <button type="button" class="btn btn-primary " id="btnEnviar" name="btnEnviar">Enviar</button>
             </div>
+
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -191,10 +208,11 @@
 
 </table>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+@section Scripts 
+{
+@Scripts.Render("~/bundles/jqueryval")
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -211,6 +229,8 @@
             prevText: 'Anterior'
         });
 
+        $("#LabelRendas").text("Bilheteria e Rendas - " + $('#BIL_DIA_CIN').val());
+
         $("#btnAtuAncine").click(function()
             {
             var txt_dia = document.getElementById('BIL_DIA_CIN');
@@ -220,11 +240,7 @@
                 data: { bIL_DIA_CIN: txt_dia.value },
                 success: function (data) {
                     alert("Atualização Concluída!");
-
-                    //$('#EMP_CD_ANCINE').val(data).trigger('change');
                     $('#btnPesquisar').trigger('click')
-                    
-
                 }
             });
             }
@@ -235,44 +251,135 @@
             var txt_dia = document.getElementById('BIL_DIA_CIN');
             var chkAncine = document.getElementById('chkAncine');
 
-            $.ajax({
-                url: "/Bilheteria/SendByDate",
-                data: { bIL_DIA_CIN: txt_dia.value, chkAncine: chkAncine.checked, chkXML: chkXML.checked, chkFTP: chkFTP.checked },
-                success: function (data)
-                {
-                    alert("Concluído");
-                    //window.open("/Bilheteria/IndexRendas");
-                },
-                error: function (error)
-                {
-                    alert(error.status + ' - ' + error.statusText);
+            if (chkAncine.checked == true) {
+
+                var imgEnvio = document.getElementById('imgProcessandoEnvioAncine');
+                imgEnvio.style.visibility = 'visible';
+
+                $.ajax({
+                    url: "/Bilheteria/SendByDate",
+                    data: { bIL_DIA_CIN: txt_dia.value, chkAncine: chkAncine.checked },
+
+                    success: function (data) {
+                        imgEnvio.style.visibility = 'hidden';
+
+                        if (data == 'OK') {
+                            alert('Rendas enviadas com sucesso !');
+                            $("#btnPesquisar").click();
+                        }
+                        else {
+                            alert(data);
+                            imgEnvio.style.visibility = 'hidden';
+                        }
+
+
+                    },
+                    error: function (error) {
+                        alert(error.status + ' - ' + error.statusText);
+                        imgEnvio.style.visibility = 'hidden';
+                    }
+                });
+
+            }
+
+
+            if (chkXML.checked == true || chkFTP.checked == true) {
+
+                if (chkXML.checked == true) {
+                    var imgEnvio1 = document.getElementById('imgProcessandoEnvioXML');
+                    imgEnvio1.style.visibility = 'visible';
                 }
-            });
+
+                if (chkFTP.checked == true) {
+                    var imgEnvio2 = document.getElementById('imgProcessandoEnvioFTP');
+                    imgEnvio2.style.visibility = 'visible';
+                }
+
+                $.ajax({
+                    url: "/Bilheteria/SendByDateXMLFTP",
+                    data: { bIL_DIA_CIN: txt_dia.value, chkXML: chkXML.checked, chkFTP: chkFTP.checked },
+
+                    success: function (data) {
+
+                        if (chkXML.checked == true) { imgEnvio1.style.visibility = 'hidden'; }
+                        if (chkFTP.checked == true) { imgEnvio2.style.visibility = 'hidden'; }
+
+                        if (data == 'OK') {
+
+                            alert('Arquivos gerados com sucesso !');
+
+                            $("#btnPesquisar").click();
+                        }
+                        else {
+                            alert(data);
+                            if (chkXML.checked == true) { imgEnvio1.style.visibility = 'hidden'; }
+                            if (chkFTP.checked == true) { imgEnvio2.style.visibility = 'hidden'; }
+                        }
+
+
+                    },
+                    error: function (error) {
+                        alert(error.status + ' - ' + error.statusText);
+                        if (chkXML.checked == true) { imgEnvio1.style.visibility = 'hidden'; }
+                        if (chkFTP.checked == true) { imgEnvio2.style.visibility = 'hidden'; }
+                    }
+                });
+
+
+            }
+
 
         })
 
-        function updateStatus() {
-            $.ajax({
-                url: "/Admin/AsyncStatus",
-                type: "GET",
-                cache: false,
-                dataType: "json",
-                success: function (data) {
-                    var percentComplete = parseInt(data.PercentComplete);
-                    if (percentComplete == null || percentComplete == 100) {
-                        $(".progress").removeClass("active"); // we're done!
-                        $(".progress .bar").css("width", "100%");
-                    } else { // update the progress bar
-                        $(".progress").addClass("active");
-                        $(".progress .bar").css("width", percentComplete + "%");
-                        setTimeout(updateStatus, 1000); // call self to refresh
-                    }
-                }
-            });
-        }
-
     });
 
+    function Menos1() {
+
+        var month;
+        var day = "";
+        var year;
+        var from = "";
+
+        var tmpData = $("#BIL_DIA_CIN").val();
+        from = tmpData.toString();
+        day = from.substring(0, 2);
+
+        month = from.substring(3, 5);
+
+        year = from.substring(6, 10);
+
+        var myDate = new Date(year + "/" + month + "/" + day);
+        myDate.setDate(myDate.getDate() - 1);
+
+        $("#BIL_DIA_CIN").datepicker("setDate", myDate.toLocaleDateString());
+
+        $("#btnPesquisar").click();
+    }
+
+    function Mais1() {
+
+        var month;
+        var day = "";
+        var year;
+        var from = "";
+
+        var tmpData = $("#BIL_DIA_CIN").val();
+        from = tmpData.toString();
+        day = from.substring(0, 2);
+
+        month = from.substring(3, 5);
+
+        year = from.substring(6, 10);
+
+        var myDate = new Date(year + "/" + month + "/" + day);
+        myDate.setDate(myDate.getDate() + 1);
+
+        $("#BIL_DIA_CIN").datepicker("setDate", myDate.toLocaleDateString());
+
+        $("#btnPesquisar").click();
+
+    }
+        
     var myDate = new Date();
     var month;
     var day;
@@ -308,6 +415,6 @@
         $('#myInput').focus()
     })
 
-    </script>
+</script>
 
 }
